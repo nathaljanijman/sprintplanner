@@ -1,0 +1,10 @@
+name = "sprintplanner"
+compatibility_date = "2025-01-27"
+
+[env.production]
+name = "sprintplanner"
+route = "sprintplanner.nl/*"
+
+[[env.production.routes]]
+pattern = "sprintplanner.nl/*"
+custom_domain = true
