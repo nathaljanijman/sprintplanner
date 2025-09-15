@@ -1,4 +1,4 @@
-// Sprint Planner - Optimized Version
+// Sprint Planner - Optimized Version - Cache Bust: 2025-01-27-22:15
 import { createApp } from 'vue'
 import App from './App.vue'
 import router from './router'

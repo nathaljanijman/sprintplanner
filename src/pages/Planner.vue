@@ -1,3 +1,4 @@
+<!-- OPTIMIZED VERSION - Cache Bust: 2025-01-27-22:15 -->
 <template>
   <div class="planner">
     <!-- Navigation -->
@@ -400,10 +401,8 @@
 import { ref, computed, onMounted } from 'vue'
 import { useI18n } from 'vue-i18n'
 import LanguageSwitcher from '../components/LanguageSwitcher.vue'
-import Stepper from '../components/Stepper.vue'
-import VelocityForm from '../components/VelocityForm.vue'
-import CapacityForm from '../components/CapacityForm.vue'
-import ResultsSection from '../components/ResultsSection.vue'
+// Optimized version - no separate components needed
+// All components integrated directly in template
 
 const { t } = useI18n()
 
