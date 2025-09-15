@@ -594,12 +594,6 @@ const updateStepCompletion = () => {
 
 
 
-const onComplete = () => {
-  console.log('Planning completed!')
-  // Save to localStorage
-  saveToLocalStorage()
-}
-
 const updateNotes = (newNotes) => {
   notes.value = newNotes
   saveToLocalStorage()
