@@ -307,82 +307,35 @@
                 </div>
                 
                 <!-- Team Input Method Toggle -->
-                <div class="team-input-toggle">
-                  <button 
-                    @click="teamInputMethod = 'individual'"
-                    class="toggle-button"
-                    :class="{ 'active': teamInputMethod === 'individual' }"
-                  >
-                    <div class="toggle-content">
-                      <div class="toggle-title">Individual Developers</div>
-                      <div class="toggle-subtitle">Track each developer separately</div>
+                <!-- Simplified Team Configuration -->
+                <div class="team-config-simple">
+                  <div class="config-grid">
+                    <div class="config-item">
+                      <label>Sprint Duration</label>
+                      <div class="input-group">
+                        <input v-model.number="capacity.sprintWeeks" type="number" min="1" max="4" class="config-input" @input="updateStepCompletion" />
+                        <span class="input-suffix">weeks</span>
+                      </div>
                     </div>
-                  </button>
-                  
-                  <button 
-                    @click="teamInputMethod = 'average'"
-                    class="toggle-button"
-                    :class="{ 'active': teamInputMethod === 'average' }"
-                  >
-                    <div class="toggle-content">
-                      <div class="toggle-title">Average Hours</div>
-                      <div class="toggle-subtitle">Simple team average</div>
+
+                    <div class="config-item">
+                      <label>Team Size</label>
+                      <div class="input-group">
+                        <input v-model.number="capacity.teamMembers" type="number" min="1" max="20" class="config-input" @input="updateStepCompletion" />
+                        <span class="input-suffix">people</span>
+                      </div>
                     </div>
-                  </button>
+                  </div>
                 </div>
                 
-                <!-- Individual Developers Input -->
-                <div v-if="teamInputMethod === 'individual'" class="individual-developers-section">
-                  <!-- Add Developer Form -->
-                  <div class="add-developer-form">
-                    <div class="form-row">
-                      <div class="form-group">
-                        <label>Developer Name</label>
-                        <input v-model="newDeveloper.name" type="text" placeholder="Enter developer name" class="developer-input" />
+                <!-- Simplified Team Summary -->
+                <div class="team-capacity-summary">
+                  <div class="summary-card-simple">
+                    <div class="summary-title">Team Capacity</div>
+                    <div class="capacity-calculation">
+                      <div class="calc-step">
+                        {{ capacity.teamMembers }} people × {{ capacity.sprintWeeks }} weeks × 40h/week = {{ capacity.teamMembers * capacity.sprintWeeks * 40 }} hours
                       </div>
-                      <div class="form-group">
-                        <label>Contract Hours/Week</label>
-                        <input v-model.number="newDeveloper.contractHoursPerWeek" type="number" min="1" max="60" class="hours-input" />
-                      </div>
-                      <button @click="addDeveloper" class="add-button" :disabled="!newDeveloper.name.trim()">
-                        Add Developer
-                      </button>
-                    </div>
-                  </div>
-
-                  <!-- Developers List -->
-                  <div class="developers-list">
-                    <div v-for="developer in developers" :key="developer.id" class="developer-card">
-                      <div class="developer-info">
-                        <div class="developer-name">{{ developer.name }}</div>
-                        <div class="developer-hours">{{ developer.contractHoursPerWeek }}h/week</div>
-                      </div>
-                      <div class="developer-actions">
-                        <button @click="removeDeveloper(developer.id)" class="remove-button">
-                          Remove
-                        </button>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-                <!-- Average Hours Input -->
-                <div v-if="teamInputMethod === 'average'" class="average-hours-section">
-                  <div class="average-input-container">
-                    <div class="input-wrapper">
-                      <label>Team Size</label>
-                      <input v-model.number="capacity.teamMembers" type="number" min="1" max="20" class="team-size-input" @input="updateStepCompletion" />
-                    </div>
-                    <div class="input-wrapper">
-                      <label>Average Hours/Week per Developer</label>
-                      <input v-model.number="averageTeamHours" type="number" min="1" max="60" class="average-hours-input" @input="updateStepCompletion" />
-                    </div>
-                  </div>
-                  <div class="average-summary">
-                    <div class="summary-card">
-                      <div class="summary-title">Total Team Capacity</div>
-                      <div class="summary-value">{{ capacity.teamMembers * averageTeamHours * capacity.sprintWeeks }} hours</div>
-                      <div class="summary-subtitle">{{ capacity.teamMembers }} developers × {{ averageTeamHours }}h/week × {{ capacity.sprintWeeks }} weeks</div>
                     </div>
                   </div>
                 </div>
@@ -430,198 +383,55 @@
             <!-- Step 3: Availability -->
             <div v-if="currentStep === 3" class="step-panel availability-step">
               <div class="step-header">
-                <h3>{{ steps[2].title }}</h3>
-                <p>Plan team availability and absences for the sprint period</p>
-              </div>
-              
-              <!-- Availability Input Method Toggle -->
-              <div class="availability-input-toggle">
-                <button 
-                  @click="teamInputMethod = 'individual'"
-                  class="toggle-button"
-                  :class="{ 'active': teamInputMethod === 'individual' }"
-                >
-                  <div class="toggle-content">
-                    <div class="toggle-title">Individual Absences</div>
-                    <div class="toggle-subtitle">Track each developer's time off</div>
-                  </div>
-                </button>
-                
-                <button 
-                  @click="teamInputMethod = 'average'"
-                  class="toggle-button"
-                  :class="{ 'active': teamInputMethod === 'average' }"
-                >
-                  <div class="toggle-content">
-                    <div class="toggle-title">Team Average</div>
-                    <div class="toggle-subtitle">Simple team availability percentage</div>
-                  </div>
-                </button>
+                <h3>Team Availability</h3>
+                <p>Adjust for realistic team capacity considering vacations and unexpected issues</p>
               </div>
 
-              <!-- Individual Absences Management -->
-              <div v-if="teamInputMethod === 'individual'" class="individual-absences-section">
-                <!-- Add Absence Form -->
-                <div class="add-absence-form">
-                  <div class="form-grid">
-                    <div class="form-group">
-                      <label>Developer</label>
-                      <select v-model="newAbsence.developerId" class="absence-select">
-                        <option value="">Select developer</option>
-                        <option v-for="dev in developers" :key="dev.id" :value="dev.id">
-                          {{ dev.name }}
-                        </option>
-                      </select>
-                    </div>
-                    
-                    <div class="form-group">
-                      <label>Type</label>
-                      <select v-model="newAbsence.type" class="absence-select">
-                        <option value="vacation">Vacation</option>
-                        <option value="sick">Sick Leave</option>
-                        <option value="training">Training</option>
-                        <option value="project">Other Project</option>
-                        <option value="other">Other</option>
-                      </select>
-                    </div>
-                    
-                    <div class="form-group">
-                      <label>Start Date</label>
-                      <input v-model="newAbsence.startDate" type="date" class="absence-input" />
-                    </div>
-                    
-                    <div class="form-group">
-                      <label>End Date</label>
-                      <input v-model="newAbsence.endDate" type="date" class="absence-input" />
-                    </div>
-                    
-                    <div class="form-group">
-                      <label>Hours/Day</label>
-                      <input v-model.number="newAbsence.hoursPerDay" type="number" min="1" max="24" class="absence-input" />
-                    </div>
-                    
-                    <div class="form-group">
-                      <label>Reason</label>
-                      <input v-model="newAbsence.reason" type="text" placeholder="Optional reason" class="absence-input" />
-                    </div>
-                  </div>
-                  
-                  <button @click="addAbsence" class="add-absence-button" :disabled="!newAbsence.developerId || !newAbsence.startDate || !newAbsence.endDate">
-                    Add Absence
-                  </button>
-                </div>
-
-                <!-- Absences List -->
-                <div class="absences-list">
-                  <template v-for="developer in developers" :key="developer.id">
-                    <div v-if="developer && developer.absences && developer.absences.length > 0" class="developer-absences">
-                    <div class="developer-absences-header">
-                      <h5>{{ developer.name }}</h5>
-                      <span class="absence-count">{{ developer.absences.length }} absence(s)</span>
-                    </div>
-                    
-                    <div class="absences-grid">
-                      <div v-for="absence in developer.absences" :key="absence.id" class="absence-item" :style="{ borderLeftColor: getAbsenceTypeColor(absence.type) }">
-                        <div class="absence-info">
-                          <div class="absence-type">{{ getAbsenceTypeLabel(absence.type) }}</div>
-                          <div class="absence-dates">{{ absence.startDate }} - {{ absence.endDate }}</div>
-                          <div class="absence-details">{{ absence.hoursPerDay }}h/day</div>
-                          <div v-if="absence.reason" class="absence-reason">{{ absence.reason }}</div>
-                        </div>
-                        <button @click="removeAbsence(developer.id, absence.id)" class="remove-absence-button">
-                          ×
-                        </button>
-                      </div>
-                    </div>
-                    </div>
-                  </template>
-                </div>
-              </div>
-
-              <!-- Team Average Availability -->
-              <div v-if="teamInputMethod === 'average'" class="average-availability-section">
-                <div class="availability-input-container">
-                  <div class="input-wrapper">
-                    <label>Team Availability Percentage</label>
-                    <input v-model.number="teamAvailabilityPercentage" type="number" min="0" max="100" class="availability-input" @input="updateStepCompletion" />
-                    <div class="input-hint">What percentage of time is your team typically available?</div>
-                  </div>
-                </div>
-                
-                <div class="availability-summary">
-                  <div class="summary-card">
-                    <div class="summary-title">Adjusted Team Capacity</div>
-                    <div class="summary-value">{{ Math.round(totalContractHours * (teamAvailabilityPercentage / 100)) }} hours</div>
-                    <div class="summary-subtitle">{{ teamAvailabilityPercentage }}% of {{ totalContractHours }} total hours</div>
-                  </div>
-                </div>
-              </div>
-
-              <!-- Buffer Configuration -->
-              <div class="buffer-section">
-                <div class="section-header">
-                  <h4>Buffer for Unforeseen</h4>
-                  <p>Add buffer for unexpected issues and urgent tasks</p>
-                </div>
-                
-                <div class="buffer-input-container">
-                  <div class="input-wrapper">
-                    <label>Buffer Percentage</label>
+              <!-- Simplified Availability Configuration -->
+              <div class="availability-config-simple">
+                <div class="config-grid">
+                  <div class="config-item">
+                    <label>Team Availability</label>
                     <div class="input-group">
-                      <input v-model.number="capacity.bufferPercentage" type="number" min="0" max="50" class="buffer-input" @input="updateStepCompletion" />
+                      <input v-model.number="teamAvailabilityPercentage" type="number" min="50" max="100" class="config-input" @input="updateStepCompletion" />
                       <span class="input-suffix">%</span>
                     </div>
-                    <div class="input-hint">
-                      <div class="hint-primary">Sick days, urgent issues, unexpected meetings</div>
-                      <div class="hint-secondary">
-                        <span class="market-average">Market average: 15-20%</span>
-                        <span class="source">(Source: Agile Alliance, Scrum.org surveys)</span>
-                      </div>
+                    <div class="input-hint">Accounts for vacations, meetings, sick days (typical: 80-85%)</div>
+                  </div>
+
+                  <div class="config-item">
+                    <label>Buffer for Unexpected</label>
+                    <div class="input-group">
+                      <input v-model.number="capacity.bufferPercentage" type="number" min="0" max="50" class="config-input" @input="updateStepCompletion" />
+                      <span class="input-suffix">%</span>
                     </div>
+                    <div class="input-hint">Bug fixes, urgent issues, scope changes (market average: 15-20%)</div>
                   </div>
                 </div>
               </div>
 
-              <!-- Availability Summary -->
-              <div class="availability-summary-detailed">
-                <div class="summary-card-detailed">
-                  <div class="summary-header">
-                    <div class="summary-title">Final Team Capacity</div>
-                    <div class="summary-subtitle">After absences and buffer adjustments</div>
-                  </div>
-                  
-                  <div class="absence-breakdown">
-                    <div class="breakdown-item">
-                      <div class="breakdown-label">Total Contract Hours</div>
-                      <div class="breakdown-value">{{ totalContractHours }}h</div>
+              <!-- Final Capacity Calculation -->
+              <div class="final-capacity-summary">
+                <div class="summary-card-simple">
+                  <div class="summary-title">Final Sprint Capacity</div>
+                  <div class="capacity-calculation">
+                    <div class="calc-step">
+                      Base capacity: {{ capacity.teamMembers * capacity.sprintWeeks * 40 }} hours
                     </div>
-                    
-                    <div class="breakdown-item">
-                      <div class="breakdown-label">Total Absence Hours</div>
-                      <div class="breakdown-value">{{ totalAbsenceHours }}h</div>
+                    <div class="calc-step">
+                      × {{ teamAvailabilityPercentage }}% availability = {{ Math.round(capacity.teamMembers * capacity.sprintWeeks * 40 * (teamAvailabilityPercentage / 100)) }} hours
                     </div>
-                    
-                    <div class="breakdown-item">
-                      <div class="breakdown-label">Available Hours</div>
-                      <div class="breakdown-value">{{ availableHours }}h</div>
-                    </div>
-                    
-                    <div class="breakdown-item">
-                      <div class="breakdown-label">After Buffer ({{ capacity.bufferPercentage }}%)</div>
-                      <div class="breakdown-value">{{ finalCapacity }}h</div>
+                    <div class="calc-step">
+                      - {{ capacity.bufferPercentage }}% buffer = {{ finalCapacity }} hours
                     </div>
                   </div>
-                  
-                  <div class="final-capacity">
-                    <div class="final-label">Sprint Capacity</div>
-                    <div class="final-value">{{ finalCapacity }} hours</div>
-                  </div>
+                  <div class="final-value-large">{{ finalCapacity }} hours</div>
                 </div>
               </div>
             </div>
 
-            <!-- Step 4: Results -->
-            <div v-if="currentStep === 4" class="step-panel">
+            <!-- Step 3: Results -->
+            <div v-if="currentStep === 3" class="step-panel">
               <div class="step-header">
                 <h3>{{ steps[2].title }}</h3>
                 <p>Your personalized sprint planning recommendations</p>
@@ -673,17 +483,17 @@
               ← Previous
             </button>
             <div class="nav-spacer"></div>
-            <button 
-              v-if="currentStep < 4" 
-              @click="nextStep" 
+            <button
+              v-if="currentStep < 3"
+              @click="nextStep"
               class="nav-button primary"
               :disabled="!canProceed"
             >
               Next →
             </button>
-            <button 
-              v-if="currentStep === 4" 
-              @click="resetStepper" 
+            <button
+              v-if="currentStep === 3"
+              @click="resetStepper"
               class="nav-button primary"
             >
               Start Over
