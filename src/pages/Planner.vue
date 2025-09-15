@@ -22,115 +22,347 @@
           <p>{{ $t('planner.subtitle') }}</p>
         </div>
 
-        <Stepper 
-          :steps="steps" 
-          :can-proceed="canProceed"
-          @step-change="onStepChange"
-          @next="onNext"
-          @previous="onPrevious"
-          @complete="onComplete"
-        >
-          <!-- Step 1: Velocity Form -->
-          <template #step-1>
-            <VelocityForm 
-              v-model:sprints="sprints"
-              @update:can-proceed="updateCanProceed"
-            />
-          </template>
-
-          <!-- Step 2: Capacity Form -->
-          <template #step-2>
-            <CapacityForm 
-              v-model:capacity="capacity"
-              @update:can-proceed="updateCanProceed"
-            />
-          </template>
-
-          <!-- Step 3: Availability -->
-          <template #step-3>
-            <div class="step-panel availability-step">
-              <div class="step-header">
-                <h3>{{ steps[2].title }}</h3>
-                <p>Specify hours lost per sprint</p>
+        <!-- Step 1: Velocity -->
+        <div v-if="currentStep === 1" class="step-panel velocity-step">
+          <div class="step-header">
+            <h3>{{ steps[0].title }}</h3>
+            <p>Enter your team's velocity data</p>
+          </div>
+          
+          <!-- Velocity Input Method Toggle -->
+          <div class="velocity-input-toggle">
+            <button 
+              @click="velocityInputMethod = 'individual'"
+              class="toggle-button"
+              :class="{ 'active': velocityInputMethod === 'individual' }"
+            >
+              <div class="toggle-content">
+                <div class="toggle-title">Sprint History</div>
+                <div class="toggle-subtitle">Enter last 6 sprints</div>
               </div>
-              
-              <!-- Availability Input Method Toggle -->
-              <div class="availability-input-toggle">
-                <button 
-                  @click="availabilityInputMethod = 'individual'"
-                  class="toggle-button"
-                  :class="{ 'active': availabilityInputMethod === 'individual' }"
-                >
-                  <div class="toggle-content">
-                    <div class="toggle-title">Individual</div>
-                    <div class="toggle-subtitle">Per developer</div>
-                  </div>
-                </button>
-                
-                <button 
-                  @click="availabilityInputMethod = 'total'"
-                  class="toggle-button"
-                  :class="{ 'active': availabilityInputMethod === 'total' }"
-                >
-                  <div class="toggle-content">
-                    <div class="toggle-title">Total</div>
-                    <div class="toggle-subtitle">Team total</div>
-                  </div>
-                </button>
+            </button>
+            
+            <button 
+              @click="velocityInputMethod = 'manual'"
+              class="toggle-button"
+              :class="{ 'active': velocityInputMethod === 'manual' }"
+            >
+              <div class="toggle-content">
+                <div class="toggle-title">Average</div>
+                <div class="toggle-subtitle">Enter average directly</div>
               </div>
+            </button>
+          </div>
 
-              <!-- Total Hours Lost Input -->
-              <div v-if="availabilityInputMethod === 'total'" class="total-hours-section">
-                <div class="total-hours-input">
-                  <label>Total Hours Lost per Sprint</label>
+          <!-- Individual Sprint Input -->
+          <div v-if="velocityInputMethod === 'individual'" class="velocity-input-section">
+            <div class="velocity-grid-minimal">
+              <div 
+                v-for="(sprint, index) in sprints" 
+                :key="index" 
+                class="velocity-input-item"
+              >
+                <label>{{ sprint.name }}</label>
+                <input 
+                  v-model.number="sprint.velocity" 
+                  type="number" 
+                  min="0" 
+                  class="velocity-input"
+                  @input="updateStepCompletion"
+                  placeholder="0"
+                />
+              </div>
+            </div>
+          </div>
+
+          <!-- Manual Average Input -->
+          <div v-if="velocityInputMethod === 'manual'" class="manual-input-section">
+            <div class="manual-input-container">
+              <label>Average Velocity</label>
+              <input 
+                v-model.number="manualAverageVelocity" 
+                type="number" 
+                min="0" 
+                class="manual-input"
+                @input="updateStepCompletion"
+                placeholder="0"
+              />
+            </div>
+          </div>
+        </div>
+
+        <!-- Step 2: Capacity -->
+        <div v-if="currentStep === 2" class="step-panel capacity-step">
+          <div class="step-header">
+            <h3>{{ steps[1].title }}</h3>
+            <p>Set up your team's capacity</p>
+          </div>
+          
+          <!-- Sprint Duration -->
+          <div class="sprint-duration-section">
+            <label>Sprint Duration</label>
+            <input 
+              v-model.number="capacity.sprintWeeks" 
+              type="number" 
+              min="1" 
+              max="4" 
+              class="duration-input"
+              @input="updateStepCompletion"
+            />
+            <span class="input-suffix">weeks</span>
+          </div>
+
+          <!-- Team Input Method Toggle -->
+          <div class="team-input-toggle">
+            <button 
+              @click="teamInputMethod = 'individual'"
+              class="toggle-button"
+              :class="{ 'active': teamInputMethod === 'individual' }"
+            >
+              <div class="toggle-content">
+                <div class="toggle-title">Individual</div>
+                <div class="toggle-subtitle">Per developer</div>
+              </div>
+            </button>
+            
+            <button 
+              @click="teamInputMethod = 'average'"
+              class="toggle-button"
+              :class="{ 'active': teamInputMethod === 'average' }"
+            >
+              <div class="toggle-content">
+                <div class="toggle-title">Average</div>
+                <div class="toggle-subtitle">Team total</div>
+              </div>
+            </button>
+          </div>
+
+          <!-- Individual Developers -->
+          <div v-if="teamInputMethod === 'individual'" class="individual-developers-section">
+            <div class="developers-list">
+              <div 
+                v-for="(dev, index) in developers" 
+                :key="index" 
+                class="developer-item"
+              >
+                <div class="developer-info">
                   <input 
-                    v-model.number="totalHoursLost" 
+                    v-model="dev.name" 
+                    class="developer-name"
+                    placeholder="Developer name"
+                    @input="updateStepCompletion"
+                  />
+                  <input 
+                    v-model.number="dev.hoursPerWeek" 
                     type="number" 
                     min="0" 
-                    :max="totalContractHours" 
-                    class="hours-input"
+                    max="60" 
+                    class="developer-hours"
                     @input="updateStepCompletion"
-                    placeholder="0"
                   />
-                  <span class="input-suffix">hours</span>
+                  <span class="hours-label">hours/week</span>
                 </div>
-                <div class="field-context">
-                  <div class="context-primary">Include vacation, sick days, training, meetings</div>
-                  <div class="context-secondary">
-                    <span class="market-average">Typical: 10-15% of total hours</span>
-                    <span class="context-source">({{ Math.round(totalContractHours * 0.125) }}h for your team)</span>
-                  </div>
+                <button 
+                  @click="removeDeveloper(index)" 
+                  class="remove-developer"
+                  v-if="developers.length > 1"
+                >
+                  Remove
+                </button>
+              </div>
+            </div>
+            
+            <button @click="addDeveloper" class="add-developer">
+              Add Developer
+            </button>
+          </div>
+
+          <!-- Average Team Hours -->
+          <div v-if="teamInputMethod === 'average'" class="average-team-section">
+            <div class="team-size-input">
+              <label>Team Size</label>
+              <input 
+                v-model.number="capacity.teamMembers" 
+                type="number" 
+                min="1" 
+                max="20" 
+                class="team-size-field"
+                @input="updateStepCompletion"
+              />
+              <span class="input-suffix">developers</span>
+            </div>
+            
+            <div class="average-hours-input">
+              <label>Average Hours per Week</label>
+              <input 
+                v-model.number="averageTeamHours" 
+                type="number" 
+                min="0" 
+                max="60" 
+                class="average-hours-field"
+                @input="updateStepCompletion"
+              />
+              <span class="input-suffix">hours</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Step 3: Availability -->
+        <div v-if="currentStep === 3" class="step-panel availability-step">
+          <div class="step-header">
+            <h3>{{ steps[2].title }}</h3>
+            <p>Specify hours lost per sprint</p>
+          </div>
+          
+          <!-- Availability Input Method Toggle -->
+          <div class="availability-input-toggle">
+            <button 
+              @click="availabilityInputMethod = 'individual'"
+              class="toggle-button"
+              :class="{ 'active': availabilityInputMethod === 'individual' }"
+            >
+              <div class="toggle-content">
+                <div class="toggle-title">Individual</div>
+                <div class="toggle-subtitle">Per developer</div>
+              </div>
+            </button>
+            
+            <button 
+              @click="availabilityInputMethod = 'total'"
+              class="toggle-button"
+              :class="{ 'active': availabilityInputMethod === 'total' }"
+            >
+              <div class="toggle-content">
+                <div class="toggle-title">Total</div>
+                <div class="toggle-subtitle">Team total</div>
+              </div>
+            </button>
+          </div>
+
+          <!-- Total Hours Lost Input -->
+          <div v-if="availabilityInputMethod === 'total'" class="total-hours-section">
+            <div class="total-hours-input">
+              <label>Total Hours Lost per Sprint</label>
+              <input 
+                v-model.number="totalHoursLost" 
+                type="number" 
+                min="0" 
+                :max="totalContractHours" 
+                class="hours-input"
+                @input="updateStepCompletion"
+                placeholder="0"
+              />
+              <span class="input-suffix">hours</span>
+            </div>
+            <div class="field-context">
+              <div class="context-primary">Include vacation, sick days, training, meetings</div>
+              <div class="context-secondary">
+                <span class="market-average">Typical: 10-15% of total hours</span>
+                <span class="context-source">({{ Math.round(totalContractHours * 0.125) }}h for your team)</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Buffer Configuration -->
+          <div class="buffer-section">
+            <div class="buffer-input">
+              <label>Buffer for Unexpected Issues</label>
+              <input 
+                v-model.number="capacity.bufferPercentage" 
+                type="number" 
+                min="0" 
+                max="50" 
+                class="buffer-field"
+                @input="updateStepCompletion"
+                placeholder="15"
+              />
+              <span class="input-suffix">%</span>
+            </div>
+            <div class="field-context">
+              <div class="context-primary">For unexpected issues, sick days, urgent meetings</div>
+              <div class="context-secondary">
+                <span class="market-average">Market average: 15-20%</span>
+                <span class="context-source">(Agile Alliance, Scrum.org)</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Sprint Capacity Summary -->
+          <div class="capacity-summary">
+            <div class="summary-card-large">
+              <div class="summary-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <circle cx="12" cy="12" r="10"/>
+                  <polyline points="12,6 12,12 16,14"/>
+                </svg>
+              </div>
+              <div class="summary-content">
+                <div class="summary-label">Sprint Capacity</div>
+                <div class="summary-value">{{ finalCapacity }} hours</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Step 4: Results -->
+        <div v-if="currentStep === 4" class="step-panel">
+          <div class="step-header">
+            <h3>{{ steps[3].title }}</h3>
+            <p>Your sprint planning recommendations</p>
+          </div>
+          
+          <div class="results-container">
+            <div class="results-grid">
+              <div class="result-item" data-tooltip="Average Velocity: Your team's historical story points completed per sprint. Based on your input data to predict future performance.">
+                <div class="result-icon">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <polyline points="22,12 18,12 15,21 9,3 6,12 2,12"/>
+                  </svg>
+                </div>
+                <div class="result-info">
+                  <div class="result-label">Average Velocity</div>
+                  <div class="result-value">{{ averageVelocity }} points</div>
                 </div>
               </div>
-
-              <!-- Sprint Capacity Summary -->
-              <div class="capacity-summary">
-                <div class="summary-card-large">
-                  <div class="summary-icon">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                      <circle cx="12" cy="12" r="10"/>
-                      <polyline points="12,6 12,12 16,14"/>
-                    </svg>
-                  </div>
-                  <div class="summary-content">
-                    <div class="summary-label">Sprint Capacity</div>
-                    <div class="summary-value">{{ finalCapacity }} hours</div>
-                  </div>
+              
+              <div class="result-item" data-tooltip="Team Capacity: Total available hours your team can work during this sprint, after accounting for absences and buffer time.">
+                <div class="result-icon">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+                    <circle cx="9" cy="7" r="4"/>
+                    <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
+                    <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+                  </svg>
+                </div>
+                <div class="result-info">
+                  <div class="result-label">Team Capacity</div>
+                  <div class="result-value">{{ finalCapacity }} hours</div>
+                </div>
+              </div>
+              
+              <div class="result-item" data-tooltip="Confidence: How reliable this recommendation is based on your input data. High = 3+ sprints or manual input, Medium = 1-2 sprints, Low = no data.">
+                <div class="result-icon">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="12" cy="12" r="10"/>
+                    <polyline points="12,6 12,12 16,14"/>
+                  </svg>
+                </div>
+                <div class="result-info">
+                  <div class="result-label">Confidence</div>
+                  <div class="result-value">{{ confidence }}</div>
                 </div>
               </div>
             </div>
-          </template>
-
-          <!-- Step 4: Results -->
-          <template #step-4>
-            <ResultsSection 
-              :sprints="sprints"
-              :capacity="capacity"
-              :results="results"
-              @update:notes="updateNotes"
-            />
-          </template>
-        </Stepper>
+            
+            <div class="recommendation">
+              <h3>Recommended Sprint Size</h3>
+              <div class="recommended-value">{{ recommendedSprint }} story points</div>
+              <p class="recommendation-note">
+                Based on your average velocity of {{ averageVelocity }} points and team capacity of {{ finalCapacity }} hours.
+              </p>
+            </div>
+          </div>
+        </div>
 
         <!-- Action Buttons -->
         <div class="action-buttons">
@@ -185,12 +417,12 @@ const steps = [
 
 // Reactive data
 const sprints = ref([
-  { velocity: 0 },
-  { velocity: 0 },
-  { velocity: 0 },
-  { velocity: 0 },
-  { velocity: 0 },
-  { velocity: 0 }
+  { name: 'Sprint 1', velocity: 0 },
+  { name: 'Sprint 2', velocity: 0 },
+  { name: 'Sprint 3', velocity: 0 },
+  { name: 'Sprint 4', velocity: 0 },
+  { name: 'Sprint 5', velocity: 0 },
+  { name: 'Sprint 6', velocity: 0 }
 ])
 
 const capacity = ref({
@@ -201,8 +433,23 @@ const capacity = ref({
   bufferPercentage: 15
 })
 
-// Availability variables
+// Input methods
+const velocityInputMethod = ref('individual')
+const teamInputMethod = ref('individual')
 const availabilityInputMethod = ref('total')
+
+// Manual velocity input
+const manualAverageVelocity = ref(0)
+
+// Team configuration
+const developers = ref([
+  { name: 'Developer 1', hoursPerWeek: 40 },
+  { name: 'Developer 2', hoursPerWeek: 40 }
+])
+
+const averageTeamHours = ref(40)
+
+// Availability variables
 const totalHoursLost = ref(0)
 
 const notes = ref('')
@@ -210,9 +457,24 @@ const notes = ref('')
 // Computed properties
 const canProceed = ref(false)
 
+// Average velocity calculation
+const averageVelocity = computed(() => {
+  if (velocityInputMethod.value === 'manual') {
+    return manualAverageVelocity.value
+  }
+  
+  const validSprints = sprints.value.filter(s => s.velocity > 0)
+  if (validSprints.length === 0) return 0
+  
+  return Math.round(validSprints.reduce((sum, s) => sum + s.velocity, 0) / validSprints.length)
+})
+
 // Total contract hours calculation
 const totalContractHours = computed(() => {
-  return capacity.value.teamMembers * 40 * capacity.value.sprintWeeks
+  if (teamInputMethod.value === 'individual') {
+    return developers.value.reduce((total, dev) => total + dev.hoursPerWeek, 0) * capacity.value.sprintWeeks
+  }
+  return capacity.value.teamMembers * averageTeamHours.value * capacity.value.sprintWeeks
 })
 
 // Available hours after absences
@@ -227,6 +489,30 @@ const finalCapacity = computed(() => {
   const available = availableHours.value
   const buffer = capacity.value.bufferPercentage / 100
   return Math.round(available * (1 - buffer))
+})
+
+// Recommended sprint size
+const recommendedSprint = computed(() => {
+  const velocity = averageVelocity.value
+  const capacity = finalCapacity.value
+  
+  if (velocity === 0 || capacity === 0) return 0
+  
+  // Simple calculation: assume 1 story point = 8 hours
+  const hoursPerPoint = 8
+  return Math.round(capacity / hoursPerPoint)
+})
+
+// Confidence level
+const confidence = computed(() => {
+  if (velocityInputMethod.value === 'manual') {
+    return 'High'
+  }
+  
+  const validSprints = sprints.value.filter(s => s.velocity > 0)
+  if (validSprints.length >= 4) return 'High'
+  if (validSprints.length >= 2) return 'Medium'
+  return 'Low'
 })
 
 const results = computed(() => {
@@ -256,17 +542,57 @@ const updateCanProceed = (canProceedValue) => {
   canProceed.value = canProceedValue
 }
 
+// Developer management
+const addDeveloper = () => {
+  developers.value.push({
+    name: `Developer ${developers.value.length + 1}`,
+    hoursPerWeek: 40
+  })
+}
+
+const removeDeveloper = (index) => {
+  if (developers.value.length > 1) {
+    developers.value.splice(index, 1)
+  }
+}
+
+// Step management
+const currentStep = ref(1)
+
 const onStepChange = (step) => {
-  console.log('Step changed to:', step)
+  currentStep.value = step
 }
 
-const onNext = (step) => {
-  console.log('Next step:', step)
+const onNext = () => {
+  if (currentStep.value < 4) {
+    currentStep.value++
+  }
 }
 
-const onPrevious = (step) => {
-  console.log('Previous step:', step)
+const onPrevious = () => {
+  if (currentStep.value > 1) {
+    currentStep.value--
+  }
 }
+
+const onComplete = () => {
+  console.log('Planning completed!')
+}
+
+const updateStepCompletion = () => {
+  // Update step completion logic based on current step
+  if (currentStep.value === 1) {
+    canProceed.value = averageVelocity.value > 0
+  } else if (currentStep.value === 2) {
+    canProceed.value = capacity.value.teamMembers > 0
+  } else if (currentStep.value === 3) {
+    canProceed.value = true // Availability is optional
+  } else if (currentStep.value === 4) {
+    canProceed.value = true
+  }
+}
+
+
 
 const onComplete = () => {
   console.log('Planning completed!')
