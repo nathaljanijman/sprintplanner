@@ -1,3 +1,4 @@
+<!-- OPTIMIZED VERSION - Minimalist Design with All Improvements -->
 <template>
   <div class="planner">
     <!-- Navigation -->
@@ -99,17 +100,19 @@
           </div>
           
           <!-- Sprint Duration -->
-          <div class="sprint-duration-section">
+          <div class="sprint-duration-minimal">
             <label>Sprint Duration</label>
-            <input 
-              v-model.number="capacity.sprintWeeks" 
-              type="number" 
-              min="1" 
-              max="4" 
-              class="duration-input"
-              @input="updateStepCompletion"
-            />
-            <span class="input-suffix">weeks</span>
+            <div class="duration-input-group">
+              <input 
+                v-model.number="capacity.sprintWeeks" 
+                type="number" 
+                min="1" 
+                max="4" 
+                class="duration-input-small"
+                @input="updateStepCompletion"
+              />
+              <span class="input-suffix">weeks</span>
+            </div>
           </div>
 
           <!-- Team Input Method Toggle -->
@@ -210,8 +213,8 @@
         <!-- Step 3: Availability -->
         <div v-if="currentStep === 3" class="step-panel availability-step">
           <div class="step-header">
-            <h3>{{ steps[2].title }}</h3>
-            <p>Specify hours lost per sprint</p>
+            <h3>Availability</h3>
+            <p>Configure team availability and absences</p>
           </div>
           
           <!-- Availability Input Method Toggle -->
@@ -242,7 +245,7 @@
           <!-- Total Hours Lost Input -->
           <div v-if="availabilityInputMethod === 'total'" class="total-hours-section">
             <div class="total-hours-input">
-              <label>Total Hours Lost per Sprint</label>
+              <label>Hours Lost</label>
               <input 
                 v-model.number="totalHoursLost" 
                 type="number" 
@@ -266,7 +269,7 @@
           <!-- Buffer Configuration -->
           <div class="buffer-section">
             <div class="buffer-input">
-              <label>Buffer for Unexpected Issues</label>
+              <label>Buffer</label>
               <input 
                 v-model.number="capacity.bufferPercentage" 
                 type="number" 
@@ -307,7 +310,7 @@
         <!-- Step 4: Results -->
         <div v-if="currentStep === 4" class="step-panel">
           <div class="step-header">
-            <h3>{{ steps[3].title }}</h3>
+            <h3>Results</h3>
             <p>Your sprint planning recommendations</p>
           </div>
           
@@ -400,10 +403,6 @@
 import { ref, computed, onMounted } from 'vue'
 import { useI18n } from 'vue-i18n'
 import LanguageSwitcher from '../components/LanguageSwitcher.vue'
-import Stepper from '../components/Stepper.vue'
-import VelocityForm from '../components/VelocityForm.vue'
-import CapacityForm from '../components/CapacityForm.vue'
-import ResultsSection from '../components/ResultsSection.vue'
 
 const { t } = useI18n()
 
@@ -510,31 +509,9 @@ const confidence = computed(() => {
   }
   
   const validSprints = sprints.value.filter(s => s.velocity > 0)
-  if (validSprints.length >= 4) return 'High'
-  if (validSprints.length >= 2) return 'Medium'
+  if (validSprints.length >= 3) return 'High'
+  if (validSprints.length >= 1) return 'Medium'
   return 'Low'
-})
-
-const results = computed(() => {
-  const validSprints = sprints.value.filter(s => s.velocity > 0)
-  const averageVelocity = validSprints.length > 0 
-    ? validSprints.reduce((sum, s) => sum + s.velocity, 0) / validSprints.length 
-    : 0
-
-  const teamCapacity = capacity.value.sprintWeeks * 
-    capacity.value.teamMembers * 
-    (capacity.value.availability / 100) * 
-    capacity.value.factor
-
-  const recommendedSprint = Math.round(averageVelocity * 0.8) // Conservative estimate
-  const confidence = validSprints.length >= 3 ? 'High' : validSprints.length >= 1 ? 'Medium' : 'Low'
-
-  return {
-    averageVelocity: Math.round(averageVelocity * 100) / 100,
-    teamCapacity: Math.round(teamCapacity * 100) / 100,
-    recommendedSprint,
-    confidence
-  }
 })
 
 // Methods
@@ -584,48 +561,98 @@ const updateStepCompletion = () => {
   if (currentStep.value === 1) {
     canProceed.value = averageVelocity.value > 0
   } else if (currentStep.value === 2) {
-    canProceed.value = capacity.value.teamMembers > 0
+    if (teamInputMethod.value === 'individual') {
+      canProceed.value = developers.value.every(dev => dev.name && dev.hoursPerWeek > 0)
+    } else {
+      canProceed.value = capacity.value.teamMembers > 0 && averageTeamHours.value > 0
+    }
   } else if (currentStep.value === 3) {
-    canProceed.value = true // Availability is optional
+    canProceed.value = totalHoursLost.value >= 0
   } else if (currentStep.value === 4) {
     canProceed.value = true
   }
 }
 
+// Data persistence
+const saveToLocalStorage = () => {
+  const data = {
+    sprints: sprints.value,
+    capacity: capacity.value,
+    velocityInputMethod: velocityInputMethod.value,
+    teamInputMethod: teamInputMethod.value,
+    availabilityInputMethod: availabilityInputMethod.value,
+    manualAverageVelocity: manualAverageVelocity.value,
+    developers: developers.value,
+    averageTeamHours: averageTeamHours.value,
+    totalHoursLost: totalHoursLost.value,
+    notes: notes.value,
+    currentStep: currentStep.value
+  }
+  localStorage.setItem('sprintPlannerData', JSON.stringify(data))
+}
 
-
-const updateNotes = (newNotes) => {
-  notes.value = newNotes
-  saveToLocalStorage()
+const loadFromLocalStorage = () => {
+  const saved = localStorage.getItem('sprintPlannerData')
+  if (saved) {
+    try {
+      const data = JSON.parse(saved)
+      sprints.value = data.sprints || sprints.value
+      capacity.value = data.capacity || capacity.value
+      velocityInputMethod.value = data.velocityInputMethod || velocityInputMethod.value
+      teamInputMethod.value = data.teamInputMethod || teamInputMethod.value
+      availabilityInputMethod.value = data.availabilityInputMethod || availabilityInputMethod.value
+      manualAverageVelocity.value = data.manualAverageVelocity || manualAverageVelocity.value
+      developers.value = data.developers || developers.value
+      averageTeamHours.value = data.averageTeamHours || averageTeamHours.value
+      totalHoursLost.value = data.totalHoursLost || totalHoursLost.value
+      notes.value = data.notes || notes.value
+      currentStep.value = data.currentStep || currentStep.value
+    } catch (error) {
+      console.error('Error loading data from localStorage:', error)
+    }
+  }
 }
 
 const resetData = () => {
-  if (confirm('Are you sure you want to reset all data?')) {
     sprints.value = [
-      { velocity: 0 },
-      { velocity: 0 },
-      { velocity: 0 },
-      { velocity: 0 },
-      { velocity: 0 },
-      { velocity: 0 }
+    { name: 'Sprint 1', velocity: 0 },
+    { name: 'Sprint 2', velocity: 0 },
+    { name: 'Sprint 3', velocity: 0 },
+    { name: 'Sprint 4', velocity: 0 },
+    { name: 'Sprint 5', velocity: 0 },
+    { name: 'Sprint 6', velocity: 0 }
     ]
     capacity.value = {
       sprintWeeks: 2,
       teamMembers: 5,
       availability: 100,
-      factor: 1.0
-    }
-    notes.value = ''
-    localStorage.removeItem('sprintplanner-data')
+    factor: 1.0,
+    bufferPercentage: 15
   }
+  velocityInputMethod.value = 'individual'
+  teamInputMethod.value = 'individual'
+  availabilityInputMethod.value = 'total'
+  manualAverageVelocity.value = 0
+  developers.value = [
+    { name: 'Developer 1', hoursPerWeek: 40 },
+    { name: 'Developer 2', hoursPerWeek: 40 }
+  ]
+  averageTeamHours.value = 40
+  totalHoursLost.value = 0
+    notes.value = ''
+  currentStep.value = 1
+  canProceed.value = false
+  localStorage.removeItem('sprintPlannerData')
 }
 
 const exportData = () => {
   const data = {
     sprints: sprints.value,
     capacity: capacity.value,
-    results: results.value,
-    notes: notes.value,
+    averageVelocity: averageVelocity.value,
+    finalCapacity: finalCapacity.value,
+    recommendedSprint: recommendedSprint.value,
+    confidence: confidence.value,
     timestamp: new Date().toISOString()
   }
   
@@ -640,70 +667,49 @@ const exportData = () => {
   URL.revokeObjectURL(url)
 }
 
-const saveToLocalStorage = () => {
-  const data = {
-    sprints: sprints.value,
-    capacity: capacity.value,
-    notes: notes.value
-  }
-  localStorage.setItem('sprintplanner-data', JSON.stringify(data))
+const updateNotes = (newNotes) => {
+  notes.value = newNotes
+  saveToLocalStorage()
 }
 
-const loadFromLocalStorage = () => {
-  const saved = localStorage.getItem('sprintplanner-data')
-  if (saved) {
-    try {
-      const data = JSON.parse(saved)
-      if (data.sprints) sprints.value = data.sprints
-      if (data.capacity) capacity.value = data.capacity
-      if (data.notes) notes.value = data.notes
-    } catch (error) {
-      console.error('Error loading saved data:', error)
-    }
-  }
-}
-
+// Lifecycle
 onMounted(() => {
   loadFromLocalStorage()
+  updateStepCompletion()
 })
 </script>
 
 <style scoped>
+/* Minimalist Design System */
 .planner {
   min-height: 100vh;
-  background: #000000;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   color: #ffffff;
 }
 
-/* Navigation */
 .navbar {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  z-index: 1000;
-  background: rgba(0, 0, 0, 0.8);
+  background: rgba(255, 255, 255, 0.1);
   backdrop-filter: blur(20px);
-  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+  padding: 1rem 0;
 }
 
 .nav-container {
   max-width: 1200px;
   margin: 0 auto;
-  padding: 1rem 2rem;
+  padding: 0 2rem;
   display: flex;
   justify-content: space-between;
   align-items: center;
 }
 
 .nav-brand h2 {
+  margin: 0;
   font-size: 1.5rem;
   font-weight: 700;
-  background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
+  background: linear-gradient(135deg, #ffffff, #e0e7ff);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
-  background-clip: text;
-  margin: 0;
 }
 
 .nav-links {
@@ -713,28 +719,25 @@ onMounted(() => {
 }
 
 .nav-link {
-  color: var(--text-primary);
+  color: #ffffff;
   text-decoration: none;
   font-weight: 500;
-  transition: color 0.2s ease;
+  transition: all 0.3s ease;
+  padding: 0.5rem 1rem;
+  border-radius: 0.5rem;
 }
 
 .nav-link:hover {
-  color: var(--accent-primary);
+  background: rgba(255, 255, 255, 0.1);
+  transform: translateY(-2px);
 }
 
-.nav-link.router-link-active {
-  color: var(--accent-primary);
-}
-
-/* Main Content */
 .main-content {
-  padding: 8rem 0 4rem;
-  min-height: 100vh;
+  padding: 2rem 0;
 }
 
 .container {
-  max-width: 1000px;
+  max-width: 800px;
   margin: 0 auto;
   padding: 0 2rem;
 }
@@ -745,164 +748,51 @@ onMounted(() => {
 }
 
 .planner-header h1 {
-  font-size: clamp(2rem, 4vw, 3rem);
+  font-size: 2.5rem;
   font-weight: 700;
-  color: var(--text-primary);
   margin-bottom: 1rem;
-  background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
+  background: linear-gradient(135deg, #ffffff, #e0e7ff);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
-  background-clip: text;
 }
 
 .planner-header p {
-  font-size: clamp(1rem, 2.5vw, 1.25rem);
-  color: var(--text-secondary);
-  line-height: 1.6;
-  max-width: 600px;
-  margin: 0 auto;
-}
-
-/* Action Buttons */
-.action-buttons {
-  display: flex;
-  justify-content: center;
-  gap: 1rem;
-  margin-top: 3rem;
-  padding-top: 2rem;
-  border-top: 1px solid rgba(255, 255, 255, 0.1);
-}
-
-.btn {
-  padding: 0.75rem 2rem;
-  border-radius: 0.5rem;
-  font-weight: 600;
-  font-size: 0.875rem;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  border: none;
-  min-width: 120px;
-}
-
-.btn:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
-}
-
-.btn-secondary {
-  background: rgba(255, 255, 255, 0.1);
-  color: var(--text-primary);
-  border: 1px solid rgba(255, 255, 255, 0.2);
-}
-
-.btn-secondary:hover:not(:disabled) {
-  background: rgba(255, 255, 255, 0.15);
-  transform: translateY(-1px);
-}
-
-.btn-primary {
-  background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
-  color: white;
-  border: none;
-  box-shadow: 0 4px 15px rgba(59, 130, 246, 0.3);
-}
-
-.btn-primary:hover:not(:disabled) {
-  transform: translateY(-2px);
-  box-shadow: 0 6px 20px rgba(59, 130, 246, 0.4);
-}
-
-.btn:focus {
-  outline: none;
-  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.3);
-}
-
-/* Footer */
-.footer {
-  background: rgba(0, 0, 0, 0.5);
-  border-top: 1px solid rgba(255, 255, 255, 0.1);
-  padding: 3rem 0 2rem;
-}
-
-.footer-content {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  flex-wrap: wrap;
-  gap: 2rem;
-}
-
-.footer-brand h3 {
-  font-size: 1.25rem;
-  font-weight: 700;
-  color: var(--text-primary);
-  margin-bottom: 0.5rem;
-}
-
-.footer-brand p {
-  color: var(--text-secondary);
-  font-size: 0.875rem;
+  font-size: 1.125rem;
+  color: #e0e7ff;
   margin: 0;
 }
 
-.footer-links {
-  display: flex;
-  gap: 2rem;
-  flex-wrap: wrap;
+/* Step Panels */
+.step-panel {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 1rem;
+  padding: 2rem;
+  backdrop-filter: blur(20px);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+  margin-bottom: 2rem;
 }
 
-.footer-link {
-  color: var(--text-secondary);
-  text-decoration: none;
-  font-size: 0.875rem;
-  transition: color 0.2s ease;
+.step-header {
+  margin-bottom: 2rem;
+  text-align: center;
 }
 
-.footer-link:hover {
-  color: var(--accent-primary);
+.step-header h3 {
+  font-size: 1.5rem;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+  color: #ffffff;
 }
 
-/* Responsive Design */
-@media (max-width: 768px) {
-  .nav-container {
-    padding: 1rem;
-    flex-direction: column;
-    gap: 1rem;
-  }
-  
-  .nav-links {
-    gap: 1.5rem;
-  }
-  
-  .main-content {
-    padding: 6rem 0 3rem;
-  }
-  
-  .container {
-    padding: 0 1rem;
-  }
-  
-  .action-buttons {
-    flex-direction: column;
-    align-items: center;
-  }
-  
-  .btn {
-    width: 100%;
-    max-width: 200px;
-  }
-  
-  .footer-content {
-    flex-direction: column;
-    text-align: center;
-  }
-  
-  .footer-links {
-    justify-content: center;
-  }
+.step-header p {
+  color: #a1a1aa;
+  margin: 0;
 }
 
-/* Availability Section */
+/* Toggle Buttons */
+.velocity-input-toggle,
+.team-input-toggle,
 .availability-input-toggle {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -910,65 +800,591 @@ onMounted(() => {
   margin-bottom: 2rem;
 }
 
-.total-hours-section {
+.toggle-button {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 0.75rem;
+  padding: 1.5rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-align: left;
+}
+
+.toggle-button:hover {
+  background: rgba(255, 255, 255, 0.1);
+  transform: translateY(-2px);
+}
+
+.toggle-button.active {
+  background: rgba(59, 130, 246, 0.2);
+  border-color: #3b82f6;
+  box-shadow: 0 0 20px rgba(59, 130, 246, 0.3);
+}
+
+.toggle-content {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.toggle-title {
+  font-weight: 600;
+  color: #ffffff;
+  font-size: 1rem;
+}
+
+.toggle-subtitle {
+  color: #a1a1aa;
+  font-size: 0.875rem;
+}
+
+/* Input Sections */
+.velocity-input-section,
+.manual-input-section,
+.individual-developers-section,
+.average-team-section,
+.total-hours-section,
+.buffer-section {
   margin-bottom: 2rem;
 }
 
-.total-hours-input {
+.velocity-grid-minimal {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1rem;
+}
+
+.velocity-input-item {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.velocity-input-item label {
+  font-weight: 500;
+  color: #ffffff;
+  font-size: 0.875rem;
+}
+
+.velocity-input,
+.manual-input,
+.duration-input,
+.developer-name,
+.developer-hours,
+.team-size-field,
+.average-hours-field,
+.hours-input,
+.buffer-field {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 0.5rem;
+  padding: 0.75rem 1rem;
+  color: #ffffff;
+  font-size: 1rem;
+  transition: all 0.3s ease;
+}
+
+.velocity-input:focus,
+.manual-input:focus,
+.duration-input:focus,
+.developer-name:focus,
+.developer-hours:focus,
+.team-size-field:focus,
+.average-hours-field:focus,
+.hours-input:focus,
+.buffer-field:focus {
+  outline: none;
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+.velocity-input::placeholder,
+.manual-input::placeholder,
+.developer-name::placeholder,
+.hours-input::placeholder,
+.buffer-field::placeholder {
+  color: #6b7280;
+}
+
+/* Sprint Duration - Minimalist */
+.sprint-duration-minimal {
+  margin-bottom: 2rem;
+}
+
+.sprint-duration-minimal label {
+  display: block;
+  font-weight: 500;
+  color: #ffffff;
+  margin-bottom: 0.5rem;
+  font-size: 0.875rem;
+}
+
+.duration-input-group {
   display: flex;
   align-items: center;
-  gap: 0.75rem;
+  gap: 0.5rem;
+  max-width: 120px;
+}
+
+.duration-input-small {
+  width: 60px;
+  text-align: center;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 0.5rem;
+  padding: 0.5rem;
+  color: #ffffff;
+  font-size: 0.875rem;
+  transition: all 0.3s ease;
+}
+
+.duration-input-small:focus {
+  outline: none;
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+.input-suffix {
+  color: #a1a1aa;
+  font-size: 0.875rem;
+}
+
+/* Developers */
+.developers-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
   margin-bottom: 1rem;
 }
 
-.hours-input {
+.developer-item {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1rem;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 0.75rem;
+}
+
+.developer-info {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  flex: 1;
+}
+
+.developer-name {
+  flex: 1;
+  min-width: 150px;
+}
+
+.developer-hours {
   width: 100px;
-  background: rgba(255, 255, 255, 0.08);
-  border: 1px solid rgba(255, 255, 255, 0.15);
-  border-radius: 0.5rem;
-  padding: 0.75rem;
-  color: #ffffff;
-  font-size: 1rem;
-  font-weight: 600;
   text-align: center;
-  transition: all 0.2s ease;
 }
 
-.hours-input:focus {
-  outline: none;
+.hours-label {
+  color: #a1a1aa;
+  font-size: 0.875rem;
+  white-space: nowrap;
+}
+
+.remove-developer {
+  background: rgba(239, 68, 68, 0.1);
+  border: 1px solid rgba(239, 68, 68, 0.3);
+  color: #fca5a5;
+  padding: 0.5rem 1rem;
+  border-radius: 0.5rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-size: 0.875rem;
+}
+
+.remove-developer:hover {
+  background: rgba(239, 68, 68, 0.2);
+  border-color: #ef4444;
+}
+
+.add-developer {
+  background: rgba(59, 130, 246, 0.1);
+  border: 1px solid rgba(59, 130, 246, 0.3);
+  color: #93c5fd;
+  padding: 0.75rem 1.5rem;
+  border-radius: 0.5rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-weight: 500;
+}
+
+.add-developer:hover {
+  background: rgba(59, 130, 246, 0.2);
   border-color: #3b82f6;
-  box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2);
+  transform: translateY(-2px);
 }
 
+/* Team Configuration */
+.team-size-input,
+.average-hours-input {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.team-size-input label,
+.average-hours-input label {
+  font-weight: 500;
+  color: #ffffff;
+  min-width: 150px;
+}
+
+.team-size-field,
+.average-hours-field {
+  width: 120px;
+  text-align: center;
+}
+
+/* Field Context */
 .field-context {
   margin-top: 0.75rem;
-  padding: 0.75rem;
+  padding: 1rem;
   background: rgba(255, 255, 255, 0.03);
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.1);
   border-radius: 0.5rem;
 }
 
 .context-primary {
-  font-size: 0.875rem;
   color: #ffffff;
+  font-size: 0.875rem;
   margin-bottom: 0.5rem;
-  font-weight: 500;
 }
 
 .context-secondary {
   display: flex;
-  flex-direction: column;
-  gap: 0.25rem;
+  gap: 1rem;
   font-size: 0.75rem;
+  color: #a1a1aa;
 }
 
 .market-average {
-  color: #3b82f6;
-  font-weight: 600;
+  color: #10b981;
+  font-weight: 500;
 }
 
 .context-source {
+  color: #6b7280;
+}
+
+/* Capacity Summary */
+.capacity-summary {
+  margin-top: 2rem;
+}
+
+.summary-card-large {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1.5rem;
+  background: rgba(16, 185, 129, 0.1);
+  border: 1px solid rgba(16, 185, 129, 0.3);
+  border-radius: 0.75rem;
+}
+
+.summary-icon {
+  width: 3rem;
+  height: 3rem;
+  color: #10b981;
+  flex-shrink: 0;
+}
+
+.summary-content {
+  flex: 1;
+}
+
+.summary-label {
+  font-size: 0.875rem;
   color: #a1a1aa;
-  font-style: italic;
+  margin-bottom: 0.25rem;
+}
+
+.summary-value {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #ffffff;
+}
+
+/* Results */
+.results-container {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+.results-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1rem;
+}
+
+.result-item {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1.5rem;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 0.75rem;
+  transition: all 0.3s ease;
+  cursor: pointer;
+  position: relative;
+}
+
+.result-item:hover {
+  background: rgba(255, 255, 255, 0.1);
+  transform: translateY(-2px);
+}
+
+.result-item:hover::after {
+  content: attr(data-tooltip);
+  position: absolute;
+  bottom: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(0, 0, 0, 0.95);
+  color: #ffffff;
+  padding: 0.75rem 1rem;
+  border-radius: 0.5rem;
+  font-size: 0.75rem;
+  white-space: normal;
+  max-width: 250px;
+  text-align: center;
+  z-index: 10;
+  margin-bottom: 0.5rem;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.result-icon {
+  width: 2.5rem;
+  height: 2.5rem;
+  color: #3b82f6;
+  flex-shrink: 0;
+}
+
+.result-info {
+  flex: 1;
+}
+
+.result-label {
+  font-size: 0.875rem;
+  color: #a1a1aa;
+  margin-bottom: 0.25rem;
+}
+
+.result-value {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #ffffff;
+}
+
+.recommendation {
+  text-align: center;
+  padding: 2rem;
+  background: rgba(59, 130, 246, 0.1);
+  border: 1px solid rgba(59, 130, 246, 0.3);
+  border-radius: 1rem;
+}
+
+.recommendation h3 {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #ffffff;
+  margin-bottom: 1rem;
+}
+
+.recommended-value {
+  font-size: 3rem;
+  font-weight: 700;
+  color: #3b82f6;
+  margin-bottom: 1rem;
+}
+
+.recommendation-note {
+  color: #a1a1aa;
+  margin: 0;
+  font-size: 0.875rem;
+}
+
+/* Action Buttons */
+.action-buttons {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+  margin-top: 2rem;
+}
+
+.btn {
+  padding: 0.75rem 2rem;
+  border-radius: 0.5rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  border: none;
+  font-size: 1rem;
+}
+
+.btn-secondary {
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: #ffffff;
+}
+
+.btn-secondary:hover {
+  background: rgba(255, 255, 255, 0.2);
+  transform: translateY(-2px);
+}
+
+.btn-primary {
+  background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+  color: #ffffff;
+  box-shadow: 0 4px 15px rgba(59, 130, 246, 0.3);
+}
+
+.btn-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(59, 130, 246, 0.4);
+}
+
+/* Footer */
+.footer {
+  background: rgba(0, 0, 0, 0.2);
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  padding: 2rem 0;
+  margin-top: 4rem;
+}
+
+.footer-content {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 2rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.footer-brand h3 {
+  margin: 0 0 0.5rem 0;
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #ffffff;
+}
+
+.footer-brand p {
+  margin: 0;
+  color: #a1a1aa;
+  font-size: 0.875rem;
+}
+
+.footer-links {
+  display: flex;
+  gap: 2rem;
+}
+
+.footer-link {
+  color: #a1a1aa;
+  text-decoration: none;
+  font-size: 0.875rem;
+  transition: color 0.3s ease;
+}
+
+.footer-link:hover {
+  color: #ffffff;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .container {
+    padding: 0 1rem;
+  }
+  
+  .planner-header h1 {
+    font-size: 2rem;
+  }
+  
+  .step-panel {
+    padding: 1.5rem;
+  }
+  
+  .velocity-input-toggle,
+  .team-input-toggle,
+  .availability-input-toggle {
+    grid-template-columns: 1fr;
+  }
+  
+  .velocity-grid-minimal {
+    grid-template-columns: 1fr;
+  }
+  
+  .developer-item {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0.75rem;
+  }
+  
+  .developer-info {
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+  
+  .developer-name,
+  .developer-hours {
+    width: 100%;
+  }
+  
+  .results-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .footer-content {
+    flex-direction: column;
+    gap: 1rem;
+    text-align: center;
+  }
+  
+  .footer-links {
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+}
+
+@media (max-width: 480px) {
+  .nav-container {
+    padding: 0 1rem;
+  }
+  
+  .nav-links {
+    gap: 1rem;
+  }
+  
+  .planner-header h1 {
+    font-size: 1.75rem;
+  }
+  
+  .step-panel {
+    padding: 1rem;
+  }
+  
+  .toggle-button {
+    padding: 1rem;
+  }
+  
+  .action-buttons {
+    flex-direction: column;
+  }
+  
+  .btn {
+    width: 100%;
+  }
 }
 </style>
