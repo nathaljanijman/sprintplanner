@@ -26,7 +26,6 @@
         </div>
         <div class="nav-links">
           <router-link to="/" class="nav-link">Home</router-link>
-          <router-link to="/planner" class="nav-link">Planner</router-link>
           <div class="language-switcher">
             <button @click="toggleLanguage" class="language-button">
               {{ currentLanguage.toUpperCase() }}
@@ -42,12 +41,12 @@
         <div class="hero-content">
           <h1 class="title">Sprint Planner</h1>
           <p class="subtitle">The easiest way to plan your sprints and track your team's velocity</p>
-          <router-link to="/planner" class="cta-button">
-            Go to Planner
+          <button @click="scrollToWidget" class="cta-button">
+            Try Sprint Planner
             <svg class="cta-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
               <path d="M5 12h14M12 5l7 7-7 7"/>
             </svg>
-          </router-link>
+          </button>
         </div>
         <div class="hero-visual">
           <div class="predictability-simple">
@@ -144,13 +143,13 @@
     </section>
 
     <!-- Planner Widget -->
-    <section class="planner-widget">
+    <section id="planner-widget" class="planner-widget">
       <div class="container">
         <div class="section-header">
-          <h2 class="section-title">Sprint Planning Tool</h2>
-          <p class="section-subtitle">Plan your next sprint based on historical velocity and team capacity</p>
-            </div>
-        
+          <h2 class="section-title">Sprint Planner</h2>
+          <p class="section-subtitle">Plan your next sprint in 3 simple steps</p>
+        </div>
+
         <div class="stepper-container">
           <!-- Progress Stepper -->
           <div class="stepper-progress">
@@ -186,44 +185,31 @@
             <!-- Step 1: Historical Velocity -->
             <div v-if="currentStep === 1" class="step-panel velocity-step">
               <div class="step-header">
-                <h3>{{ steps[0].title }}</h3>
-                <p>Choose how to input your team's velocity data</p>
+                <h3>Team Velocity</h3>
+                <p>How would you like to enter your velocity?</p>
               </div>
               
               <!-- Input Method Toggle -->
               <div class="input-method-toggle">
-                <button 
-                  @click="velocityInputMethod = 'individual'"
-                  class="toggle-button"
-                  :class="{ 'active': velocityInputMethod === 'individual' }"
-                >
-                  <div class="toggle-content">
-                    <div class="toggle-title">Individual Sprints</div>
-                    <div class="toggle-subtitle">Enter each sprint's velocity</div>
-                  </div>
-                </button>
-                
-                <button 
+                <button
                   @click="velocityInputMethod = 'manual'"
                   class="toggle-button"
                   :class="{ 'active': velocityInputMethod === 'manual' }"
                 >
                   <div class="toggle-content">
-                    <div class="toggle-title">Manual Average</div>
-                    <div class="toggle-subtitle">Enter average directly</div>
+                    <div class="toggle-title">Quick Average</div>
+                    <div class="toggle-subtitle">Enter your average velocity</div>
                   </div>
                 </button>
-                
-                <button 
-                  @click="velocityInputMethod = 'integration'"
-                  class="toggle-button coming-soon"
-                  :class="{ 'active': velocityInputMethod === 'integration' }"
-                  disabled
+
+                <button
+                  @click="velocityInputMethod = 'individual'"
+                  class="toggle-button"
+                  :class="{ 'active': velocityInputMethod === 'individual' }"
                 >
                   <div class="toggle-content">
-                    <div class="toggle-title">Backlog Integration</div>
-                    <div class="toggle-subtitle">Connect to Azure DevOps</div>
-                    <div class="coming-soon-badge">Coming Soon</div>
+                    <div class="toggle-title">Detailed History</div>
+                    <div class="toggle-subtitle">Enter last 6 sprints</div>
                   </div>
                 </button>
               </div>
@@ -273,28 +259,6 @@
                 </div>
               </div>
 
-              <!-- Integration Placeholder -->
-              <div v-if="velocityInputMethod === 'integration'" class="integration-placeholder">
-                <h4>Backlog Tool Integration</h4>
-                <p>Connect to your Azure DevOps, Jira, or other backlog tools to automatically import velocity data.</p>
-                <div class="integration-features">
-                  <div class="feature-item">
-                    <div class="feature-dot"></div>
-                    <span>Automatic velocity calculation</span>
-                  </div>
-                  <div class="feature-item">
-                    <div class="feature-dot"></div>
-                    <span>Real-time data sync</span>
-                  </div>
-                  <div class="feature-item">
-                    <div class="feature-dot"></div>
-                    <span>Historical trend analysis</span>
-                  </div>
-                </div>
-                <button class="integration-button" disabled>
-                  Integration Coming Soon
-                </button>
-              </div>
 
               <!-- Velocity Summary - Only for Individual Sprints -->
               <div v-if="velocityInputMethod === 'individual'" class="velocity-summary-minimal">
@@ -757,6 +721,13 @@ const currentLanguage = ref('nl')
 const toggleLanguage = () => {
   currentLanguage.value = currentLanguage.value === 'nl' ? 'en' : 'nl'
   localStorage.setItem('sprintplanner-language', currentLanguage.value)
+}
+
+const scrollToWidget = () => {
+  const element = document.getElementById('planner-widget')
+  if (element) {
+    element.scrollIntoView({ behavior: 'smooth' })
+  }
 }
 
 // Stepper data
@@ -2162,16 +2133,16 @@ onMounted(() => {
 }
 
 .toggle-button {
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 1.5rem;
-  padding: 2rem;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 1rem;
+  padding: 1.5rem;
   cursor: pointer;
-  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: all 0.2s ease;
   text-align: left;
   position: relative;
   overflow: hidden;
-  backdrop-filter: blur(20px);
+  backdrop-filter: blur(40px);
 }
 
 .toggle-button::before {
@@ -2191,10 +2162,10 @@ onMounted(() => {
 }
 
 .toggle-button.active {
-  background: linear-gradient(135deg, rgba(59, 130, 246, 0.15), rgba(29, 78, 216, 0.15));
-  border-color: rgba(59, 130, 246, 0.4);
-  transform: translateY(-2px);
-  box-shadow: 0 20px 40px rgba(59, 130, 246, 0.2);
+  background: rgba(59, 130, 246, 0.08);
+  border-color: rgba(59, 130, 246, 0.3);
+  transform: translateY(-1px);
+  box-shadow: 0 8px 25px rgba(59, 130, 246, 0.15), inset 0 1px 0 rgba(255, 255, 255, 0.1);
 }
 
 .toggle-button.coming-soon {
