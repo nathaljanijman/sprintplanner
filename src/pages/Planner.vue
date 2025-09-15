@@ -46,8 +46,83 @@
             />
           </template>
 
-          <!-- Step 3: Results -->
+          <!-- Step 3: Availability -->
           <template #step-3>
+            <div class="step-panel availability-step">
+              <div class="step-header">
+                <h3>{{ steps[2].title }}</h3>
+                <p>Specify hours lost per sprint</p>
+              </div>
+              
+              <!-- Availability Input Method Toggle -->
+              <div class="availability-input-toggle">
+                <button 
+                  @click="availabilityInputMethod = 'individual'"
+                  class="toggle-button"
+                  :class="{ 'active': availabilityInputMethod === 'individual' }"
+                >
+                  <div class="toggle-content">
+                    <div class="toggle-title">Individual</div>
+                    <div class="toggle-subtitle">Per developer</div>
+                  </div>
+                </button>
+                
+                <button 
+                  @click="availabilityInputMethod = 'total'"
+                  class="toggle-button"
+                  :class="{ 'active': availabilityInputMethod === 'total' }"
+                >
+                  <div class="toggle-content">
+                    <div class="toggle-title">Total</div>
+                    <div class="toggle-subtitle">Team total</div>
+                  </div>
+                </button>
+              </div>
+
+              <!-- Total Hours Lost Input -->
+              <div v-if="availabilityInputMethod === 'total'" class="total-hours-section">
+                <div class="total-hours-input">
+                  <label>Total Hours Lost per Sprint</label>
+                  <input 
+                    v-model.number="totalHoursLost" 
+                    type="number" 
+                    min="0" 
+                    :max="totalContractHours" 
+                    class="hours-input"
+                    @input="updateStepCompletion"
+                    placeholder="0"
+                  />
+                  <span class="input-suffix">hours</span>
+                </div>
+                <div class="field-context">
+                  <div class="context-primary">Include vacation, sick days, training, meetings</div>
+                  <div class="context-secondary">
+                    <span class="market-average">Typical: 10-15% of total hours</span>
+                    <span class="context-source">({{ Math.round(totalContractHours * 0.125) }}h for your team)</span>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Sprint Capacity Summary -->
+              <div class="capacity-summary">
+                <div class="summary-card-large">
+                  <div class="summary-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <circle cx="12" cy="12" r="10"/>
+                      <polyline points="12,6 12,12 16,14"/>
+                    </svg>
+                  </div>
+                  <div class="summary-content">
+                    <div class="summary-label">Sprint Capacity</div>
+                    <div class="summary-value">{{ finalCapacity }} hours</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </template>
+
+          <!-- Step 4: Results -->
+          <template #step-4>
             <ResultsSection 
               :sprints="sprints"
               :capacity="capacity"
@@ -104,7 +179,8 @@ const { t } = useI18n()
 const steps = [
   { id: 1, titleKey: 'velocityForm.title' },
   { id: 2, titleKey: 'capacityForm.title' },
-  { id: 3, titleKey: 'results.title' }
+  { id: 3, titleKey: 'availability.title' },
+  { id: 4, titleKey: 'results.title' }
 ]
 
 // Reactive data
@@ -121,13 +197,37 @@ const capacity = ref({
   sprintWeeks: 2,
   teamMembers: 5,
   availability: 100,
-  factor: 1.0
+  factor: 1.0,
+  bufferPercentage: 15
 })
+
+// Availability variables
+const availabilityInputMethod = ref('total')
+const totalHoursLost = ref(0)
 
 const notes = ref('')
 
 // Computed properties
 const canProceed = ref(false)
+
+// Total contract hours calculation
+const totalContractHours = computed(() => {
+  return capacity.value.teamMembers * 40 * capacity.value.sprintWeeks
+})
+
+// Available hours after absences
+const availableHours = computed(() => {
+  const contractHours = totalContractHours.value
+  const absenceHours = totalHoursLost.value
+  return Math.max(0, contractHours - absenceHours)
+})
+
+// Final capacity after buffer
+const finalCapacity = computed(() => {
+  const available = availableHours.value
+  const buffer = capacity.value.bufferPercentage / 100
+  return Math.round(available * (1 - buffer))
+})
 
 const results = computed(() => {
   const validSprints = sprints.value.filter(s => s.velocity > 0)
@@ -251,8 +351,8 @@ onMounted(() => {
 <style scoped>
 .planner {
   min-height: 100vh;
-  background: var(--bg-primary);
-  color: var(--text-primary);
+  background: #000000;
+  color: #ffffff;
 }
 
 /* Navigation */
@@ -480,5 +580,75 @@ onMounted(() => {
   .footer-links {
     justify-content: center;
   }
+}
+
+/* Availability Section */
+.availability-input-toggle {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+  margin-bottom: 2rem;
+}
+
+.total-hours-section {
+  margin-bottom: 2rem;
+}
+
+.total-hours-input {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 1rem;
+}
+
+.hours-input {
+  width: 100px;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 0.5rem;
+  padding: 0.75rem;
+  color: #ffffff;
+  font-size: 1rem;
+  font-weight: 600;
+  text-align: center;
+  transition: all 0.2s ease;
+}
+
+.hours-input:focus {
+  outline: none;
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2);
+}
+
+.field-context {
+  margin-top: 0.75rem;
+  padding: 0.75rem;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 0.5rem;
+}
+
+.context-primary {
+  font-size: 0.875rem;
+  color: #ffffff;
+  margin-bottom: 0.5rem;
+  font-weight: 500;
+}
+
+.context-secondary {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  font-size: 0.75rem;
+}
+
+.market-average {
+  color: #3b82f6;
+  font-weight: 600;
+}
+
+.context-source {
+  color: #a1a1aa;
+  font-style: italic;
 }
 </style>

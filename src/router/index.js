@@ -1,41 +1,35 @@
 import { createRouter, createWebHistory } from 'vue-router'
-import Home from '../pages/Home.vue'
-import Planner from '../pages/Planner.vue'
-import PrivacyPolicy from '../pages/PrivacyPolicy.vue'
-import TermsOfService from '../pages/TermsOfService.vue'
-import Service from '../pages/Service.vue'
-import DataDeletion from '../pages/DataDeletion.vue'
 
 const routes = [
   {
     path: '/',
     name: 'Home',
-    component: Home
+    component: () => import('../pages/Home.vue')
   },
   {
     path: '/planner',
     name: 'Planner',
-    component: Planner
+    component: () => import('../pages/Planner.vue')
   },
   {
     path: '/privacy',
     name: 'PrivacyPolicy',
-    component: PrivacyPolicy
+    component: () => import('../pages/PrivacyPolicy.vue')
   },
   {
     path: '/terms',
     name: 'TermsOfService',
-    component: TermsOfService
+    component: () => import('../pages/TermsOfService.vue')
   },
   {
     path: '/service',
     name: 'Service',
-    component: Service
+    component: () => import('../pages/Service.vue')
   },
   {
     path: '/data-deletion',
     name: 'DataDeletion',
-    component: DataDeletion
+    component: () => import('../pages/DataDeletion.vue')
   }
 ]
 

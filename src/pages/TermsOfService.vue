@@ -9,29 +9,103 @@
       <div class="legal-content">
         <p>{{ $t('legal.terms.content') }}</p>
         
-        <h2>Acceptance of Terms</h2>
-        <p>By accessing and using Sprint Planner, you accept and agree to be bound by the terms and provision of this agreement.</p>
+        <h2>1. Acceptance of Terms</h2>
+        <p>By accessing and using Sprint Planner ("the Service"), you accept and agree to be bound by the terms and provisions of this agreement. If you do not agree to abide by the above, please do not use this service.</p>
         
-        <h2>Use License</h2>
-        <p>Permission is granted to temporarily use Sprint Planner for personal, non-commercial transitory viewing only. This is the grant of a license, not a transfer of title, and under this license you may not:</p>
+        <h2>2. Description of Service</h2>
+        <p>Sprint Planner is a free web-based tool designed to help agile teams plan their sprints more effectively by:</p>
         <ul>
-          <li>modify or copy the materials</li>
-          <li>use the materials for any commercial purpose or for any public display</li>
-          <li>attempt to reverse engineer any software contained on the website</li>
-          <li>remove any copyright or other proprietary notations from the materials</li>
+          <li>Tracking historical sprint velocity data</li>
+          <li>Calculating team capacity and availability</li>
+          <li>Providing sprint planning recommendations</li>
+          <li>Offering data visualization and insights</li>
         </ul>
         
-        <h2>Disclaimer</h2>
-        <p>The materials on Sprint Planner are provided on an 'as is' basis. Sprint Planner makes no warranties, expressed or implied, and hereby disclaims and negates all other warranties including without limitation, implied warranties or conditions of merchantability, fitness for a particular purpose, or non-infringement of intellectual property or other violation of rights.</p>
+        <h2>3. Use License</h2>
+        <p>Permission is granted to use Sprint Planner for personal and commercial purposes, subject to the following restrictions:</p>
+        <ul>
+          <li>You may not modify, copy, or redistribute the software</li>
+          <li>You may not attempt to reverse engineer or decompile the application</li>
+          <li>You may not use the service for any illegal or unauthorized purpose</li>
+          <li>You may not remove any copyright or proprietary notices</li>
+          <li>You may not use the service to violate any laws or regulations</li>
+        </ul>
         
-        <h2>Limitations</h2>
-        <p>In no event shall Sprint Planner or its suppliers be liable for any damages (including, without limitation, damages for loss of data or profit, or due to business interruption) arising out of the use or inability to use the materials on Sprint Planner, even if Sprint Planner or an authorized representative has been notified orally or in writing of the possibility of such damage.</p>
+        <h2>4. User Responsibilities</h2>
+        <p>As a user of Sprint Planner, you agree to:</p>
+        <ul>
+          <li>Provide accurate and truthful information when using the service</li>
+          <li>Use the service in accordance with all applicable laws and regulations</li>
+          <li>Not attempt to gain unauthorized access to the service or its systems</li>
+          <li>Not use the service to transmit malicious code or harmful content</li>
+          <li>Respect the intellectual property rights of Sprint Planner</li>
+        </ul>
         
-        <h2>Accuracy of Materials</h2>
-        <p>The materials appearing on Sprint Planner could include technical, typographical, or photographic errors. Sprint Planner does not warrant that any of the materials on its website are accurate, complete or current.</p>
+        <h2>5. Data and Privacy</h2>
+        <p>Your use of Sprint Planner is subject to our Privacy Policy, which is incorporated into these Terms by reference. Key points:</p>
+        <ul>
+          <li>All data is stored locally in your browser</li>
+          <li>We do not collect or store your personal sprint data on our servers</li>
+          <li>You are responsible for backing up your data</li>
+          <li>You can delete your data at any time</li>
+        </ul>
         
-        <h2>Contact Information</h2>
-        <p>If you have any questions about these Terms of Service, please contact us at legal@sprintplanner.nl</p>
+        <h2>6. Service Availability</h2>
+        <p>We strive to provide continuous service availability, but we do not guarantee:</p>
+        <ul>
+          <li>Uninterrupted access to the service</li>
+          <li>Error-free operation</li>
+          <li>Compatibility with all devices or browsers</li>
+          <li>Availability of specific features</li>
+        </ul>
+        
+        <h2>7. Intellectual Property</h2>
+        <p>The service and its original content, features, and functionality are owned by Sprint Planner and are protected by international copyright, trademark, patent, trade secret, and other intellectual property laws.</p>
+        
+        <h2>8. Disclaimer of Warranties</h2>
+        <p>Sprint Planner is provided "as is" and "as available" without any warranties of any kind, either express or implied, including but not limited to:</p>
+        <ul>
+          <li>Warranties of merchantability or fitness for a particular purpose</li>
+          <li>Warranties regarding the accuracy, reliability, or completeness of the service</li>
+          <li>Warranties that the service will be uninterrupted or error-free</li>
+          <li>Warranties regarding the security of the service</li>
+        </ul>
+        
+        <h2>9. Limitation of Liability</h2>
+        <p>In no event shall Sprint Planner, its directors, employees, partners, agents, suppliers, or affiliates be liable for any indirect, incidental, special, consequential, or punitive damages, including without limitation:</p>
+        <ul>
+          <li>Loss of profits, data, use, goodwill, or other intangible losses</li>
+          <li>Damages resulting from your use or inability to use the service</li>
+          <li>Damages resulting from any conduct or content of any third party on the service</li>
+          <li>Damages resulting from unauthorized access to or alteration of your data</li>
+        </ul>
+        
+        <h2>10. Indemnification</h2>
+        <p>You agree to defend, indemnify, and hold harmless Sprint Planner and its licensee and licensors, and their employees, contractors, agents, officers and directors, from and against any and all claims, damages, obligations, losses, liabilities, costs or debt, and expenses (including but not limited to attorney's fees).</p>
+        
+        <h2>11. Termination</h2>
+        <p>We may terminate or suspend your access to the service immediately, without prior notice or liability, for any reason whatsoever, including without limitation if you breach the Terms.</p>
+        
+        <h2>12. Changes to Terms</h2>
+        <p>We reserve the right, at our sole discretion, to modify or replace these Terms at any time. If a revision is material, we will try to provide at least 30 days notice prior to any new terms taking effect.</p>
+        
+        <h2>13. Governing Law</h2>
+        <p>These Terms shall be interpreted and governed by the laws of the Netherlands, without regard to its conflict of law provisions.</p>
+        
+        <h2>14. Severability</h2>
+        <p>If any provision of these Terms is held to be invalid or unenforceable by a court, the remaining provisions of these Terms will remain in effect.</p>
+        
+        <h2>15. Contact Information</h2>
+        <p>If you have any questions about these Terms of Service, please contact us:</p>
+        <ul>
+          <li><strong>Email:</strong> legal@sprintplanner.nl</li>
+          <li><strong>Website:</strong> https://sprintplanner.nl</li>
+        </ul>
+        
+        <div class="legal-note">
+          <h3>Effective Date</h3>
+          <p>These Terms of Service are effective as of January 1, 2025, and will remain in effect except with respect to any changes in their provisions in the future, which will be in effect immediately after being posted on this page.</p>
+        </div>
       </div>
       
       <div class="legal-footer">

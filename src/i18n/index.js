@@ -4,7 +4,8 @@ const messages = {
   en: {
     nav: {
       home: 'Home',
-      planner: 'Planner'
+      planner: 'Planner',
+      language: 'Language'
     },
     hero: {
       title: 'Sprint Planner',
@@ -84,6 +85,10 @@ const messages = {
       factor: 'Capacity Factor',
       calculatedCapacity: 'Calculated Capacity'
     },
+    availability: {
+      title: 'Availability',
+      subtitle: 'Configure team availability and absences'
+    },
     results: {
       title: 'Sprint Planning Results',
       subtitle: 'Based on your historical data and team capacity',
@@ -123,7 +128,8 @@ const messages = {
   nl: {
     nav: {
       home: 'Home',
-      planner: 'Planner'
+      planner: 'Planner',
+      language: 'Taal'
     },
     hero: {
       title: 'Sprint Planner',
@@ -202,6 +208,10 @@ const messages = {
       availability: 'Team Beschikbaarheid (%)',
       factor: 'Capaciteit Factor',
       calculatedCapacity: 'Berekende Capaciteit'
+    },
+    availability: {
+      title: 'Beschikbaarheid',
+      subtitle: 'Configureer team beschikbaarheid en afwezigheden'
     },
     results: {
       title: 'Sprint Planning Resultaten',
