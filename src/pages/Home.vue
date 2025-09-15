@@ -36,7 +36,7 @@
       </div>
     </nav>
 
-    <!-- Hero Section -->
+    <!-- Hero Section - Updated Version -->
     <section class="hero">
       <div class="hero-container">
         <div class="hero-content">
