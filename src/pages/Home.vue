@@ -1,7 +1,7 @@
 <template>
   <div class="home">
     <!-- Skip Navigation for Accessibility -->
-    <a href="#main-content" class="skip-link">Skip to main content</a>
+    <a href="#main-content" class="skip-link">Ga naar hoofdinhoud</a>
 
     <!-- Global Loading State -->
     <div v-if="isLoading" class="loading-overlay" role="status" aria-live="polite">
@@ -14,11 +14,11 @@
     <!-- Global Feedback Messages -->
     <div class="feedback-container">
       <div v-if="successMessage" class="feedback success" role="status" aria-live="polite">
-        <span class="feedback-icon" aria-hidden="true">✓</span>
+        <span class="feedback-icon" aria-hidden="true"></span>
         {{ successMessage }}
       </div>
       <div v-if="errorMessage" class="feedback error" role="alert" aria-live="assertive">
-        <span class="feedback-icon" aria-hidden="true">⚠</span>
+        <span class="feedback-icon" aria-hidden="true"></span>
         {{ errorMessage }}
         <button @click="errorMessage = ''" class="feedback-close" aria-label="Dismiss error">×</button>
       </div>
@@ -27,36 +27,36 @@
     <div v-if="!cookieConsentAccepted" class="cookie-consent" role="dialog" aria-labelledby="cookie-title" aria-describedby="cookie-description">
       <div class="cookie-content">
         <div class="cookie-text">
-          <h4 id="cookie-title">Cookie Settings</h4>
-          <p id="cookie-description">We use cookies and local storage to save your sprint planning data and preferences locally on your device. No data is transmitted to external servers.</p>
+          <h4 id="cookie-title">Cookie Instellingen</h4>
+          <p id="cookie-description">We gebruiken cookies en lokale opslag om je sprint planning data en voorkeuren lokaal op je apparaat op te slaan. Geen data wordt verzonden naar externe servers.</p>
 
           <div class="cookie-categories">
             <div class="cookie-category">
-              <h5>Essential Cookies (Required)</h5>
-              <p>Necessary for the application to function. Cannot be disabled.</p>
+              <h5>Essentiële Cookies (Vereist)</h5>
+              <p>Noodzakelijk voor het functioneren van de applicatie. Kan niet worden uitgeschakeld.</p>
               <ul>
-                <li>Sprint planning data (localStorage)</li>
-                <li>Language preferences</li>
-                <li>Cookie consent status</li>
+                <li>Sprint planning data (lokale opslag)</li>
+                <li>Taal voorkeuren</li>
+                <li>Cookie toestemming status</li>
               </ul>
             </div>
           </div>
 
           <div class="data-controller">
-            <h5>Data Controller</h5>
+            <h5>Data Beheerder</h5>
             <p>Sprint Planner (sprintplanner.nl)<br>
-            Data retention: Until manually deleted by user<br>
-            Legal basis: Legitimate interest (Art. 6(1)(f) GDPR)</p>
+            Data bewaring: Tot handmatig verwijderd door gebruiker<br>
+            Juridische basis: Gerechtvaardigd belang (Art. 6(1)(f) AVG)</p>
           </div>
         </div>
         <div class="cookie-actions">
           <button @click="acceptCookies" class="cookie-button primary" aria-describedby="accept-description">
-            Accept All
+            Alles Accepteren
           </button>
           <router-link to="/privacy" class="cookie-button secondary">
-            Privacy Policy
+            Privacybeleid
           </router-link>
-          <span id="accept-description" class="sr-only">Accept essential cookies and continue using the application</span>
+          <span id="accept-description" class="sr-only">Accepteer essentiële cookies en ga door met het gebruiken van de applicatie</span>
         </div>
       </div>
     </div>
@@ -85,14 +85,14 @@
         <div class="hero-container">
           <div class="hero-content">
             <h1 id="hero-title" class="title">Sprint Planner</h1>
-            <p class="subtitle">The easiest way to plan your sprints and track your team's velocity</p>
+            <p class="subtitle">De eenvoudigste manier om je sprints te plannen en je team's velocity te tracken</p>
             <button @click="scrollToWidget" class="cta-button" aria-describedby="cta-description">
-              Try Sprint Planner
+              Probeer Sprint Planner
               <svg class="cta-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
                 <path d="M5 12h14M12 5l7 7-7 7"/>
               </svg>
             </button>
-            <span id="cta-description" class="sr-only">Scroll to sprint planning tool below</span>
+            <span id="cta-description" class="sr-only">Scroll naar sprint planning tool hieronder</span>
           </div>
         <div class="hero-visual">
           <div class="predictability-simple">
@@ -100,7 +100,7 @@
             <div class="trend-chart">
               <div class="chart-header">
                 <span class="chart-title">Sprint Velocity</span>
-                <span class="trend-indicator">↗ +12%</span>
+                <span class="trend-indicator">+12%</span>
               </div>
               <div class="chart-line">
                 <svg viewBox="0 0 300 80" class="trend-svg">
@@ -137,8 +137,8 @@
                 </svg>
               </div>
               <div class="message-text">
-                <h3>Predictability increases with historical data</h3>
-                <p>Track your team's velocity patterns to make better sprint planning decisions</p>
+                <h3>Voorspelbaarheid neemt toe met historische data</h3>
+                <p>Track je team's velocity patronen om betere sprint planning beslissingen te nemen</p>
               </div>
             </div>
           </div>
@@ -150,8 +150,8 @@
     <section class="features">
       <div class="container">
         <div class="section-header">
-          <h2 class="section-title">Features</h2>
-          <p class="section-subtitle">Everything you need for effective sprint planning</p>
+          <h2 class="section-title">Functies</h2>
+          <p class="section-subtitle">Alles wat je nodig hebt voor effectieve sprint planning</p>
         </div>
         <div class="features-grid">
           <div class="feature-card">
@@ -162,7 +162,7 @@
               </svg>
             </div>
             <h3>Velocity tracking</h3>
-            <p>Track your team's velocity over time to make better predictions</p>
+            <p>Track je team's velocity over tijd om betere voorspellingen te maken</p>
           </div>
           <div class="feature-card">
             <div class="feature-icon">
@@ -172,7 +172,7 @@
               </svg>
             </div>
             <h3>Sprint planning</h3>
-            <p>Plan your sprints based on historical data and team capacity</p>
+            <p>Plan je sprints op basis van historische data en team capaciteit</p>
           </div>
           <div class="feature-card">
             <div class="feature-icon">
@@ -181,8 +181,8 @@
                 <polyline points="12,6 12,12 16,14"/>
               </svg>
             </div>
-            <h3>Simple & fast</h3>
-            <p>Intuitive interface that gets you results in seconds</p>
+            <h3>Simpel & snel</h3>
+            <p>Intuïtieve interface die je binnen seconden resultaten geeft</p>
           </div>
             </div>
           </div>
@@ -193,7 +193,7 @@
       <div class="container">
         <div class="section-header">
           <h2 id="planner-title" class="section-title">Sprint Planner</h2>
-          <p class="section-subtitle">Plan your next sprint in 3 simple steps</p>
+          <p class="section-subtitle">Plan je volgende sprint in 3 eenvoudige stappen</p>
         </div>
 
         <div class="stepper-container" role="group" aria-labelledby="stepper-title">
@@ -212,7 +212,7 @@
               :aria-label="`Step ${index + 1}: ${step.title}`"
               :aria-current="index + 1 === currentStep ? 'step' : false"
             >
-              <span v-if="index + 1 < currentStep" class="checkmark" aria-hidden="true">✓</span>
+              <span v-if="index + 1 < currentStep" class="checkmark" aria-hidden="true"></span>
               <span v-else aria-hidden="true">{{ index + 1 }}</span>
           </div>
         </div>
@@ -521,7 +521,7 @@
                 
                 <div class="results-grid">
                   <div class="result-item">
-                    <div class="result-icon">📈</div>
+                    <div class="result-icon"></div>
                     <div class="result-info">
                       <div class="result-label">Average Velocity</div>
                       <div class="result-value">{{ averageVelocity }}</div>
@@ -529,7 +529,7 @@
                   </div>
                   
                   <div class="result-item">
-                    <div class="result-icon">💪</div>
+                    <div class="result-icon"></div>
                     <div class="result-info">
                       <div class="result-label">Team Capacity</div>
                       <div class="result-value">{{ teamCapacity }}</div>
@@ -537,7 +537,7 @@
                   </div>
                   
                   <div class="result-item">
-                    <div class="result-icon">🎯</div>
+                    <div class="result-icon"></div>
                     <div class="result-info">
                       <div class="result-label">Confidence</div>
                       <div class="result-value confidence" :class="confidence.toLowerCase()">{{ confidence }}</div>
@@ -555,7 +555,7 @@
               @click="previousStep" 
               class="nav-button secondary"
             >
-              ← Previous
+              Vorige
             </button>
             <div class="nav-spacer"></div>
             <button
@@ -564,7 +564,7 @@
               class="nav-button primary"
               :disabled="!canProceed"
             >
-              Next →
+              Volgende
             </button>
             <button
               v-if="currentStep === 3"
@@ -586,21 +586,21 @@
         <div class="footer-content">
           <div class="footer-brand">
             <h3>Sprint Planner</h3>
-            <p>© 2025 sprintplanner.nl - GDPR Compliant Sprint Planning</p>
-            <p class="footer-compliance">🇪🇺 EU GDPR Compliant • 🔒 Data Stored Locally • 🚫 No Tracking</p>
+            <p>© 2025 sprintplanner.nl - AVG Conforme Sprint Planning</p>
+            <p class="footer-compliance">EU AVG Conform • Data Lokaal Opgeslagen • Geen Tracking</p>
           </div>
           <div class="footer-links">
             <div class="footer-section">
-              <h4>Legal</h4>
-              <router-link to="/privacy" class="footer-link">Privacy Policy</router-link>
-              <router-link to="/terms" class="footer-link">Terms of Service</router-link>
-              <router-link to="/data-deletion" class="footer-link">Data Deletion</router-link>
+              <h4>Juridisch</h4>
+              <router-link to="/privacy" class="footer-link">Privacybeleid</router-link>
+              <router-link to="/terms" class="footer-link">Algemene Voorwaarden</router-link>
+              <router-link to="/data-deletion" class="footer-link">Gegevens Verwijderen</router-link>
             </div>
             <div class="footer-section">
-              <h4>Your Rights</h4>
-              <a href="mailto:privacy@sprintplanner.nl" class="footer-link">Contact DPO</a>
-              <router-link to="/data-deletion" class="footer-link">Delete My Data</router-link>
-              <a href="#" @click.prevent="showCookieSettings" class="footer-link">Cookie Settings</a>
+              <h4>Je Rechten</h4>
+              <a href="mailto:privacy@sprintplanner.nl" class="footer-link">Contact FG</a>
+              <router-link to="/data-deletion" class="footer-link">Verwijder Mijn Gegevens</router-link>
+              <a href="#" @click.prevent="showCookieSettings" class="footer-link">Cookie Instellingen</a>
             </div>
           </div>
         </div>
@@ -720,26 +720,26 @@ const newAbsence = ref({
 
 // Computed properties - CORRECTED LOGIC
 const averageVelocity = computed(() => {
-  console.log('📊 averageVelocity computed - method:', velocityInputMethod.value)
+  console.log('averageVelocity computed - method:', velocityInputMethod.value)
   
   if (velocityInputMethod.value === 'manual') {
     const result = manualAverageVelocity.value || 0
-    console.log('📊 Manual velocity result:', result)
+    console.log(' Manual velocity result:', result)
     return result
   }
   
   // Individual sprints calculation
   const validSprints = sprints.value.filter(s => s.velocity > 0)
-  console.log('📊 Valid sprints:', validSprints)
+  console.log(' Valid sprints:', validSprints)
   
   if (validSprints.length === 0) {
-    console.log('📊 No valid sprints, returning 0')
+    console.log(' No valid sprints, returning 0')
     return 0
   }
   
   const sum = validSprints.reduce((acc, s) => acc + s.velocity, 0)
   const result = Math.round((sum / validSprints.length) * 100) / 100
-  console.log('📊 Individual velocity result:', result)
+  console.log(' Individual velocity result:', result)
   return result
 })
 
@@ -819,45 +819,45 @@ const confidence = computed(() => {
 
 // Stepper methods - SIMPLIFIED
 const updateStepCompletion = () => {
-  console.log('🔍 updateStepCompletion called, currentStep:', currentStep.value)
-  console.log('🔍 velocityInputMethod:', velocityInputMethod.value)
-  console.log('🔍 manualAverageVelocity:', manualAverageVelocity.value)
-  console.log('🔍 sprints:', sprints.value)
+  console.log(' updateStepCompletion called, currentStep:', currentStep.value)
+  console.log(' velocityInputMethod:', velocityInputMethod.value)
+  console.log(' manualAverageVelocity:', manualAverageVelocity.value)
+  console.log(' sprints:', sprints.value)
   
   if (currentStep.value === 1) {
     // Step 1: Check if velocity is entered
     if (velocityInputMethod.value === 'manual') {
       canProceed.value = manualAverageVelocity.value > 0
-      console.log('🔍 Manual velocity check:', manualAverageVelocity.value > 0)
+      console.log(' Manual velocity check:', manualAverageVelocity.value > 0)
     } else {
       canProceed.value = sprints.value.some(s => s.velocity > 0)
-      console.log('🔍 Individual sprints check:', sprints.value.some(s => s.velocity > 0))
+      console.log(' Individual sprints check:', sprints.value.some(s => s.velocity > 0))
     }
   } else if (currentStep.value === 2) {
     // Step 2: Check if team capacity is configured
     if (teamInputMethod.value === 'average') {
       canProceed.value = capacity.value.teamMembers > 0 && averageTeamHours.value > 0
-      console.log('🔍 Average team capacity check:', capacity.value.teamMembers > 0 && averageTeamHours.value > 0)
+      console.log(' Average team capacity check:', capacity.value.teamMembers > 0 && averageTeamHours.value > 0)
     } else {
       canProceed.value = developers.value.length > 0
-      console.log('🔍 Individual team capacity check:', developers.value.length > 0)
+      console.log(' Individual team capacity check:', developers.value.length > 0)
     }
   } else if (currentStep.value === 3) {
     // Step 3: Check if availability is configured
     if (teamInputMethod.value === 'average') {
       canProceed.value = teamAvailabilityPercentage.value > 0
-      console.log('🔍 Average availability check:', teamAvailabilityPercentage.value > 0)
+      console.log(' Average availability check:', teamAvailabilityPercentage.value > 0)
     } else {
       canProceed.value = true // Individual absences are optional
-      console.log('🔍 Individual availability check: allowing proceed')
+      console.log(' Individual availability check: allowing proceed')
     }
   } else {
     // Step 4: Always allow proceeding
     canProceed.value = true
-    console.log('🔍 Step 4: allowing proceed')
+    console.log(' Step 4: allowing proceed')
   }
   
-  console.log('✅ canProceed set to:', canProceed.value)
+  console.log(' canProceed set to:', canProceed.value)
 }
 
 // Removed updateManualVelocity - now using updateStepCompletion directly
@@ -950,8 +950,8 @@ const getAbsenceTypeColor = (type) => {
 }
 
 const nextStep = () => {
-  console.log('🚀 NEXT CLICKED - Current step:', currentStep.value)
-  console.log('🚀 canProceed:', canProceed.value)
+  console.log(' NEXT CLICKED - Current step:', currentStep.value)
+  console.log(' canProceed:', canProceed.value)
 
   if (!canProceed.value) {
     showError('Please complete all required fields before continuing')
