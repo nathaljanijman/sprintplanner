@@ -1,33 +1,76 @@
 <template>
   <div class="home">
-    <!-- Cookie Consent Banner -->
-    <div v-if="!cookieConsentAccepted" class="cookie-consent">
+    <!-- Skip Navigation for Accessibility -->
+    <a href="#main-content" class="skip-link">Skip to main content</a>
+
+    <!-- Global Loading State -->
+    <div v-if="isLoading" class="loading-overlay" role="status" aria-live="polite">
+      <div class="loading-content">
+        <div class="loading-spinner" aria-hidden="true"></div>
+        <p>{{ loadingMessage }}</p>
+      </div>
+    </div>
+
+    <!-- Global Feedback Messages -->
+    <div class="feedback-container">
+      <div v-if="successMessage" class="feedback success" role="status" aria-live="polite">
+        <span class="feedback-icon" aria-hidden="true">✓</span>
+        {{ successMessage }}
+      </div>
+      <div v-if="errorMessage" class="feedback error" role="alert" aria-live="assertive">
+        <span class="feedback-icon" aria-hidden="true">⚠</span>
+        {{ errorMessage }}
+        <button @click="errorMessage = ''" class="feedback-close" aria-label="Dismiss error">×</button>
+      </div>
+    </div>
+    <!-- GDPR Cookie Consent Banner -->
+    <div v-if="!cookieConsentAccepted" class="cookie-consent" role="dialog" aria-labelledby="cookie-title" aria-describedby="cookie-description">
       <div class="cookie-content">
         <div class="cookie-text">
-          <h4>We use cookies</h4>
-          <p>We use cookies to save your planning data locally and improve your experience. No data is sent to our servers.</p>
+          <h4 id="cookie-title">Cookie Settings</h4>
+          <p id="cookie-description">We use cookies and local storage to save your sprint planning data and preferences locally on your device. No data is transmitted to external servers.</p>
+
+          <div class="cookie-categories">
+            <div class="cookie-category">
+              <h5>Essential Cookies (Required)</h5>
+              <p>Necessary for the application to function. Cannot be disabled.</p>
+              <ul>
+                <li>Sprint planning data (localStorage)</li>
+                <li>Language preferences</li>
+                <li>Cookie consent status</li>
+              </ul>
+            </div>
+          </div>
+
+          <div class="data-controller">
+            <h5>Data Controller</h5>
+            <p>Sprint Planner (sprintplanner.nl)<br>
+            Data retention: Until manually deleted by user<br>
+            Legal basis: Legitimate interest (Art. 6(1)(f) GDPR)</p>
+          </div>
         </div>
         <div class="cookie-actions">
-          <button @click="acceptCookies" class="cookie-button primary">
-            Accept
+          <button @click="acceptCookies" class="cookie-button primary" aria-describedby="accept-description">
+            Accept All
           </button>
-          <button @click="declineCookies" class="cookie-button secondary">
-            Decline
-          </button>
+          <router-link to="/privacy" class="cookie-button secondary">
+            Privacy Policy
+          </router-link>
+          <span id="accept-description" class="sr-only">Accept essential cookies and continue using the application</span>
         </div>
       </div>
     </div>
 
     <!-- Navigation -->
-    <nav class="navbar">
+    <nav class="navbar" role="navigation" aria-label="Main navigation">
       <div class="nav-container">
         <div class="nav-brand">
           <h2>Sprint Planner</h2>
         </div>
         <div class="nav-links">
-          <router-link to="/" class="nav-link">Home</router-link>
+          <router-link to="/" class="nav-link" aria-current="page">Home</router-link>
           <div class="language-switcher">
-            <button @click="toggleLanguage" class="language-button">
+            <button @click="toggleLanguage" class="language-button" aria-label="Switch language">
               {{ currentLanguage.toUpperCase() }}
             </button>
           </div>
@@ -35,19 +78,22 @@
       </div>
     </nav>
 
-    <!-- Hero Section - Updated Version -->
-    <section class="hero">
-      <div class="hero-container">
-        <div class="hero-content">
-          <h1 class="title">Sprint Planner</h1>
-          <p class="subtitle">The easiest way to plan your sprints and track your team's velocity</p>
-          <button @click="scrollToWidget" class="cta-button">
-            Try Sprint Planner
-            <svg class="cta-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <path d="M5 12h14M12 5l7 7-7 7"/>
-            </svg>
-          </button>
-        </div>
+    <!-- Main Content -->
+    <main id="main-content">
+      <!-- Hero Section -->
+      <section class="hero" aria-labelledby="hero-title">
+        <div class="hero-container">
+          <div class="hero-content">
+            <h1 id="hero-title" class="title">Sprint Planner</h1>
+            <p class="subtitle">The easiest way to plan your sprints and track your team's velocity</p>
+            <button @click="scrollToWidget" class="cta-button" aria-describedby="cta-description">
+              Try Sprint Planner
+              <svg class="cta-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                <path d="M5 12h14M12 5l7 7-7 7"/>
+              </svg>
+            </button>
+            <span id="cta-description" class="sr-only">Scroll to sprint planning tool below</span>
+          </div>
         <div class="hero-visual">
           <div class="predictability-simple">
             <!-- Simple Trend Chart -->
@@ -143,28 +189,31 @@
     </section>
 
     <!-- Planner Widget -->
-    <section id="planner-widget" class="planner-widget">
+    <section id="planner-widget" class="planner-widget" aria-labelledby="planner-title" role="region">
       <div class="container">
         <div class="section-header">
-          <h2 class="section-title">Sprint Planner</h2>
+          <h2 id="planner-title" class="section-title">Sprint Planner</h2>
           <p class="section-subtitle">Plan your next sprint in 3 simple steps</p>
         </div>
 
-        <div class="stepper-container">
+        <div class="stepper-container" role="group" aria-labelledby="stepper-title">
+          <h3 id="stepper-title" class="sr-only">Sprint planning wizard</h3>
           <!-- Progress Stepper -->
-          <div class="stepper-progress">
-            <div class="stepper-line" :style="{ width: `${(currentStep / 4) * 100}%` }"></div>
-            <div 
-              v-for="(step, index) in steps" 
+          <div class="stepper-progress" role="progressbar" :aria-valuenow="currentStep" aria-valuemin="1" aria-valuemax="3" :aria-valuetext="`Step ${currentStep} of 3: ${steps[currentStep - 1]?.title}`">
+            <div class="stepper-line" :style="{ width: `${(currentStep / 3) * 100}%` }"></div>
+            <div
+              v-for="(step, index) in steps"
               :key="index"
               class="stepper-circle"
-              :class="{ 
-                'active': index + 1 === currentStep, 
+              :class="{
+                'active': index + 1 === currentStep,
                 'completed': index + 1 < currentStep
               }"
+              :aria-label="`Step ${index + 1}: ${step.title}`"
+              :aria-current="index + 1 === currentStep ? 'step' : false"
             >
-              <span v-if="index + 1 < currentStep" class="checkmark">✓</span>
-              <span v-else>{{ index + 1 }}</span>
+              <span v-if="index + 1 < currentStep" class="checkmark" aria-hidden="true">✓</span>
+              <span v-else aria-hidden="true">{{ index + 1 }}</span>
           </div>
         </div>
 
@@ -221,19 +270,24 @@
                   <p>Enter velocity for each sprint to calculate your average</p>
                 </div>
                 
-                <div class="velocity-grid-minimal">
+                <div class="velocity-grid-minimal" role="group" aria-labelledby="velocity-inputs-title">
+                  <h4 id="velocity-inputs-title" class="sr-only">Sprint velocity inputs</h4>
                   <div v-for="(sprint, index) in sprints" :key="index" class="velocity-card-minimal">
-                    <div class="sprint-number">{{ index + 1 }}</div>
-                    <input 
-                      v-model.number="sprint.velocity" 
-                      type="number" 
-                      min="0" 
+                    <label :for="`sprint-${index}`" class="sprint-number">{{ index + 1 }}</label>
+                    <input
+                      :id="`sprint-${index}`"
+                      v-model.number="sprint.velocity"
+                      type="number"
+                      min="0"
                       placeholder="0"
                       class="velocity-input-minimal"
                       @input="updateStepCompletion"
+                      :aria-label="`Sprint ${index + 1} velocity in story points`"
+                      aria-describedby="velocity-hint"
                     />
                     <div class="sprint-label">Sprint</div>
                   </div>
+                  <p id="velocity-hint" class="sr-only">Enter the number of story points completed in each sprint</p>
                 </div>
               </div>
 
@@ -309,21 +363,42 @@
                 <!-- Team Input Method Toggle -->
                 <!-- Simplified Team Configuration -->
                 <div class="team-config-simple">
-                  <div class="config-grid">
+                  <div class="config-grid" role="group" aria-labelledby="team-config-title">
+                    <h4 id="team-config-title" class="sr-only">Team configuration</h4>
                     <div class="config-item">
-                      <label>Sprint Duration</label>
+                      <label for="sprint-weeks">Sprint Duration</label>
                       <div class="input-group">
-                        <input v-model.number="capacity.sprintWeeks" type="number" min="1" max="4" class="config-input" @input="updateStepCompletion" />
+                        <input
+                          id="sprint-weeks"
+                          v-model.number="capacity.sprintWeeks"
+                          type="number"
+                          min="1"
+                          max="4"
+                          class="config-input"
+                          @input="updateStepCompletion"
+                          aria-describedby="sprint-weeks-hint"
+                        />
                         <span class="input-suffix">weeks</span>
                       </div>
+                      <span id="sprint-weeks-hint" class="sr-only">Enter sprint duration between 1 and 4 weeks</span>
                     </div>
 
                     <div class="config-item">
-                      <label>Team Size</label>
+                      <label for="team-size">Team Size</label>
                       <div class="input-group">
-                        <input v-model.number="capacity.teamMembers" type="number" min="1" max="20" class="config-input" @input="updateStepCompletion" />
+                        <input
+                          id="team-size"
+                          v-model.number="capacity.teamMembers"
+                          type="number"
+                          min="1"
+                          max="20"
+                          class="config-input"
+                          @input="updateStepCompletion"
+                          aria-describedby="team-size-hint"
+                        />
                         <span class="input-suffix">people</span>
                       </div>
+                      <span id="team-size-hint" class="sr-only">Enter number of team members</span>
                     </div>
                   </div>
                 </div>
@@ -503,19 +578,30 @@
       </div>
     </section>
 
+    </main>
+
     <!-- Footer -->
-    <footer class="footer">
+    <footer class="footer" role="contentinfo">
       <div class="container">
         <div class="footer-content">
           <div class="footer-brand">
             <h3>Sprint Planner</h3>
-            <p>© 2025 sprintplanner.nl - Predict your sprints better</p>
+            <p>© 2025 sprintplanner.nl - GDPR Compliant Sprint Planning</p>
+            <p class="footer-compliance">🇪🇺 EU GDPR Compliant • 🔒 Data Stored Locally • 🚫 No Tracking</p>
           </div>
           <div class="footer-links">
-            <router-link to="/privacy" class="footer-link">Privacy Policy</router-link>
-            <router-link to="/terms" class="footer-link">Terms of Service</router-link>
-            <router-link to="/service" class="footer-link">Service</router-link>
-            <router-link to="/data-deletion" class="footer-link">Data Deletion</router-link>
+            <div class="footer-section">
+              <h4>Legal</h4>
+              <router-link to="/privacy" class="footer-link">Privacy Policy</router-link>
+              <router-link to="/terms" class="footer-link">Terms of Service</router-link>
+              <router-link to="/data-deletion" class="footer-link">Data Deletion</router-link>
+            </div>
+            <div class="footer-section">
+              <h4>Your Rights</h4>
+              <a href="mailto:privacy@sprintplanner.nl" class="footer-link">Contact DPO</a>
+              <router-link to="/data-deletion" class="footer-link">Delete My Data</router-link>
+              <a href="#" @click.prevent="showCookieSettings" class="footer-link">Cookie Settings</a>
+            </div>
           </div>
         </div>
       </div>
@@ -528,9 +614,16 @@ import { ref, computed, onMounted } from 'vue'
 
 const currentLanguage = ref('nl')
 
+// Modern UX State Management
+const isLoading = ref(false)
+const loadingMessage = ref('')
+const errorMessage = ref('')
+const successMessage = ref('')
+
 const toggleLanguage = () => {
   currentLanguage.value = currentLanguage.value === 'nl' ? 'en' : 'nl'
   localStorage.setItem('sprintplanner-language', currentLanguage.value)
+  showSuccess('Language updated')
 }
 
 const scrollToWidget = () => {
@@ -538,6 +631,29 @@ const scrollToWidget = () => {
   if (element) {
     element.scrollIntoView({ behavior: 'smooth' })
   }
+}
+
+// Show loading state for operations
+const showLoading = (message) => {
+  isLoading.value = true
+  loadingMessage.value = message
+  errorMessage.value = ''
+  successMessage.value = ''
+}
+
+// Show success feedback
+const showSuccess = (message) => {
+  isLoading.value = false
+  successMessage.value = message
+  errorMessage.value = ''
+  setTimeout(() => { successMessage.value = '' }, 3000)
+}
+
+// Show error feedback
+const showError = (message) => {
+  isLoading.value = false
+  errorMessage.value = message
+  successMessage.value = ''
 }
 
 // Stepper data
@@ -750,14 +866,12 @@ const updateStepCompletion = () => {
 const acceptCookies = () => {
   cookieConsentAccepted.value = true
   localStorage.setItem('sprintplanner-cookie-consent', 'accepted')
+  // Record consent timestamp for GDPR compliance
+  localStorage.setItem('sprintplanner-consent-timestamp', new Date().toISOString())
 }
 
-const declineCookies = () => {
-  cookieConsentAccepted.value = true
-  localStorage.setItem('sprintplanner-cookie-consent', 'declined')
-  // Clear any existing data
-  localStorage.removeItem('sprintplanner-data')
-  localStorage.removeItem('sprintplanner-language')
+const showCookieSettings = () => {
+  cookieConsentAccepted.value = false
 }
 
 // Developer management methods
@@ -838,22 +952,20 @@ const getAbsenceTypeColor = (type) => {
 const nextStep = () => {
   console.log('🚀 NEXT CLICKED - Current step:', currentStep.value)
   console.log('🚀 canProceed:', canProceed.value)
-  
-  if (currentStep.value === 1) {
-    // Move to step 2
-    currentStep.value = 2
-    console.log('🚀 Moved to step 2')
-    updateStepCompletion() // Update completion status for step 2
-  } else if (currentStep.value === 2) {
-    // Move to step 3
-    currentStep.value = 3
-    console.log('🚀 Moved to step 3')
-    updateStepCompletion() // Update completion status for step 3
-  } else if (currentStep.value === 3) {
-    // Move to step 4
-    currentStep.value = 4
-    console.log('🚀 Moved to step 4')
-    updateStepCompletion() // Update completion status for step 4
+
+  if (!canProceed.value) {
+    showError('Please complete all required fields before continuing')
+    return
+  }
+
+  if (currentStep.value < 3) {
+    showLoading('Processing step...')
+    // Simulate processing time for better UX
+    setTimeout(() => {
+      currentStep.value++
+      updateStepCompletion()
+      showSuccess(`Moved to step ${currentStep.value}`)
+    }, 500)
   }
 }
 
@@ -1487,6 +1599,179 @@ onMounted(() => {
   
   .footer-links {
     justify-content: center;
+  }
+}
+
+/* Accessibility Styles */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+.skip-link {
+  position: absolute;
+  top: -40px;
+  left: 6px;
+  background: #3b82f6;
+  color: white;
+  padding: 8px;
+  text-decoration: none;
+  border-radius: 4px;
+  z-index: 1000;
+  transition: top 0.3s ease;
+}
+
+.skip-link:focus {
+  top: 6px;
+}
+
+/* Focus Styles for Better Accessibility */
+button:focus,
+input:focus,
+select:focus,
+textarea:focus,
+.nav-link:focus {
+  outline: 2px solid #3b82f6;
+  outline-offset: 2px;
+}
+
+/* High Contrast Support */
+@media (prefers-contrast: high) {
+  .toggle-button {
+    border-width: 2px;
+  }
+
+  .stepper-circle {
+    border-width: 2px;
+  }
+}
+
+/* Reduced Motion Support */
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+
+  .loading-spinner {
+    animation: none !important;
+  }
+}
+
+/* Loading Overlay */
+.loading-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+  backdrop-filter: blur(4px);
+}
+
+.loading-content {
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 1rem;
+  padding: 2rem;
+  text-align: center;
+  color: white;
+  backdrop-filter: blur(20px);
+}
+
+.loading-spinner {
+  width: 32px;
+  height: 32px;
+  border: 3px solid rgba(255, 255, 255, 0.3);
+  border-top: 3px solid #3b82f6;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin: 0 auto 1rem;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* Feedback Messages */
+.feedback-container {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  z-index: 1000;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.feedback {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1rem;
+  border-radius: 0.5rem;
+  color: white;
+  font-weight: 500;
+  min-width: 250px;
+  backdrop-filter: blur(20px);
+  animation: slideIn 0.3s ease-out;
+}
+
+.feedback.success {
+  background: rgba(16, 185, 129, 0.9);
+  border: 1px solid rgba(16, 185, 129, 0.3);
+}
+
+.feedback.error {
+  background: rgba(239, 68, 68, 0.9);
+  border: 1px solid rgba(239, 68, 68, 0.3);
+}
+
+.feedback-icon {
+  font-size: 1.2rem;
+}
+
+.feedback-close {
+  background: none;
+  border: none;
+  color: white;
+  font-size: 1.2rem;
+  cursor: pointer;
+  margin-left: auto;
+  padding: 0;
+  width: 20px;
+  height: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.feedback-close:hover {
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 50%;
+}
+
+@keyframes slideIn {
+  from {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
   }
 }
 
