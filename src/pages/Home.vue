@@ -389,8 +389,8 @@
                         @input="updateStepCompletion"
                       />
                       <span class="input-suffix-minimal">weken</span>
-                    </div>
-                  </div>
+                      </div>
+                      </div>
 
                   <div class="config-item-minimal">
                     <label>Aantal developers</label>
@@ -404,8 +404,8 @@
                         @input="updateStepCompletion"
                       />
                       <span class="input-suffix-minimal">personen</span>
+                    </div>
                   </div>
-                </div>
 
                   <div class="config-item-minimal">
                     <label>Gemiddelde uren per week</label>
@@ -419,9 +419,9 @@
                         @input="updateStepCompletion"
                       />
                       <span class="input-suffix-minimal">uur</span>
+                      </div>
+                      </div>
                     </div>
-                  </div>
-                </div>
                 
                 <!-- Team Capacity Summary for Average -->
                 <div class="team-capacity-summary-minimal">
@@ -430,11 +430,11 @@
                     <div class="capacity-calculation-minimal">
                       <div class="calc-step-minimal">
                         {{ capacity.teamMembers }} personen × {{ capacity.sprintWeeks }} weken × {{ averageTeamHours }}u/week = {{ capacity.teamMembers * capacity.sprintWeeks * averageTeamHours }} uur
-                      </div>
-                    </div>
                   </div>
                 </div>
-              </div>
+                    </div>
+                    </div>
+                  </div>
 
               <!-- Individual Developers Option -->
               <div v-if="teamInputMethod === 'individual'" class="individual-team-section">
@@ -448,7 +448,7 @@
                         placeholder="Bijv. Jan de Vries"
                         class="developer-input-minimal"
                       />
-                  </div>
+                    </div>
                     <div class="form-group-minimal">
                       <label>Uren per week</label>
                       <input
@@ -458,7 +458,7 @@
                         max="60"
                         class="hours-input-minimal"
                       />
-                    </div>
+                  </div>
                 <button 
                       @click="addDeveloper" 
                       :disabled="!newDeveloper.name.trim() || !newDeveloper.hours"
@@ -466,7 +466,7 @@
                     >
                       Toevoegen
                 </button>
-                  </div>
+                </div>
               </div>
 
                 <div v-if="developers.length > 0" class="developers-list-minimal">
@@ -474,13 +474,13 @@
                     <div class="developer-info-minimal">
                       <div class="developer-name-minimal">{{ developer.name }}</div>
                       <div class="developer-hours-minimal">{{ developer.hours }} uur/week</div>
-                    </div>
+                  </div>
                     <button @click="removeDeveloper(developer.id)" class="remove-button-minimal">
                       Verwijderen
                     </button>
-                  </div>
-                </div>
-                
+                    </div>
+                    </div>
+                    
                 <!-- Team Capacity Summary for Individual -->
                 <div v-if="developers.length > 0" class="team-capacity-summary-minimal">
                   <div class="summary-card-minimal">
@@ -488,22 +488,22 @@
                     <div class="capacity-calculation-minimal">
                       <div class="calc-step-minimal">
                         Totaal: {{ totalIndividualHours }} uur/week × {{ capacity.sprintWeeks }} weken = {{ totalIndividualHours * capacity.sprintWeeks }} uur
-                      </div>
+                    </div>
                     </div>
                   </div>
+                  </div>
                 </div>
-              </div>
 
                 <!-- Simplified Team Summary -->
-                </div>
-                
+            </div>
+
             <!-- Step 3: Availability -->
             <div v-if="currentStep === 3" class="step-panel availability-step">
               <div class="step-header">
                 <h3>Team beschikbaarheid</h3>
                 <p>Voeg afwezigheden toe om realistische sprint capaciteit te berekenen</p>
               </div>
-
+              
               <!-- Hours-based Availability -->
               <div class="hours-availability-section">
                 <div class="add-absence-form-minimal">
@@ -535,19 +535,19 @@
                       title="Klik om afwezigheid toe te voegen"
                     >
                       +
-                    </button>
-                  </div>
+                  </button>
                 </div>
-
+                    </div>
+                    
                 <div v-if="allAbsences.length > 0" class="absences-list-minimal">
                   <div v-for="absence in allAbsences" :key="absence.id" class="absence-item-minimal">
                     <div class="absence-info-minimal">
                       <div class="absence-details-minimal">{{ getDeveloperName(absence.developerId) }} - {{ absence.hours }} uur afwezigheid</div>
-                    </div>
+                        </div>
                     <button @click="removeAbsence(absence.id)" class="remove-absence-button-minimal">
-                      ×
-                    </button>
-                  </div>
+                          ×
+                        </button>
+                      </div>
                 </div>
               </div>
 
@@ -558,17 +558,17 @@
                   <div class="capacity-calculation-minimal">
                     <div class="calc-step-minimal">
                       Basis capaciteit: {{ totalContractHours }} uur
-                    </div>
+                  </div>
                     <div v-if="availabilityInputMethod === 'percentage'" class="calc-step-minimal">
                       × {{ teamAvailabilityPercentage }}% beschikbaarheid = {{ Math.round(totalContractHours * (teamAvailabilityPercentage / 100)) }} uur
-                    </div>
+                </div>
                     <div v-if="availabilityInputMethod === 'hours'" class="calc-step-minimal">
                       - {{ totalAbsenceHours }} uur afwezigheid = {{ availableHours }} uur
-                    </div>
+                  </div>
                     <div class="calc-step-minimal">
                       - {{ capacity.bufferPercentage }}% buffer = {{ finalCapacity }} uur
-                    </div>
-                  </div>
+                </div>
+              </div>
                   <div class="final-value-minimal">{{ finalCapacity }} uur</div>
                 </div>
               </div>
@@ -970,7 +970,7 @@ const addAbsence = () => {
   if (newAbsence.value.developerId && newAbsence.value.hours > 0) {
     // Add to reactive absences list
     generalAbsences.value.push({
-      id: Date.now(),
+        id: Date.now(),
       developerId: newAbsence.value.developerId,
       hours: newAbsence.value.hours
     })
@@ -978,12 +978,12 @@ const addAbsence = () => {
     console.log('Added absence:', generalAbsences.value)
     
     // Reset form
-    newAbsence.value = {
+      newAbsence.value = {
       type: '',
       hours: 0,
       developerId: ''
-    }
-    updateStepCompletion()
+      }
+      updateStepCompletion()
   } else {
     console.log('Missing required fields:', {
       developerId: newAbsence.value.developerId,
@@ -994,7 +994,7 @@ const addAbsence = () => {
 
 const removeAbsence = (absenceId) => {
   generalAbsences.value = generalAbsences.value.filter(a => a.id !== absenceId)
-  updateStepCompletion()
+    updateStepCompletion()
 }
 
 const getAbsenceTypeLabel = (type) => {
@@ -3373,10 +3373,21 @@ textarea:focus,
   .form-row-minimal {
     gap: 1rem;
     flex-direction: column;
+    grid-template-columns: 1fr;
   }
   
   .form-group-minimal {
     width: 100%;
+  }
+  
+  .config-grid-minimal {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+  
+  .team-input-toggle {
+    flex-direction: column;
+    gap: 1rem;
   }
   
   .absence-select-minimal, .absence-input-minimal {
@@ -3388,6 +3399,17 @@ textarea:focus,
   .add-absence-button-minimal {
     min-height: 48px;
     min-width: 48px;
+  }
+  
+  .add-button-minimal {
+    min-height: 48px;
+    padding: 0.75rem 1.5rem;
+    font-size: 1rem;
+  }
+  
+  .remove-button-minimal {
+    min-height: 44px;
+    min-width: 44px;
   }
   
   .summary-card-minimal {
@@ -4515,7 +4537,19 @@ textarea:focus,
   .velocity-input-minimal {
     font-size: 1rem;
     padding: 0.75rem;
-    min-height: 44px;
+    min-height: 48px;
+  }
+  
+  .config-input-minimal {
+    min-height: 48px;
+    font-size: 1rem;
+    padding: 0.75rem;
+  }
+  
+  .developer-input-minimal, .hours-input-minimal {
+    min-height: 48px;
+    font-size: 1rem;
+    padding: 0.75rem;
   }
   
   .sprint-number {
@@ -4563,6 +4597,16 @@ textarea:focus,
   
   .result-card {
     padding: 1.5rem;
+    min-height: 120px;
+  }
+  
+  .main-result {
+    padding: 2rem 1rem;
+    min-height: 150px;
+  }
+  
+  .result-number {
+    font-size: 2.5rem;
   }
   
   .main-result {
@@ -4575,6 +4619,18 @@ textarea:focus,
     min-height: 44px;
   }
   
+  .stepper-labels {
+    padding: 0 0.5rem;
+    margin-top: 0.5rem;
+  }
+  
+  .step-label {
+    font-size: 0.75rem;
+    max-width: 70px;
+    text-align: center;
+    line-height: 1.2;
+  }
+  
   .remove-absence-button-minimal {
     min-width: 44px;
     min-height: 44px;
@@ -4583,6 +4639,16 @@ textarea:focus,
   .toggle-button {
     min-height: 60px;
     padding: 1rem;
+  }
+  
+  .input-method-toggle {
+    flex-direction: column;
+    gap: 1rem;
+  }
+  
+  .input-method-toggle .toggle-button {
+    min-height: 70px;
+    padding: 1.25rem;
   }
 }
 </style>
