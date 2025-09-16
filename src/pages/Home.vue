@@ -68,7 +68,18 @@
           <h2>Sprint Planner</h2>
         </div>
         <div class="nav-links">
-          <router-link to="/" class="nav-link" aria-current="page">Home</router-link>
+          <a 
+            href="https://linkedin.com/in/nathaljanijman" 
+            target="_blank" 
+            rel="noopener noreferrer" 
+            class="nav-link linkedin-link"
+            aria-label="LinkedIn profiel van Nathalja Nijman"
+          >
+            <svg class="linkedin-icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+              <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/>
+            </svg>
+            <span class="linkedin-text">LinkedIn | Nathalja Nijman</span>
+          </a>
         </div>
       </div>
     </nav>
@@ -559,23 +570,15 @@
     <footer class="footer" role="contentinfo">
       <div class="container">
         <div class="footer-content">
-          <div class="footer-brand">
-            <h3>Sprint Planner</h3>
-            <p>© 2025 sprintplanner.nl - AVG Conforme Sprint Planning</p>
-            <p class="footer-compliance">EU AVG Conform • Data Lokaal Opgeslagen • Geen Tracking</p>
-          </div>
-          <div class="footer-links">
-            <div class="footer-section">
-              <h4>Juridisch</h4>
-              <router-link to="/privacy" class="footer-link">Privacybeleid</router-link>
-              <router-link to="/terms" class="footer-link">Algemene Voorwaarden</router-link>
-              <router-link to="/data-deletion" class="footer-link">Gegevens Verwijderen</router-link>
+          <div class="footer-content-minimal">
+            <div class="footer-brand-minimal">
+              <h3>Sprint Planner</h3>
+              <p class="footer-copyright">© 2025 sprintplanner.nl</p>
             </div>
-            <div class="footer-section">
-              <h4>Je Rechten</h4>
-              <a href="mailto:privacy@sprintplanner.nl" class="footer-link">Contact FG</a>
-              <router-link to="/data-deletion" class="footer-link">Verwijder Mijn Gegevens</router-link>
-              <a href="#" @click.prevent="showCookieSettings" class="footer-link">Cookie Instellingen</a>
+            <div class="footer-links-minimal">
+              <router-link to="/privacy" class="footer-link-minimal">Privacy</router-link>
+              <router-link to="/data-deletion" class="footer-link-minimal">Delete Data</router-link>
+              <router-link to="/cookie-settings" class="footer-link-minimal">Cookies</router-link>
             </div>
           </div>
         </div>
@@ -626,15 +629,15 @@ const showError = (message) => {
 // Stepper data
 const currentStep = ref(1)
 const canProceed = ref(false)
-const velocityInputMethod = ref('individual')
+const velocityInputMethod = ref('average')
 const manualAverageVelocity = ref(0)
 const cookieConsentAccepted = ref(false)
 
 const steps = [
-  { title: 'Historical Velocity' },
-  { title: 'Team Capacity' },
-  { title: 'Availability' },
-  { title: 'Results' }
+  { title: 'Historische Velocity' },
+  { title: 'Team Capaciteit' },
+  { title: 'Beschikbaarheid' },
+  { title: 'Resultaten' }
 ]
 
 // Planner data
@@ -837,9 +840,6 @@ const acceptCookies = () => {
   localStorage.setItem('sprintplanner-consent-timestamp', new Date().toISOString())
 }
 
-const showCookieSettings = () => {
-  cookieConsentAccepted.value = false
-}
 
 // Developer management methods
 const addDeveloper = () => {
@@ -1160,10 +1160,64 @@ onMounted(() => {
   color: #3b82f6;
 }
 
+.linkedin-link {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1rem;
+  border-radius: 0.5rem;
+  transition: all 0.3s ease;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  font-size: 0.875rem;
+}
+
+.linkedin-link:hover {
+  background: rgba(0, 119, 181, 0.1);
+  border-color: #0077b5;
+  color: #0077b5;
+  transform: translateY(-1px);
+}
+
+.linkedin-icon {
+  width: 1.25rem;
+  height: 1.25rem;
+  transition: transform 0.2s ease;
+}
+
+.linkedin-link:hover .linkedin-icon {
+  transform: scale(1.1);
+}
+
+.linkedin-text {
+  font-size: 0.875rem;
+  font-weight: 500;
+}
+
+@media (max-width: 768px) {
+  .linkedin-text {
+    font-size: 0.75rem;
+  }
+  
+  .linkedin-link {
+    padding: 0.5rem 0.75rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .linkedin-text {
+    display: none;
+  }
+  
+  .linkedin-link {
+    padding: 0.5rem;
+  }
+}
+
 
 /* Hero Section */
 .hero {
-  padding: 8rem 0 4rem;
+  padding: 5rem 0 2rem;
   position: relative;
   overflow: hidden;
 }
@@ -1175,8 +1229,8 @@ onMounted(() => {
   display: grid;
   grid-template-columns: 1fr 1fr;
   align-items: center;
-  gap: 4rem;
-  min-height: 80vh;
+  gap: 2rem;
+  min-height: 50vh;
 }
 
 .hero-content {
@@ -1191,10 +1245,10 @@ onMounted(() => {
 }
 
 .title {
-  font-size: clamp(2.5rem, 6vw, 4rem);
+  font-size: clamp(2rem, 5vw, 3rem);
   font-weight: 800;
   line-height: 1.1;
-  margin-bottom: 1.5rem;
+  margin-bottom: 1rem;
   background: linear-gradient(135deg, var(--text-primary), var(--accent-primary));
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
@@ -1202,10 +1256,10 @@ onMounted(() => {
 }
 
 .subtitle {
-  font-size: clamp(1rem, 2.5vw, 1.25rem);
+  font-size: clamp(0.875rem, 2vw, 1.125rem);
   color: var(--text-secondary);
   line-height: 1.6;
-  margin-bottom: 2.5rem;
+  margin-bottom: 1.5rem;
   max-width: 500px;
   margin-left: auto;
   margin-right: auto;
@@ -1214,14 +1268,14 @@ onMounted(() => {
 .cta-button {
   display: inline-flex;
   align-items: center;
-  gap: 0.75rem;
-  padding: 1rem 2rem;
+  gap: 0.5rem;
+  padding: 0.75rem 1.5rem;
   background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
   color: white;
   text-decoration: none;
-  border-radius: 0.75rem;
+  border-radius: 0.5rem;
   font-weight: 600;
-  font-size: 1.125rem;
+  font-size: 1rem;
   transition: all 0.3s ease;
   box-shadow: 0 4px 20px rgba(59, 130, 246, 0.3);
 }
@@ -1241,6 +1295,7 @@ onMounted(() => {
   transform: translateX(4px);
 }
 
+
 /* Simple Predictability Visual */
 .predictability-simple {
   background: rgba(255, 255, 255, 0.05);
@@ -1254,7 +1309,7 @@ onMounted(() => {
 }
 
 .trend-chart {
-  margin-bottom: 2rem;
+  margin-bottom: 1rem;
 }
 
 .chart-header {
@@ -1446,47 +1501,48 @@ onMounted(() => {
 
 /* Footer */
 .footer {
-  background: rgba(0, 0, 0, 0.5);
+  background: rgba(0, 0, 0, 0.3);
   border-top: 1px solid rgba(255, 255, 255, 0.1);
-  padding: 3rem 0 2rem;
+  padding: 2rem 0;
 }
 
-.footer-content {
+.footer-content-minimal {
   display: flex;
   justify-content: space-between;
   align-items: center;
   flex-wrap: wrap;
-  gap: 2rem;
+  gap: 1rem;
 }
 
-.footer-brand h3 {
+.footer-brand-minimal h3 {
   font-size: 1.25rem;
-  font-weight: 700;
-  color: var(--text-primary);
-  margin-bottom: 0.5rem;
-}
-
-.footer-brand p {
-  color: var(--text-secondary);
-  font-size: 0.875rem;
+  font-weight: 600;
+  color: #ffffff;
   margin: 0;
 }
 
-.footer-links {
+.footer-copyright {
+  color: #71717a;
+  font-size: 0.75rem;
+  margin: 0;
+}
+
+.footer-links-minimal {
   display: flex;
   gap: 2rem;
-  flex-wrap: wrap;
+  align-items: center;
 }
 
-.footer-link {
-  color: var(--text-secondary);
+.footer-link-minimal {
+  color: #a1a1aa;
   text-decoration: none;
   font-size: 0.875rem;
-  transition: color 0.2s ease;
+  transition: color 0.3s ease;
+  font-weight: 500;
 }
 
-.footer-link:hover {
-  color: var(--accent-primary);
+.footer-link-minimal:hover {
+  color: #3b82f6;
 }
 
 /* Responsive Design */
@@ -1502,12 +1558,25 @@ onMounted(() => {
   }
   
   .hero {
-    padding: 6rem 0 3rem;
+    padding: 0.5rem 0 1.5rem;
   }
   
   .hero-container {
     padding: 0 1rem;
+    grid-template-columns: 1fr;
+    gap: 1rem;
+    min-height: auto;
   }
+  
+  .hero-content {
+    text-align: center;
+  }
+  
+  .subtitle {
+    margin-left: auto;
+    margin-right: auto;
+  }
+  
   
   .features {
     padding: 4rem 0;
@@ -1522,14 +1591,20 @@ onMounted(() => {
     gap: 1.5rem;
   }
   
-  .footer-content {
-    flex-direction: column;
-    text-align: center;
+  .footer {
+    padding: 1.5rem 0;
   }
   
-  .footer-links {
-    justify-content: center;
+  .footer-content-minimal {
+    flex-direction: column;
+    text-align: center;
+    gap: 1.5rem;
   }
+  
+  .footer-links-minimal {
+    gap: 1.5rem;
+  }
+  
 }
 
 /* Accessibility Styles */
@@ -1707,7 +1782,7 @@ textarea:focus,
 
 /* Planner Widget */
 .planner-widget {
-  padding: 6rem 0;
+  padding: 3rem 0;
   background: rgba(255, 255, 255, 0.02);
 }
 
@@ -1722,7 +1797,7 @@ textarea:focus,
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 2rem;
+  margin-bottom: 1rem;
   padding: 0 2rem;
 }
 
@@ -1796,7 +1871,7 @@ textarea:focus,
 .team-input-toggle {
   display: flex;
   gap: 1rem;
-  margin-bottom: 2rem;
+  margin-bottom: 1rem;
   padding: 1rem;
   background: rgba(255, 255, 255, 0.03);
   border: 1px solid rgba(255, 255, 255, 0.08);
@@ -1852,7 +1927,7 @@ textarea:focus,
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 1.5rem;
-  margin-bottom: 2rem;
+  margin-bottom: 1rem;
 }
 
 .input-wrapper {
@@ -1928,10 +2003,14 @@ textarea:focus,
 
 /* Step Labels */
 .stepper-labels {
-  display: flex;
-  justify-content: space-between;
-  margin-bottom: 3rem;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 0;
+  margin-bottom: 1.5rem;
   padding: 0 2rem;
+  position: relative;
+  margin-top: 0.5rem;
+  align-items: start;
 }
 
 .step-label {
@@ -1939,8 +2018,16 @@ textarea:focus,
   color: #a1a1aa;
   font-weight: 500;
   text-align: center;
-  max-width: 120px;
   transition: color 0.3s ease;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  position: relative;
+  margin-top: 0.75rem;
+  line-height: 1.2;
+  padding: 0 0.5rem;
 }
 
 .step-label.active {
@@ -1957,14 +2044,14 @@ textarea:focus,
   background: rgba(255, 255, 255, 0.05);
   border: 1px solid rgba(255, 255, 255, 0.1);
   border-radius: 1.5rem;
-  padding: 3rem;
+  padding: 2rem;
   backdrop-filter: blur(20px);
   box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
 }
 
 .step-header {
   text-align: center;
-  margin-bottom: 3rem;
+  margin-bottom: 1.5rem;
 }
 
 .step-header h3 {
@@ -1991,7 +2078,7 @@ textarea:focus,
   border: 1px solid rgba(255, 255, 255, 0.1);
   border-radius: 1rem;
   padding: 2rem;
-  margin-bottom: 2rem;
+  margin-bottom: 1rem;
   backdrop-filter: blur(10px);
 }
 
@@ -2154,7 +2241,7 @@ textarea:focus,
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
   gap: 1rem;
-  margin-bottom: 3rem;
+  margin-bottom: 1.5rem;
 }
 
 .toggle-button {
@@ -2254,7 +2341,7 @@ textarea:focus,
 /* Section Headers */
 .section-header {
   text-align: center;
-  margin-bottom: 2rem;
+  margin-bottom: 1rem;
 }
 
 .section-header h4 {
@@ -2271,14 +2358,14 @@ textarea:focus,
 
 /* Individual Sprint Input */
 .velocity-input-section {
-  margin-bottom: 2rem;
+  margin-bottom: 1rem;
 }
 
 .velocity-grid-minimal {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
   gap: 1rem;
-  margin-bottom: 2rem;
+  margin-bottom: 1rem;
 }
 
 .velocity-card-minimal {
@@ -2357,7 +2444,7 @@ textarea:focus,
 
 /* Manual Input Section */
 .manual-input-section {
-  margin-bottom: 2rem;
+  margin-bottom: 1rem;
 }
 
 .manual-input-container {
@@ -2413,11 +2500,11 @@ textarea:focus,
 /* Integration Placeholder */
 .integration-placeholder {
   text-align: center;
-  padding: 3rem 2rem;
+  padding: 2rem 1.5rem;
   background: rgba(255, 255, 255, 0.02);
   border: 2px dashed rgba(255, 255, 255, 0.1);
   border-radius: 1.5rem;
-  margin-bottom: 2rem;
+  margin-bottom: 1rem;
 }
 
 /* Removed integration-icon for minimalist design */
@@ -2432,7 +2519,7 @@ textarea:focus,
 .integration-placeholder p {
   color: #a1a1aa;
   font-size: 1rem;
-  margin-bottom: 2rem;
+  margin-bottom: 1rem;
   max-width: 400px;
   margin-left: auto;
   margin-right: auto;
@@ -2442,7 +2529,7 @@ textarea:focus,
   display: flex;
     flex-direction: column;
     gap: 1rem;
-  margin-bottom: 2rem;
+  margin-bottom: 1rem;
   max-width: 300px;
   margin-left: auto;
   margin-right: auto;
@@ -2597,7 +2684,7 @@ textarea:focus,
 .availability-input-toggle {
   display: flex;
   gap: 1rem;
-  margin-bottom: 2rem;
+  margin-bottom: 1rem;
   padding: 1rem;
   background: rgba(255, 255, 255, 0.03);
   border: 1px solid rgba(255, 255, 255, 0.08);
@@ -2633,7 +2720,7 @@ textarea:focus,
 }
 
 .availability-input-container {
-  margin-bottom: 2rem;
+  margin-bottom: 1rem;
 }
 
 .availability-input {
@@ -2682,7 +2769,7 @@ textarea:focus,
 
 /* Capacity Sections */
 .capacity-section {
-  margin-bottom: 3rem;
+  margin-bottom: 1.5rem;
 }
 
 .capacity-section .section-header {
@@ -2708,7 +2795,7 @@ textarea:focus,
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
     gap: 1.5rem;
-  margin-bottom: 2rem;
+  margin-bottom: 1rem;
 }
 
 .config-card {
@@ -2867,8 +2954,8 @@ textarea:focus,
   background: linear-gradient(135deg, rgba(59, 130, 246, 0.1), rgba(29, 78, 216, 0.1));
   border: 2px solid rgba(59, 130, 246, 0.3);
   border-radius: 2rem;
-  padding: 3rem;
-  margin-bottom: 3rem;
+  padding: 2rem;
+  margin-bottom: 1.5rem;
     position: relative;
   overflow: hidden;
 }
@@ -3052,11 +3139,13 @@ textarea:focus,
   
   .stepper-labels {
     padding: 0 1rem;
+    margin-top: 0.25rem;
   }
   
   .step-label {
     font-size: 0.75rem;
     max-width: 80px;
+    width: 100%;
   }
   
   .step-panel {
@@ -3067,9 +3156,9 @@ textarea:focus,
     font-size: 1.5rem;
   }
   
-  .velocity-grid {
+  .velocity-grid-minimal {
     grid-template-columns: repeat(2, 1fr);
-    gap: 1rem;
+    gap: 0.75rem;
   }
   
   .capacity-grid {
@@ -3107,6 +3196,28 @@ textarea:focus,
   .nav-button {
     width: 100%;
     max-width: 200px;
+  }
+  
+  .input-method-toggle {
+    grid-template-columns: 1fr;
+    gap: 0.75rem;
+  }
+  
+  .toggle-button {
+    padding: 1rem;
+  }
+  
+  .velocity-card-minimal {
+    padding: 1rem 0.75rem;
+  }
+  
+  .velocity-input-minimal {
+    font-size: 1rem;
+    padding: 0.5rem;
+  }
+  
+  .sprint-number {
+    font-size: 1.25rem;
   }
 }
 
@@ -3188,7 +3299,7 @@ textarea:focus,
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
   gap: 1.5rem;
-  margin-bottom: 2rem;
+  margin-bottom: 1rem;
 }
 
 .availability-card {
@@ -3269,7 +3380,7 @@ textarea:focus,
 
 .summary-header {
   text-align: center;
-  margin-bottom: 2rem;
+  margin-bottom: 1rem;
 }
 
 .summary-title {
@@ -3288,7 +3399,7 @@ textarea:focus,
   display: flex;
   flex-direction: column;
   gap: 1rem;
-  margin-bottom: 2rem;
+  margin-bottom: 1rem;
 }
 
 .breakdown-item {
@@ -3343,6 +3454,7 @@ textarea:focus,
   .contract-hours-input {
     min-width: auto;
     width: 100%;
+    padding: 1.5rem;
   }
   
   .availability-grid {
@@ -3371,7 +3483,7 @@ textarea:focus,
   border: 1px solid rgba(255, 255, 255, 0.1);
   border-radius: 1.25rem;
   padding: 2rem;
-  margin-bottom: 2rem;
+  margin-bottom: 1rem;
   backdrop-filter: blur(20px);
 }
 
@@ -3498,7 +3610,7 @@ textarea:focus,
   border: 1px solid rgba(255, 255, 255, 0.1);
   border-radius: 1.25rem;
   padding: 2rem;
-  margin-bottom: 2rem;
+  margin-bottom: 1rem;
   backdrop-filter: blur(20px);
 }
 
@@ -3681,6 +3793,92 @@ textarea:focus,
     flex-direction: column;
     align-items: flex-start;
     gap: 0.5rem;
+  }
+  
+  .add-developer-form,
+  .add-absence-form {
+    padding: 1.5rem;
+  }
+  
+  .developer-card {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1rem;
+  }
+  
+  .developer-actions {
+    margin-left: 0;
+    width: 100%;
+  }
+  
+  .remove-button {
+    width: 100%;
+  }
+}
+
+/* Extra small mobile devices */
+@media (max-width: 480px) {
+  .hero-container {
+    padding: 0 0.75rem;
+  }
+  
+  .step-panel {
+    padding: 1rem 0.75rem;
+  }
+  
+  .stepper-circle {
+    width: 35px;
+    height: 35px;
+    font-size: 0.875rem;
+  }
+  
+  .step-label {
+    font-size: 0.625rem;
+    max-width: 60px;
+    width: 100%;
+  }
+  
+  .velocity-grid-minimal {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 0.5rem;
+  }
+  
+  .velocity-card-minimal {
+    padding: 0.75rem 0.5rem;
+  }
+  
+  .velocity-input-minimal {
+    font-size: 0.875rem;
+    padding: 0.375rem;
+  }
+  
+  .sprint-number {
+    font-size: 1rem;
+  }
+  
+  .toggle-button {
+    padding: 0.75rem;
+  }
+  
+  .toggle-title {
+    font-size: 1rem;
+  }
+  
+  .toggle-subtitle {
+    font-size: 0.75rem;
+  }
+  
+  .nav-button {
+    padding: 0.75rem 1.5rem;
+    font-size: 0.875rem;
+  }
+  
+  .result-number {
+    font-size: 2.5rem;
+  }
+  
+  .main-result {
+    padding: 1.5rem 1rem;
   }
 }
 </style>

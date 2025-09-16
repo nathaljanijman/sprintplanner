@@ -30,6 +30,11 @@ const routes = [
     path: '/data-deletion',
     name: 'DataDeletion',
     component: () => import('../pages/DataDeletion.vue')
+  },
+  {
+    path: '/cookie-settings',
+    name: 'CookieSettings',
+    component: () => import('../pages/CookieSettings.vue')
   }
 ]
 

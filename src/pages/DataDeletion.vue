@@ -2,35 +2,35 @@
   <div class="legal-page">
     <div class="container">
       <div class="legal-header">
-        <h1>{{ $t('legal.dataDeletion.title') }}</h1>
-        <p class="last-updated">{{ $t('legal.dataDeletion.lastUpdated') }}</p>
+        <h1>Gegevens Verwijderen</h1>
+        <p class="last-updated">Laatst bijgewerkt: september 2025</p>
       </div>
       
       <div class="legal-content">
-        <p>{{ $t('legal.dataDeletion.content') }}</p>
+        <p>Je kunt al je gegevens op elk moment verwijderen. Alle gegevens worden lokaal opgeslagen in je browser.</p>
         
-        <h2>What Data Is Stored</h2>
-        <p>Sprint Planner stores the following data locally in your browser:</p>
+        <h2>Welke gegevens worden opgeslagen</h2>
+        <p>Sprint Planner slaat de volgende gegevens lokaal op in je browser:</p>
         <ul>
-          <li>Sprint velocity history</li>
-          <li>Team capacity settings</li>
-          <li>Planning notes and results</li>
-          <li>Language preference</li>
-          <li>User interface preferences</li>
+          <li>Sprint velocity geschiedenis</li>
+          <li>Team capaciteit instellingen</li>
+          <li>Planning notities en resultaten</li>
+          <li>Taal voorkeur</li>
+          <li>Gebruikersinterface voorkeuren</li>
         </ul>
         
-        <h2>How to Delete Your Data</h2>
-        <p>You can delete all your data in two ways:</p>
+        <h2>Hoe je je gegevens kunt verwijderen</h2>
+        <p>Je kunt al je gegevens op twee manieren verwijderen:</p>
         
         <div class="delete-section">
-          <h3>Method 1: Use the Delete Button</h3>
-          <p>Click the button below to instantly delete all your data:</p>
+          <h3>Methode 1: Gebruik de verwijder knop</h3>
+          <p>Klik op de knop hieronder om direct al je gegevens te verwijderen:</p>
           <button 
             @click="deleteAllData" 
             class="btn btn-danger"
             :disabled="isDeleting"
           >
-            {{ isDeleting ? 'Deleting...' : $t('legal.dataDeletion.deleteButton') }}
+            {{ isDeleting ? 'Verwijderen...' : 'Verwijder Alle Gegevens' }}
           </button>
           <div v-if="deleteMessage" class="delete-message" :class="{ success: deleteSuccess }">
             {{ deleteMessage }}
@@ -38,36 +38,36 @@
         </div>
         
         <div class="delete-section">
-          <h3>Method 2: Clear Browser Data</h3>
-          <p>You can also clear your data by clearing your browser's localStorage:</p>
+          <h3>Methode 2: Browser gegevens wissen</h3>
+          <p>Je kunt ook je gegevens wissen door je browser's localStorage te wissen:</p>
           <ol>
-            <li>Open your browser's Developer Tools (F12)</li>
-            <li>Go to the Application or Storage tab</li>
-            <li>Find "Local Storage" in the left sidebar</li>
-            <li>Select your domain (sprintplanner.nl or localhost)</li>
-            <li>Delete all entries or clear all data</li>
+            <li>Open je browser's Developer Tools (F12)</li>
+            <li>Ga naar het Application of Storage tabblad</li>
+            <li>Zoek "Local Storage" in de linker sidebar</li>
+            <li>Selecteer je domein (sprintplanner.nl of localhost)</li>
+            <li>Verwijder alle items of wis alle gegevens</li>
           </ol>
         </div>
         
-        <h2>What Happens After Deletion</h2>
-        <p>After deleting your data:</p>
+        <h2>Wat er gebeurt na verwijdering</h2>
+        <p>Na het verwijderen van je gegevens:</p>
         <ul>
-          <li>All sprint velocity data will be lost</li>
-          <li>All team capacity settings will be reset</li>
-          <li>All planning notes will be removed</li>
-          <li>Language preference will reset to default (Dutch)</li>
-          <li>You'll need to re-enter all data to use the planner again</li>
+          <li>Alle sprint velocity gegevens gaan verloren</li>
+          <li>Alle team capaciteit instellingen worden gereset</li>
+          <li>Alle planning notities worden verwijderd</li>
+          <li>Taal voorkeur wordt gereset naar standaard (Nederlands)</li>
+          <li>Je moet alle gegevens opnieuw invoeren om de planner te gebruiken</li>
         </ul>
         
-        <h2>Data Recovery</h2>
-        <p>Once data is deleted, it cannot be recovered. Make sure to export any important data before deletion if you want to keep a backup.</p>
+        <h2>Gegevensherstel</h2>
+        <p>Zodra gegevens zijn verwijderd, kunnen ze niet worden hersteld. Zorg ervoor dat je belangrijke gegevens exporteert voordat je ze verwijdert als je een back-up wilt bewaren.</p>
         
         <h2>Contact</h2>
-        <p>If you have questions about data deletion or need help, contact us at privacy@sprintplanner.nl</p>
+        <p>Als je vragen hebt over gegevensverwijdering of hulp nodig hebt, neem dan contact met ons op via privacy@sprintplanner.nl</p>
       </div>
       
       <div class="legal-footer">
-        <router-link to="/" class="btn btn-primary">Back to Home</router-link>
+        <router-link to="/" class="btn btn-primary">Terug naar Home</router-link>
       </div>
     </div>
   </div>
@@ -75,16 +75,13 @@
 
 <script setup>
 import { ref } from 'vue'
-import { useI18n } from 'vue-i18n'
-
-const { t } = useI18n()
 
 const isDeleting = ref(false)
 const deleteMessage = ref('')
 const deleteSuccess = ref(false)
 
 const deleteAllData = async () => {
-  if (!confirm(t('legal.dataDeletion.confirmMessage'))) {
+  if (!confirm('Weet je zeker dat je alle gegevens wilt verwijderen? Deze actie kan niet ongedaan worden gemaakt.')) {
     return
   }
   
@@ -98,7 +95,7 @@ const deleteAllData = async () => {
     // Wait a moment for visual feedback
     await new Promise(resolve => setTimeout(resolve, 1000))
     
-    deleteMessage.value = t('legal.dataDeletion.successMessage')
+    deleteMessage.value = 'Alle gegevens zijn succesvol verwijderd.'
     deleteSuccess.value = true
     
     // Reset after 3 seconds
@@ -108,7 +105,7 @@ const deleteAllData = async () => {
     }, 3000)
     
   } catch (error) {
-    deleteMessage.value = 'Error deleting data. Please try clearing your browser data manually.'
+    deleteMessage.value = 'Fout bij het verwijderen van gegevens. Probeer je browser gegevens handmatig te wissen.'
     deleteSuccess.value = false
   } finally {
     isDeleting.value = false
@@ -119,8 +116,8 @@ const deleteAllData = async () => {
 <style scoped>
 .legal-page {
   min-height: 100vh;
-  background: var(--bg-primary);
-  color: var(--text-primary);
+  background: #000000;
+  color: #ffffff;
   padding: 2rem 0;
 }
 
@@ -140,16 +137,16 @@ const deleteAllData = async () => {
 .legal-header h1 {
   font-size: clamp(2rem, 5vw, 3rem);
   font-weight: 700;
-  color: var(--text-primary);
+  color: #ffffff;
   margin-bottom: 1rem;
-  background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
+  background: linear-gradient(135deg, #ffffff, #3b82f6);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
 }
 
 .last-updated {
-  color: var(--text-secondary);
+  color: #a1a1aa;
   font-size: 0.875rem;
   font-style: italic;
 }
@@ -162,7 +159,7 @@ const deleteAllData = async () => {
 .legal-content h2 {
   font-size: 1.5rem;
   font-weight: 600;
-  color: var(--text-primary);
+  color: #ffffff;
   margin: 2rem 0 1rem 0;
   padding-bottom: 0.5rem;
   border-bottom: 1px solid rgba(255, 255, 255, 0.1);
@@ -171,18 +168,18 @@ const deleteAllData = async () => {
 .legal-content h3 {
   font-size: 1.25rem;
   font-weight: 600;
-  color: var(--text-primary);
+  color: #ffffff;
   margin: 1.5rem 0 0.75rem 0;
 }
 
 .legal-content p {
   margin-bottom: 1.5rem;
-  color: var(--text-secondary);
+  color: #a1a1aa;
 }
 
 .legal-content ul, .legal-content ol {
   margin: 1rem 0 1.5rem 2rem;
-  color: var(--text-secondary);
+  color: #a1a1aa;
 }
 
 .legal-content li {
@@ -215,7 +212,7 @@ const deleteAllData = async () => {
 }
 
 .btn-primary {
-  background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
+  background: linear-gradient(135deg, #3b82f6, #1d4ed8);
   color: white;
   box-shadow: 0 4px 15px rgba(59, 130, 246, 0.3);
 }
