@@ -86,17 +86,17 @@
 
     <!-- Main Content -->
     <main id="main-content">
-      <!-- Hero Section -->
+    <!-- Hero Section -->
       <section class="hero" aria-labelledby="hero-title">
-        <div class="hero-container">
-          <div class="hero-content">
+      <div class="hero-container">
+        <div class="hero-content">
             <h1 id="hero-title" class="title">Sprint Planner</h1>
             <p class="subtitle">De eenvoudigste manier om je sprints te plannen en je team's velocity te tracken</p>
             <button @click="scrollToWidget" class="cta-button" aria-describedby="cta-description">
               Probeer Sprint Planner
               <svg class="cta-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
-                <path d="M5 12h14M12 5l7 7-7 7"/>
-              </svg>
+              <path d="M5 12h14M12 5l7 7-7 7"/>
+            </svg>
             </button>
             <span id="cta-description" class="sr-only">Scroll naar sprint planning tool hieronder</span>
           </div>
@@ -190,8 +190,8 @@
             <h3>Simpel & snel</h3>
             <p>Intuïtieve interface die je binnen seconden resultaten geeft</p>
           </div>
-        </div>
-      </div>
+            </div>
+          </div>
     </section>
 
     <!-- Planner Widget -->
@@ -200,19 +200,19 @@
         <div class="section-header">
           <h2 id="planner-title" class="section-title">Sprint Planner</h2>
           <p class="section-subtitle">Plan je volgende sprint in 4 eenvoudige stappen</p>
-        </div>
-
+            </div>
+        
         <div class="stepper-container" role="group" aria-labelledby="stepper-title">
           <h3 id="stepper-title" class="sr-only">Sprint planning wizard</h3>
           <!-- Progress Stepper -->
           <div class="stepper-progress" role="progressbar" :aria-valuenow="currentStep" aria-valuemin="1" aria-valuemax="4" :aria-valuetext="`Step ${currentStep} of 4: ${steps[currentStep - 1]?.title}`">
             <div class="stepper-line" :style="{ width: `${(currentStep / 4) * 100}%` }"></div>
-            <div
-              v-for="(step, index) in steps"
+            <div 
+              v-for="(step, index) in steps" 
               :key="index"
               class="stepper-circle"
-              :class="{
-                'active': index + 1 === currentStep,
+              :class="{ 
+                'active': index + 1 === currentStep, 
                 'completed': index + 1 < currentStep
               }"
               :aria-label="`Step ${index + 1}: ${step.title}`"
@@ -220,8 +220,8 @@
             >
               <span v-if="index + 1 < currentStep" class="checkmark" aria-hidden="true"></span>
               <span v-else aria-hidden="true">{{ index + 1 }}</span>
-            </div>
           </div>
+        </div>
 
           <!-- Step Labels -->
           <div class="stepper-labels">
@@ -232,7 +232,7 @@
               :class="{ 'active': index + 1 === currentStep }"
             >
               {{ step.title }}
-            </div>
+      </div>
           </div>
 
           <!-- Step Content -->
@@ -246,7 +246,7 @@
               
               <!-- Input Method Toggle -->
               <div class="input-method-toggle">
-                <button
+                <button 
                   @click="velocityInputMethod = 'manual'"
                   class="toggle-button"
                   :class="{ 'active': velocityInputMethod === 'manual' }"
@@ -256,8 +256,8 @@
                     <div class="toggle-subtitle">Voer je gemiddelde velocity in</div>
                   </div>
                 </button>
-
-                <button
+                
+                <button 
                   @click="velocityInputMethod = 'individual'"
                   class="toggle-button"
                   :class="{ 'active': velocityInputMethod === 'individual' }"
@@ -280,11 +280,11 @@
                   <h4 id="velocity-inputs-title" class="sr-only">Sprint velocity inputs</h4>
                   <div v-for="(sprint, index) in sprints" :key="index" class="velocity-card-minimal">
                     <label :for="`sprint-${index}`" class="sprint-number">{{ index + 1 }}</label>
-                    <input
+                    <input 
                       :id="`sprint-${index}`"
-                      v-model.number="sprint.velocity"
-                      type="number"
-                      min="0"
+                      v-model.number="sprint.velocity" 
+                      type="number" 
+                      min="0" 
                       placeholder="0"
                       class="velocity-input-minimal"
                       @input="updateStepCompletion"
@@ -336,157 +336,238 @@
             <div v-if="currentStep === 2" class="step-panel capacity-step">
               <div class="step-header">
                 <h3>{{ steps[1].title }}</h3>
-                <p>Configureer de realistische capaciteit van je team met individuele developer tracking</p>
-              </div>
-              
-              <!-- Basic Configuration -->
-              <div class="capacity-section">
-                <div class="section-header">
-                  <h4>Team Configuration</h4>
-                  <p>Configureer de capaciteit van je team en sprint duur</p>
+                <p>Configureer je team capaciteit op basis van contracturen of individuele developers</p>
+                </div>
+                
+                <!-- Team Input Method Toggle -->
+                <div class="team-input-toggle">
+                  <button 
+                  @click="teamInputMethod = 'average'" 
+                  :class="['toggle-button', { active: teamInputMethod === 'average' }]"
+                  aria-pressed="teamInputMethod === 'average'"
+                >
+                  <div class="toggle-icon">
+                    <svg viewBox="0 0 24 24" fill="currentColor">
+                      <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
+                    </svg>
+                  </div>
+                    <div class="toggle-content">
+                    <div class="toggle-title">Gemiddelde contracturen</div>
+                    <div class="toggle-subtitle">Aantal developers × gemiddelde uren per week</div>
+                    </div>
+                  </button>
+                  
+                  <button 
+                  @click="teamInputMethod = 'individual'" 
+                  :class="['toggle-button', { active: teamInputMethod === 'individual' }]"
+                  aria-pressed="teamInputMethod === 'individual'"
+                >
+                  <div class="toggle-icon">
+                    <svg viewBox="0 0 24 24" fill="currentColor">
+                      <path d="M16 4c0-1.11.89-2 2-2s2 .89 2 2-.89 2-2 2-2-.89-2-2zm4 18v-6h2.5l-2.54-7.63A1.5 1.5 0 0 0 18.54 8H17c-.8 0-1.54.37-2.01.99L14 10.5V22h2v-6h2v6h2zM12.5 11.5c.83 0 1.5-.67 1.5-1.5s-.67-1.5-1.5-1.5S11 9.17 11 10s.67 1.5 1.5 1.5zM5.5 6c1.11 0 2-.89 2-2s-.89-2-2-2-2 .89-2 2 .89 2 2 2zm2 16v-7H9V9.5C9 8.12 7.88 7 6.5 7S4 8.12 4 9.5V15h-.5v7h4z"/>
+                    </svg>
+                  </div>
+                    <div class="toggle-content">
+                    <div class="toggle-title">Individuele developers</div>
+                    <div class="toggle-subtitle">Voeg developers toe met hun specifieke uren</div>
+                    </div>
+                  </button>
+                </div>
+                
+              <!-- Average Team Hours Option -->
+              <div v-if="teamInputMethod === 'average'" class="average-team-section">
+                <div class="config-grid-minimal">
+                  <div class="config-item-minimal">
+                    <label>Sprint duur</label>
+                    <div class="input-group-minimal">
+                      <input
+                        v-model.number="capacity.sprintWeeks"
+                        type="number"
+                        min="1"
+                        max="4"
+                        class="config-input-minimal"
+                        @input="updateStepCompletion"
+                      />
+                      <span class="input-suffix-minimal">weken</span>
+                    </div>
+                  </div>
+
+                  <div class="config-item-minimal">
+                    <label>Aantal developers</label>
+                    <div class="input-group-minimal">
+                      <input
+                        v-model.number="capacity.teamMembers"
+                        type="number"
+                        min="1"
+                        max="20"
+                        class="config-input-minimal"
+                        @input="updateStepCompletion"
+                      />
+                      <span class="input-suffix-minimal">personen</span>
+                  </div>
                 </div>
 
-                <!-- Team Input Method Toggle -->
-                <!-- Simplified Team Configuration -->
-                <div class="team-config-simple">
-                  <div class="config-grid" role="group" aria-labelledby="team-config-title">
-                    <h4 id="team-config-title" class="sr-only">Team configuration</h4>
-                    <div class="config-item">
-                      <label for="sprint-weeks">Sprint duur</label>
-                      <div class="input-group">
-                        <input
-                          id="sprint-weeks"
-                          v-model.number="capacity.sprintWeeks"
-                          type="number"
-                          min="1"
-                          max="4"
-                          class="config-input"
-                          @input="updateStepCompletion"
-                          aria-describedby="sprint-weeks-hint"
-                        />
-                        <span class="input-suffix">weeks</span>
-                      </div>
-                      <span id="sprint-weeks-hint" class="sr-only">Voer sprint duur in tussen 1 en 4 weken</span>
-                    </div>
-
-                    <div class="config-item">
-                      <label for="team-size">Team Size</label>
-                      <div class="input-group">
-                        <input
-                          id="team-size"
-                          v-model.number="capacity.teamMembers"
-                          type="number"
-                          min="1"
-                          max="20"
-                          class="config-input"
-                          @input="updateStepCompletion"
-                          aria-describedby="team-size-hint"
-                        />
-                        <span class="input-suffix">people</span>
-                      </div>
-                      <span id="team-size-hint" class="sr-only">Voer aantal teamleden in</span>
+                  <div class="config-item-minimal">
+                    <label>Gemiddelde uren per week</label>
+                    <div class="input-group-minimal">
+                      <input
+                        v-model.number="averageTeamHours"
+                        type="number"
+                        min="10"
+                        max="60"
+                        class="config-input-minimal"
+                        @input="updateStepCompletion"
+                      />
+                      <span class="input-suffix-minimal">uur</span>
                     </div>
                   </div>
                 </div>
                 
-                <!-- Simplified Team Summary -->
-                <div class="team-capacity-summary">
-                  <div class="summary-card-simple">
-                    <div class="summary-title">Team capaciteit</div>
-                    <div class="capacity-calculation">
-                      <div class="calc-step">
-                        {{ capacity.teamMembers }} personen × {{ capacity.sprintWeeks }} weken × 40u/week = {{ capacity.teamMembers * capacity.sprintWeeks * 40 }} uur
+                <!-- Team Capacity Summary for Average -->
+                <div class="team-capacity-summary-minimal">
+                  <div class="summary-card-minimal">
+                    <div class="summary-title-minimal">Team capaciteit</div>
+                    <div class="capacity-calculation-minimal">
+                      <div class="calc-step-minimal">
+                        {{ capacity.teamMembers }} personen × {{ capacity.sprintWeeks }} weken × {{ averageTeamHours }}u/week = {{ capacity.teamMembers * capacity.sprintWeeks * averageTeamHours }} uur
                       </div>
                     </div>
                   </div>
                 </div>
               </div>
 
+              <!-- Individual Developers Option -->
+              <div v-if="teamInputMethod === 'individual'" class="individual-team-section">
+                <div class="add-developer-form-minimal">
+                  <div class="form-row-minimal">
+                    <div class="form-group-minimal">
+                      <label>Developer naam</label>
+                      <input
+                        v-model="newDeveloper.name"
+                        type="text"
+                        placeholder="Bijv. Jan de Vries"
+                        class="developer-input-minimal"
+                      />
+                  </div>
+                    <div class="form-group-minimal">
+                      <label>Uren per week</label>
+                      <input
+                        v-model.number="newDeveloper.hours"
+                        type="number"
+                        min="10"
+                        max="60"
+                        class="hours-input-minimal"
+                      />
+                    </div>
+                <button 
+                      @click="addDeveloper" 
+                      :disabled="!newDeveloper.name.trim() || !newDeveloper.hours"
+                      class="add-button-minimal"
+                    >
+                      Toevoegen
+                </button>
+                  </div>
+              </div>
 
-              <!-- Capacity Summary -->
-              <div class="capacity-summary-detailed">
-                <div class="summary-card-detailed">
-                  <div class="summary-header">
-                    <div class="summary-title">Realistische team capaciteit</div>
-                    <div class="summary-subtitle">Gebaseerd op individuele contract uren en afwezigheid</div>
+                <div v-if="developers.length > 0" class="developers-list-minimal">
+                  <div v-for="developer in developers" :key="developer.id" class="developer-card-minimal">
+                    <div class="developer-info-minimal">
+                      <div class="developer-name-minimal">{{ developer.name }}</div>
+                      <div class="developer-hours-minimal">{{ developer.hours }} uur/week</div>
+                    </div>
+                    <button @click="removeDeveloper(developer.id)" class="remove-button-minimal">
+                      Verwijderen
+                    </button>
                   </div>
-                  
-                  <div class="capacity-breakdown">
-                    <div class="breakdown-item">
-                      <div class="breakdown-label">Totaal contract uren</div>
-                      <div class="breakdown-value">{{ totalContractHours }}h</div>
+                </div>
+                
+                <!-- Team Capacity Summary for Individual -->
+                <div v-if="developers.length > 0" class="team-capacity-summary-minimal">
+                  <div class="summary-card-minimal">
+                    <div class="summary-title-minimal">Team capaciteit</div>
+                    <div class="capacity-calculation-minimal">
+                      <div class="calc-step-minimal">
+                        Totaal: {{ totalIndividualHours }} uur/week × {{ capacity.sprintWeeks }} weken = {{ totalIndividualHours * capacity.sprintWeeks }} uur
+                      </div>
                     </div>
-                    
-                    <div class="breakdown-item">
-                      <div class="breakdown-label">Totaal afwezigheids uren</div>
-                      <div class="breakdown-value">{{ totalAbsenceHours }}h</div>
-                    </div>
-                    
-                    <div class="breakdown-item">
-                      <div class="breakdown-label">Beschikbare uren</div>
-                      <div class="breakdown-value">{{ availableHours }}h</div>
-                    </div>
-                    
-                    <div class="breakdown-item">
-                      <div class="breakdown-label">Na buffer ({{ capacity.bufferPercentage }}%)</div>
-                      <div class="breakdown-value">{{ finalCapacity }}h</div>
-                    </div>
-                  </div>
-                  
-                  <div class="final-capacity">
-                    <div class="final-label">Sprint capaciteit</div>
-                    <div class="final-value">{{ finalCapacity }} uur</div>
                   </div>
                 </div>
               </div>
-            </div>
 
+                <!-- Simplified Team Summary -->
+                </div>
+                
             <!-- Step 3: Availability -->
             <div v-if="currentStep === 3" class="step-panel availability-step">
               <div class="step-header">
                 <h3>Team beschikbaarheid</h3>
-                <p>Pas aan voor realistische team capaciteit rekening houdend met vakanties en onverwachte problemen</p>
+                <p>Voeg afwezigheden toe om realistische sprint capaciteit te berekenen</p>
               </div>
 
-              <!-- Simplified Availability Configuration -->
-              <div class="availability-config-simple">
-                <div class="config-grid">
-                  <div class="config-item">
-                    <label>Team beschikbaarheid</label>
-                    <div class="input-group">
-                      <input v-model.number="teamAvailabilityPercentage" type="number" min="50" max="100" class="config-input" @input="updateStepCompletion" />
-                      <span class="input-suffix">%</span>
+              <!-- Hours-based Availability -->
+              <div class="hours-availability-section">
+                <div class="add-absence-form-minimal">
+                  <div class="form-row-minimal">
+                    <div class="form-group-minimal">
+                      <label>Developer</label>
+                      <select v-model="newAbsence.developerId" class="absence-select-minimal">
+                        <option value="">Selecteer developer</option>
+                        <option v-if="teamInputMethod === 'average'" v-for="i in capacity.teamMembers" :key="i" :value="i">Developer {{ i }}</option>
+                        <option v-if="teamInputMethod === 'individual'" v-for="dev in developers" :key="dev.id" :value="dev.id">{{ dev.name }}</option>
+                      </select>
                     </div>
-                    <div class="input-hint">Houdt rekening met vakanties, vergaderingen, ziektedagen (typisch: 80-85%)</div>
+                    <div class="form-group-minimal">
+                      <label>Aantal uren afwezigheid</label>
+                      <input
+                        v-model.number="newAbsence.hours"
+                        type="number"
+                        min="1"
+                        max="40"
+                        class="absence-input-minimal"
+                        placeholder="Bijv. 8"
+                      />
+                    </div>
+                    <button 
+                      @click="addAbsence" 
+                      :disabled="!newAbsence.developerId || !newAbsence.hours"
+                      class="add-absence-button-minimal"
+                    >
+                      +
+                    </button>
                   </div>
+                </div>
 
-                  <div class="config-item">
-                    <label>Buffer for Unexpected</label>
-                    <div class="input-group">
-                      <input v-model.number="capacity.bufferPercentage" type="number" min="0" max="50" class="config-input" @input="updateStepCompletion" />
-                      <span class="input-suffix">%</span>
+                <div v-if="allAbsences.length > 0" class="absences-list-minimal">
+                  <div v-for="absence in allAbsences" :key="absence.id" class="absence-item-minimal">
+                    <div class="absence-info-minimal">
+                      <div class="absence-details-minimal">{{ getDeveloperName(absence.developerId) }} - {{ absence.hours }} uur afwezigheid</div>
                     </div>
-                    <div class="input-hint">Bugfixes, urgente zaken, scope wijzigingen (marktgemiddelde: 15-20%)</div>
+                    <button @click="removeAbsence(absence.id)" class="remove-absence-button-minimal">
+                      ×
+                    </button>
                   </div>
                 </div>
               </div>
 
-              <!-- Final Capacity Calculation -->
-              <div class="final-capacity-summary">
-                <div class="summary-card-simple">
-                  <div class="summary-title">Definitieve sprint capaciteit</div>
-                  <div class="capacity-calculation">
-                    <div class="calc-step">
-                      Basis capaciteit: {{ capacity.teamMembers * capacity.sprintWeeks * 40 }} uur
+              <!-- Final Capacity Summary -->
+              <div class="final-capacity-summary-minimal">
+                <div class="summary-card-minimal">
+                  <div class="summary-title-minimal">Definitieve sprint capaciteit</div>
+                  <div class="capacity-calculation-minimal">
+                    <div class="calc-step-minimal">
+                      Basis capaciteit: {{ totalContractHours }} uur
                     </div>
-                    <div class="calc-step">
-                      × {{ teamAvailabilityPercentage }}% beschikbaarheid = {{ Math.round(capacity.teamMembers * capacity.sprintWeeks * 40 * (teamAvailabilityPercentage / 100)) }} uur
+                    <div v-if="availabilityInputMethod === 'percentage'" class="calc-step-minimal">
+                      × {{ teamAvailabilityPercentage }}% beschikbaarheid = {{ Math.round(totalContractHours * (teamAvailabilityPercentage / 100)) }} uur
                     </div>
-                    <div class="calc-step">
+                    <div v-if="availabilityInputMethod === 'hours'" class="calc-step-minimal">
+                      - {{ totalAbsenceHours }} uur afwezigheid = {{ availableHours }} uur
+                    </div>
+                    <div class="calc-step-minimal">
                       - {{ capacity.bufferPercentage }}% buffer = {{ finalCapacity }} uur
                     </div>
                   </div>
-                  <div class="final-value-large">{{ finalCapacity }} uur</div>
+                  <div class="final-value-minimal">{{ finalCapacity }} uur</div>
                 </div>
               </div>
             </div>
@@ -544,17 +625,17 @@
               Vorige
             </button>
             <div class="nav-spacer"></div>
-            <button
-              v-if="currentStep < 4"
-              @click="nextStep"
+            <button 
+              v-if="currentStep < 4" 
+              @click="nextStep" 
               class="nav-button primary"
               :disabled="!canProceed"
             >
               Volgende
             </button>
-            <button
-              v-if="currentStep === 4"
-              @click="resetStepper"
+            <button 
+              v-if="currentStep === 4" 
+              @click="resetStepper" 
               class="nav-button primary"
             >
               Start Over
@@ -572,9 +653,9 @@
         <div class="footer-content">
           <div class="footer-content-minimal">
             <div class="footer-brand-minimal">
-              <h3>Sprint Planner</h3>
+            <h3>Sprint Planner</h3>
               <p class="footer-copyright">© 2025 sprintplanner.nl</p>
-            </div>
+          </div>
             <div class="footer-links-minimal">
               <router-link to="/privacy" class="footer-link-minimal">Privacy</router-link>
               <router-link to="/data-deletion" class="footer-link-minimal">Delete Data</router-link>
@@ -634,8 +715,8 @@ const manualAverageVelocity = ref(0)
 const cookieConsentAccepted = ref(false)
 
 const steps = [
-  { title: 'Historische Velocity' },
-  { title: 'Team Capaciteit' },
+  { title: 'Historische velocity' },
+  { title: 'Team capaciteit' },
   { title: 'Beschikbaarheid' },
   { title: 'Resultaten' }
 ]
@@ -658,7 +739,10 @@ const capacity = ref({
 })
 
 // Team input method toggle
-const teamInputMethod = ref('individual') // 'individual' or 'average'
+const teamInputMethod = ref('average') // 'individual' or 'average'
+
+// Availability input method toggle
+const availabilityInputMethod = ref('percentage') // 'percentage' or 'hours'
 
 // Individual developers with absences - start with 2 default developers
 const developers = ref([
@@ -678,8 +762,24 @@ const newDeveloper = ref({
   contractHoursPerWeek: 40
 })
 
-// Absence form
+// New absence form
 const newAbsence = ref({
+  type: '',
+  hours: 0,
+  developerId: ''
+})
+
+// General absences list (reactive)
+const generalAbsences = ref([])
+
+// All absences (from general absences list)
+const allAbsences = computed(() => {
+  console.log('allAbsences computed:', generalAbsences.value)
+  return generalAbsences.value
+})
+
+// Absence form (legacy - keeping for compatibility)
+const newAbsenceLegacy = ref({
   developerId: null,
   type: 'vacation',
   startDate: '',
@@ -717,10 +817,20 @@ const displayAverageVelocity = computed(() => {
   return averageVelocity.value
 })
 
+// Helper function to get developer name
+const getDeveloperName = (developerId) => {
+  if (teamInputMethod.value === 'average') {
+    return `Developer ${developerId}`
+  }
+  
+  const dev = developers.value.find(d => d.id === developerId)
+  return dev ? dev.name : `Developer ${developerId}`
+}
+
 // Team capacity calculations
 const totalContractHours = computed(() => {
   if (teamInputMethod.value === 'average') {
-    return capacity.value.teamMembers * averageTeamHours.value * capacity.value.sprintWeeks
+    return capacity.value.teamMembers * capacity.value.contractHoursPerWeek * capacity.value.sprintWeeks
   }
   
   if (developers.value.length === 0) return 0
@@ -731,18 +841,8 @@ const totalContractHours = computed(() => {
 })
 
 const totalAbsenceHours = computed(() => {
-  if (developers.value.length === 0) return 0
-  
-  return developers.value.reduce((total, dev) => {
-    const devAbsenceHours = dev.absences.reduce((devTotal, absence) => {
-      if (!absence.startDate || !absence.endDate) return devTotal
-      
-      const startDate = new Date(absence.startDate)
-      const endDate = new Date(absence.endDate)
-      const daysDiff = Math.ceil((endDate - startDate) / (1000 * 60 * 60 * 24)) + 1
-      return devTotal + (daysDiff * (absence.hoursPerDay || 8))
-    }, 0)
-    return total + devAbsenceHours
+  return generalAbsences.value.reduce((total, absence) => {
+    return total + (absence.hours || 0)
   }, 0)
 })
 
@@ -760,6 +860,12 @@ const finalCapacity = computed(() => {
 
 const teamCapacity = computed(() => {
   return finalCapacity.value
+})
+
+// Total individual hours for summary
+const totalIndividualHours = computed(() => {
+  if (developers.value.length === 0) return 0
+  return developers.value.reduce((total, dev) => total + (dev.hours || 0), 0)
 })
 
 // Sprint planning calculations
@@ -813,14 +919,9 @@ const updateStepCompletion = () => {
       console.log(' Individual team capacity check:', developers.value.length > 0)
     }
   } else if (currentStep.value === 3) {
-    // Step 3: Check if availability is configured
-    if (teamInputMethod.value === 'average') {
-      canProceed.value = teamAvailabilityPercentage.value > 0
-      console.log(' Average availability check:', teamAvailabilityPercentage.value > 0)
-    } else {
-      canProceed.value = true // Individual absences are optional
-      console.log(' Individual availability check: allowing proceed')
-    }
+    // Step 3: Availability is always optional - allow proceeding
+    canProceed.value = true
+    console.log(' Step 3: allowing proceed (availability optional)')
   } else {
     // Step 4: Always allow proceeding
     canProceed.value = true
@@ -862,36 +963,36 @@ const removeDeveloper = (developerId) => {
 }
 
 const addAbsence = () => {
-  if (newAbsence.value.developerId && newAbsence.value.startDate && newAbsence.value.endDate) {
-    const developer = developers.value.find(d => d.id === newAbsence.value.developerId)
-    if (developer) {
-      developer.absences.push({
-        id: Date.now(),
-        type: newAbsence.value.type,
-        startDate: newAbsence.value.startDate,
-        endDate: newAbsence.value.endDate,
-        hoursPerDay: newAbsence.value.hoursPerDay,
-        reason: newAbsence.value.reason
-      })
-      newAbsence.value = {
-        developerId: null,
-        type: 'vacation',
-        startDate: '',
-        endDate: '',
-        hoursPerDay: 8,
-        reason: ''
-      }
-      updateStepCompletion()
+  console.log('addAbsence called', newAbsence.value)
+  
+  if (newAbsence.value.developerId && newAbsence.value.hours > 0) {
+    // Add to reactive absences list
+    generalAbsences.value.push({
+      id: Date.now(),
+      developerId: newAbsence.value.developerId,
+      hours: newAbsence.value.hours
+    })
+    
+    console.log('Added absence:', generalAbsences.value)
+    
+    // Reset form
+    newAbsence.value = {
+      type: '',
+      hours: 0,
+      developerId: ''
     }
+    updateStepCompletion()
+  } else {
+    console.log('Missing required fields:', {
+      developerId: newAbsence.value.developerId,
+      hours: newAbsence.value.hours
+    })
   }
 }
 
-const removeAbsence = (developerId, absenceId) => {
-  const developer = developers.value.find(d => d.id === developerId)
-  if (developer) {
-    developer.absences = developer.absences.filter(a => a.id !== absenceId)
-    updateStepCompletion()
-  }
+const removeAbsence = (absenceId) => {
+  generalAbsences.value = generalAbsences.value.filter(a => a.id !== absenceId)
+  updateStepCompletion()
 }
 
 const getAbsenceTypeLabel = (type) => {
@@ -925,7 +1026,7 @@ const nextStep = () => {
     return
   }
 
-  if (currentStep.value < 3) {
+  if (currentStep.value < 4) {
     showLoading('Processing step...')
     // Simulate processing time for better UX
     setTimeout(() => {
@@ -1681,7 +1782,7 @@ textarea:focus,
   background: rgba(0, 0, 0, 0.7);
   display: flex;
   align-items: center;
-  justify-content: center;
+    justify-content: center;
   z-index: 9999;
   backdrop-filter: blur(4px);
 }
@@ -2643,6 +2744,474 @@ textarea:focus,
   backdrop-filter: blur(40px);
 }
 
+/* Team Input Toggle */
+.team-input-toggle {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+  margin-bottom: 2rem;
+}
+
+.team-input-toggle .toggle-button {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 0.75rem;
+  padding: 1.5rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-align: left;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.team-input-toggle .toggle-button:hover {
+  background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(59, 130, 246, 0.3);
+}
+
+.team-input-toggle .toggle-button.active {
+  background: rgba(59, 130, 246, 0.1);
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
+}
+
+.team-input-toggle .toggle-icon {
+  width: 24px;
+  height: 24px;
+  color: #3b82f6;
+  flex-shrink: 0;
+}
+
+.team-input-toggle .toggle-content {
+  flex: 1;
+}
+
+.team-input-toggle .toggle-title {
+  font-size: 1rem;
+  font-weight: 600;
+  color: #ffffff;
+  margin-bottom: 0.25rem;
+}
+
+.team-input-toggle .toggle-subtitle {
+  font-size: 0.875rem;
+  color: #a1a1aa;
+  line-height: 1.4;
+}
+
+/* Minimal Config Grid */
+.config-grid-minimal {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.config-item-minimal {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.config-item-minimal label {
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: #ffffff;
+}
+
+.input-group-minimal {
+  display: flex;
+  align-items: center;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 0.5rem;
+  overflow: hidden;
+}
+
+.config-input-minimal {
+  flex: 1;
+  background: transparent;
+  border: none;
+  padding: 0.75rem;
+  color: #ffffff;
+  font-size: 1rem;
+  outline: none;
+}
+
+.config-input-minimal:focus {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.input-suffix-minimal {
+  padding: 0.75rem;
+  background: rgba(255, 255, 255, 0.05);
+  color: #a1a1aa;
+  font-size: 0.875rem;
+  border-left: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* Minimal Developer Form */
+.add-developer-form-minimal {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 0.75rem;
+  padding: 1.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.form-row-minimal {
+  display: grid;
+  grid-template-columns: 2fr 1fr auto;
+  gap: 1rem;
+  align-items: end;
+}
+
+.form-group-minimal {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.form-group-minimal label {
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: #ffffff;
+}
+
+.developer-input-minimal, .hours-input-minimal {
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 0.5rem;
+  padding: 0.75rem;
+  color: #ffffff;
+  font-size: 0.875rem;
+}
+
+.developer-input-minimal:focus, .hours-input-minimal:focus {
+  outline: none;
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
+}
+
+.add-button-minimal {
+  background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+  color: white;
+  border: none;
+  border-radius: 0.5rem;
+  padding: 0.75rem 1.5rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  white-space: nowrap;
+}
+
+.add-button-minimal:hover:not(:disabled) {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 15px rgba(59, 130, 246, 0.3);
+}
+
+.add-button-minimal:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* Minimal Developer List */
+.developers-list-minimal {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.developer-card-minimal {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 0.5rem;
+  padding: 1rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.developer-info-minimal {
+  flex: 1;
+}
+
+.developer-name-minimal {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: #ffffff;
+  margin-bottom: 0.25rem;
+}
+
+.developer-hours-minimal {
+  font-size: 0.75rem;
+  color: #a1a1aa;
+}
+
+.remove-button-minimal {
+  background: rgba(239, 68, 68, 0.1);
+  color: #ef4444;
+  border: 1px solid rgba(239, 68, 68, 0.3);
+  border-radius: 0.375rem;
+  padding: 0.5rem 1rem;
+  font-size: 0.75rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.remove-button-minimal:hover {
+  background: rgba(239, 68, 68, 0.2);
+  transform: translateY(-1px);
+}
+
+/* Team Capacity Summary Minimal */
+.team-capacity-summary-minimal {
+  margin-top: 1.5rem;
+}
+
+.summary-card-minimal {
+  background: rgba(59, 130, 246, 0.1);
+  border: 1px solid rgba(59, 130, 246, 0.2);
+  border-radius: 0.75rem;
+  padding: 1.5rem;
+  text-align: center;
+}
+
+.summary-title-minimal {
+  font-size: 1rem;
+  font-weight: 600;
+  color: #3b82f6;
+  margin-bottom: 0.75rem;
+}
+
+.capacity-calculation-minimal {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.calc-step-minimal {
+  font-size: 0.875rem;
+  color: #a1a1aa;
+  font-family: 'Monaco', 'Menlo', monospace;
+  background: rgba(0, 0, 0, 0.2);
+  padding: 0.75rem;
+  border-radius: 0.5rem;
+  border: 1px solid rgba(59, 130, 246, 0.1);
+}
+
+/* Availability Input Toggle */
+.availability-input-toggle {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+  margin-bottom: 2rem;
+}
+
+.availability-input-toggle .toggle-button {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 0.75rem;
+  padding: 1.5rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-align: left;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.availability-input-toggle .toggle-button:hover {
+  background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(59, 130, 246, 0.3);
+}
+
+.availability-input-toggle .toggle-button.active {
+  background: rgba(59, 130, 246, 0.1);
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
+}
+
+.availability-input-toggle .toggle-icon {
+  width: 24px;
+  height: 24px;
+  color: #3b82f6;
+  flex-shrink: 0;
+}
+
+.availability-input-toggle .toggle-content {
+  flex: 1;
+}
+
+.availability-input-toggle .toggle-title {
+  font-size: 1rem;
+  font-weight: 600;
+  color: #ffffff;
+  margin-bottom: 0.25rem;
+}
+
+.availability-input-toggle .toggle-subtitle {
+  font-size: 0.875rem;
+  color: #a1a1aa;
+  line-height: 1.4;
+}
+
+/* Hours-based Availability */
+.add-absence-form-minimal {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 0.75rem;
+  padding: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+.absence-select-minimal, .absence-input-minimal {
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 0.5rem;
+  padding: 0.75rem;
+  color: #ffffff;
+  font-size: 0.875rem;
+  width: 100%;
+}
+
+.absence-select-minimal:focus, .absence-input-minimal:focus {
+  outline: none;
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
+}
+
+.add-absence-button-minimal {
+  background: linear-gradient(135deg, #10b981, #059669);
+  color: white;
+  border: none;
+  border-radius: 0.5rem;
+  padding: 0.75rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  white-space: nowrap;
+  width: 48px;
+  height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.25rem;
+}
+
+.add-absence-button-minimal:hover:not(:disabled) {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 15px rgba(16, 185, 129, 0.3);
+}
+
+.add-absence-button-minimal:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* Absences List */
+.absences-list-minimal {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  margin-bottom: 2rem;
+}
+
+.absence-item-minimal {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 0.5rem;
+  padding: 1rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.absence-info-minimal {
+  flex: 1;
+}
+
+.absence-type-minimal {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: #ffffff;
+  margin-bottom: 0.25rem;
+  text-transform: capitalize;
+}
+
+.absence-details-minimal {
+  font-size: 0.75rem;
+  color: #a1a1aa;
+}
+
+.remove-absence-button-minimal {
+  background: rgba(239, 68, 68, 0.1);
+  color: #ef4444;
+  border: 1px solid rgba(239, 68, 68, 0.3);
+  border-radius: 50%;
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-size: 1rem;
+  line-height: 1;
+}
+
+.remove-absence-button-minimal:hover {
+  background: rgba(239, 68, 68, 0.2);
+  transform: scale(1.1);
+}
+
+/* Input Hint */
+.input-hint-minimal {
+  font-size: 0.75rem;
+  color: #71717a;
+  font-style: italic;
+  margin-top: 0.25rem;
+}
+
+/* Final Value */
+.final-value-minimal {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #3b82f6;
+  margin-top: 1.5rem;
+  text-align: center;
+}
+
+/* Final Capacity Summary */
+.final-capacity-summary-minimal {
+  margin-top: 2rem;
+}
+
+.summary-card-minimal {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 0.75rem;
+  padding: 2rem;
+  backdrop-filter: blur(20px);
+}
+
+.summary-title-minimal {
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: #ffffff;
+  margin-bottom: 1.5rem;
+  text-align: center;
+}
+
+.capacity-calculation-minimal {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  margin-bottom: 1.5rem;
+}
+
 /* Step 3: Availability - Enhanced Design */
 .availability-step {
   background: rgba(255, 255, 255, 0.03);
@@ -2764,6 +3333,19 @@ textarea:focus,
 @media (max-width: 768px) {
   .availability-input-toggle {
     flex-direction: column;
+  }
+  
+  .add-absence-form-minimal {
+    padding: 1rem;
+    margin-bottom: 1.5rem;
+  }
+  
+  .summary-card-minimal {
+    padding: 1.5rem;
+  }
+  
+  .final-capacity-summary-minimal {
+    margin-top: 1.5rem;
   }
 }
 
