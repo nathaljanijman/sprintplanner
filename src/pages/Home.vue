@@ -70,7 +70,7 @@
         </div>
         <div class="nav-links">
           <a 
-            href="https://linkedin.com/in/nathaljanijman" 
+            href="https://www.linkedin.com/in/nathalja-nijman-86410389/" 
             target="_blank" 
             rel="noopener noreferrer" 
             class="nav-link linkedin-link"
@@ -1342,7 +1342,7 @@ onMounted(() => {
 
 /* Hero Section */
 .hero {
-  padding: 6rem 0 3rem;
+  padding: 4rem 0 1.5rem;
   position: relative;
   overflow: hidden;
   margin-top: 0;
@@ -1935,7 +1935,7 @@ textarea:focus,
 
 /* Planner Widget */
 .planner-widget {
-  padding: 3rem 0;
+  padding: 1.5rem 0;
   background: rgba(255, 255, 255, 0.02);
 }
 
@@ -2156,14 +2156,12 @@ textarea:focus,
 
 /* Step Labels */
 .stepper-labels {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 0;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
   margin-bottom: 1.5rem;
   padding: 0 2rem;
   position: relative;
-  margin-top: 0.5rem;
-  align-items: start;
 }
 
 .step-label {
@@ -2176,11 +2174,12 @@ textarea:focus,
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  width: 100%;
+  flex: 1;
   position: relative;
   margin-top: 0.75rem;
   line-height: 1.2;
-  padding: 0 0.5rem;
+  padding: 0 0.25rem;
+  max-width: 80px;
 }
 
 .step-label.active {
@@ -2190,7 +2189,7 @@ textarea:focus,
 
 /* Step Content */
 .step-content {
-  min-height: 400px;
+  min-height: 300px;
 }
 
 .step-panel {
@@ -3814,14 +3813,16 @@ textarea:focus,
   }
   
   .stepper-labels {
-    padding: 0 1rem;
+    padding: 0 0.5rem;
     margin-top: 0.25rem;
+    gap: 0.5rem;
   }
   
   .step-label {
     font-size: 0.75rem;
-    max-width: 80px;
-    width: 100%;
+    max-width: 70px;
+    flex: 1;
+    padding: 0 0.125rem;
   }
   
   .step-panel {
@@ -4642,15 +4643,18 @@ textarea:focus,
   }
   
   .stepper-labels {
-    padding: 0 0.5rem;
+    padding: 0 0.25rem;
     margin-top: 0.5rem;
+    gap: 0.25rem;
   }
   
   .step-label {
-    font-size: 0.75rem;
-    max-width: 70px;
+    font-size: 0.625rem;
+    max-width: 60px;
+    flex: 1;
     text-align: center;
-    line-height: 1.2;
+    line-height: 1.1;
+    padding: 0 0.125rem;
   }
   
   .remove-absence-button-minimal {
