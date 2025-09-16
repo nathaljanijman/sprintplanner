@@ -95,9 +95,6 @@
             <p class="subtitle">De eenvoudigste manier om je sprints te plannen en je team's velocity te tracken</p>
             <button @click="scrollToWidget" class="cta-button" aria-describedby="cta-description">
               Probeer Sprint Planner
-              <svg class="cta-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
-              <path d="M5 12h14M12 5l7 7-7 7"/>
-            </svg>
             </button>
             <span id="cta-description" class="sr-only">Scroll naar sprint planning tool hieronder</span>
           </div>
@@ -203,38 +200,47 @@
           <p class="section-subtitle">Plan je volgende sprint in 4 eenvoudige stappen</p>
             </div>
         
-        <div class="stepper-container" role="group" aria-labelledby="stepper-title">
-          <h3 id="stepper-title" class="sr-only">Sprint planning wizard</h3>
-          <!-- Progress Stepper -->
-          <div class="stepper-progress" role="progressbar" :aria-valuenow="currentStep" aria-valuemin="1" aria-valuemax="4" :aria-valuetext="`Step ${currentStep} of 4: ${steps[currentStep - 1]?.title}`">
-            <div class="stepper-line" :style="{ width: `${(currentStep / 4) * 100}%` }"></div>
-            <div 
-              v-for="(step, index) in steps" 
-              :key="index"
-              class="stepper-circle"
-              :class="{ 
-                'active': index + 1 === currentStep, 
-                'completed': index + 1 < currentStep
-              }"
-              :aria-label="`Step ${index + 1}: ${step.title}`"
-              :aria-current="index + 1 === currentStep ? 'step' : false"
-            >
-              <span v-if="index + 1 < currentStep" class="checkmark" aria-hidden="true"></span>
-              <span v-else aria-hidden="true">{{ index + 1 }}</span>
+        <div class="progress-container" role="group" aria-labelledby="progress-title">
+          <h3 id="progress-title" class="sr-only">Sprint planning wizard</h3>
+          
+          <!-- Modern Progress Bar -->
+          <div class="progress-bar-wrapper">
+            <div class="progress-bar">
+              <div 
+                class="progress-fill"
+                :style="{ width: `${((currentStep - 1) / (steps.length - 1)) * 100}%` }"
+                aria-hidden="true"
+              ></div>
+            </div>
+            
+            <div class="progress-steps">
+              <div 
+                v-for="(step, index) in steps" 
+                :key="index"
+                class="progress-step"
+                :class="{ 
+                  'active': index + 1 === currentStep,
+                  'completed': index + 1 < currentStep 
+                }"
+                :aria-label="`Stap ${index + 1}: ${step.title}`"
+                role="button"
+                tabindex="0"
+                @click="goToStep(index + 1)"
+                @keydown.enter="goToStep(index + 1)"
+                @keydown.space.prevent="goToStep(index + 1)"
+              >
+                <div class="step-circle">
+                  <svg v-if="index + 1 < currentStep" class="check-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                    <path d="M20 6L9 17l-5-5"/>
+                  </svg>
+                  <span v-else aria-hidden="true">{{ index + 1 }}</span>
+                </div>
+                <div class="step-label">{{ step.title }}</div>
+              </div>
+            </div>
           </div>
         </div>
 
-          <!-- Step Labels -->
-          <div class="stepper-labels">
-            <div 
-              v-for="(step, index) in steps" 
-              :key="index"
-              class="step-label"
-              :class="{ 'active': index + 1 === currentStep }"
-            >
-              {{ step.title }}
-      </div>
-          </div>
 
           <!-- Step Content -->
           <div class="step-content">
@@ -615,39 +621,38 @@
                   </div>
                 </div>
               </div>
+              
+              <!-- Navigation within step -->
+              <div class="step-navigation">
+                <button 
+                  v-if="currentStep > 1" 
+                  @click="previousStep" 
+                  class="nav-button secondary"
+                >
+                  Vorige
+                </button>
+                <div class="nav-spacer"></div>
+                <button 
+                  v-if="currentStep < 4" 
+                  @click="nextStep" 
+                  class="nav-button primary"
+                  :disabled="!canProceed"
+                >
+                  Volgende
+                </button>
+                <button 
+                  v-if="currentStep === 4" 
+                  @click="resetStepper" 
+                  class="nav-button primary"
+                >
+                  Start Over
+                </button>
+              </div>
             </div>
-          </div>
-
-          <!-- Navigation -->
-          <div class="stepper-navigation">
-            <button 
-              v-if="currentStep > 1" 
-              @click="previousStep" 
-              class="nav-button secondary"
-            >
-              Vorige
-            </button>
-            <div class="nav-spacer"></div>
-            <button 
-              v-if="currentStep < 4" 
-              @click="nextStep" 
-              class="nav-button primary"
-              :disabled="!canProceed"
-            >
-              Volgende
-            </button>
-            <button 
-              v-if="currentStep === 4" 
-              @click="resetStepper" 
-              class="nav-button primary"
-            >
-              Start Over
-            </button>
           </div>
         </div>
       </div>
     </section>
-
     </main>
 
     <!-- Footer -->
@@ -1036,6 +1041,14 @@ const nextStep = () => {
       currentStep.value++
       updateStepCompletion()
       showSuccess(`Moved to step ${currentStep.value}`)
+      
+      // Scroll to top of widget after step change
+      setTimeout(() => {
+        const widget = document.getElementById('planner-widget')
+        if (widget) {
+          widget.scrollIntoView({ behavior: 'smooth', block: 'start' })
+        }
+      }, 100)
     }, 500)
   }
 }
@@ -1044,6 +1057,14 @@ const previousStep = () => {
   if (currentStep.value > 1) {
     currentStep.value--
     updateStepCompletion()
+    
+    // Scroll to top of widget after step change
+    setTimeout(() => {
+      const widget = document.getElementById('planner-widget')
+      if (widget) {
+        widget.scrollIntoView({ behavior: 'smooth', block: 'start' })
+      }
+    }, 100)
   }
 }
 
@@ -1342,7 +1363,7 @@ onMounted(() => {
 
 /* Hero Section */
 .hero {
-  padding: 4rem 0 1.5rem;
+  padding: 8rem 0 3rem;
   position: relative;
   overflow: hidden;
   margin-top: 0;
@@ -1701,7 +1722,7 @@ onMounted(() => {
   }
   
   .hero {
-    padding: 5rem 0 2rem;
+    padding: 6rem 0 2.5rem;
   }
   
   .hero-content {
@@ -1939,85 +1960,176 @@ textarea:focus,
   background: rgba(255, 255, 255, 0.02);
 }
 
-.stepper-container {
+.progress-container {
   max-width: 900px;
   margin: 0 auto;
 }
 
-/* Stepper Progress */
-.stepper-progress {
+/* Modern Progress Bar */
+.progress-bar-wrapper {
   position: relative;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 1rem;
+  margin-bottom: 2rem;
   padding: 0 2rem;
 }
 
-.stepper-line {
-  position: absolute;
-  top: 50%;
-  left: 2rem;
-  right: 2rem;
-  height: 3px;
-  background: linear-gradient(90deg, #3b82f6, #1d4ed8);
+.progress-bar {
+  position: relative;
+  height: 4px;
+  background: rgba(255, 255, 255, 0.1);
   border-radius: 2px;
-  transform: translateY(-50%);
-  transition: width 0.5s ease;
-  z-index: 1;
+  margin-bottom: 1.5rem;
+  overflow: hidden;
 }
 
-.stepper-circle {
+.progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #3b82f6, #1d4ed8);
+  border-radius: 2px;
+  transition: width 0.5s ease;
   position: relative;
-  width: 50px;
-  height: 50px;
+}
+
+.progress-fill::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 8px;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3));
+  border-radius: 0 2px 2px 0;
+}
+
+.progress-steps {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  position: relative;
+}
+
+.progress-step {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  flex: 1;
+  max-width: 120px;
+}
+
+.step-circle {
+  width: 40px;
+  height: 40px;
   border-radius: 50%;
-  background: rgba(255, 255, 255, 0.1);
-  border: 3px solid rgba(255, 255, 255, 0.2);
   display: flex;
   align-items: center;
   justify-content: center;
   font-weight: 600;
-  font-size: 1.125rem;
-  color: #a1a1aa;
-  cursor: pointer;
+  font-size: 0.875rem;
   transition: all 0.3s ease;
+  margin-bottom: 0.75rem;
+  position: relative;
   z-index: 2;
+  background: rgba(255, 255, 255, 0.1);
+  border: 2px solid rgba(255, 255, 255, 0.2);
+  color: #a1a1aa;
 }
 
-.stepper-circle.active {
+.progress-step.active .step-circle {
   background: linear-gradient(135deg, #3b82f6, #1d4ed8);
   border-color: #3b82f6;
   color: white;
-  transform: scale(1.1);
-  box-shadow: 0 8px 25px rgba(59, 130, 246, 0.4);
+  box-shadow: 0 0 20px rgba(59, 130, 246, 0.3);
 }
 
-.stepper-circle.completed {
+.progress-step.completed .step-circle {
   background: linear-gradient(135deg, #10b981, #059669);
   border-color: #10b981;
   color: white;
 }
 
-.stepper-circle.disabled {
-  background: rgba(255, 255, 255, 0.05);
-  border-color: rgba(255, 255, 255, 0.1);
-  color: #71717a;
-  cursor: not-allowed;
-  opacity: 0.5;
+.step-label {
+  font-size: 0.75rem;
+  color: #a1a1aa;
+  font-weight: 500;
+  text-align: center;
+  line-height: 1.2;
+  transition: color 0.3s ease;
 }
 
-.stepper-circle:hover:not(.active) {
+.progress-step.active .step-label {
+  color: #3b82f6;
+  font-weight: 600;
+}
+
+.progress-step.completed .step-label {
+  color: #10b981;
+}
+
+.check-icon {
+  width: 16px;
+  height: 16px;
+  stroke-width: 2.5;
+}
+
+.progress-step:hover .step-circle {
   transform: scale(1.05);
-  border-color: #3b82f6;
-  cursor: pointer;
 }
 
-/* Stepper circles are now display-only - no click functionality */
+.progress-step:focus .step-circle {
+  outline: 2px solid #3b82f6;
+  outline-offset: 2px;
+}
 
-.checkmark {
-  font-size: 1.25rem;
-  font-weight: 700;
+/* Mobile Responsiveness for Progress Bar */
+@media (max-width: 768px) {
+  .progress-bar-wrapper {
+    padding: 0 1rem;
+    margin-bottom: 1.5rem;
+  }
+  
+  .progress-bar {
+    height: 3px;
+    margin-bottom: 1rem;
+  }
+  
+  .step-circle {
+    width: 35px;
+    height: 35px;
+    font-size: 0.75rem;
+    margin-bottom: 0.5rem;
+  }
+  
+  .step-label {
+    font-size: 0.625rem;
+    max-width: 80px;
+  }
+  
+  .progress-step {
+    max-width: 100px;
+  }
+}
+
+@media (max-width: 480px) {
+  .progress-bar-wrapper {
+    padding: 0 0.5rem;
+  }
+  
+  .step-circle {
+    width: 32px;
+    height: 32px;
+    font-size: 0.625rem;
+  }
+  
+  .step-label {
+    font-size: 0.5rem;
+    max-width: 60px;
+    line-height: 1.1;
+  }
+  
+  .progress-step {
+    max-width: 80px;
+  }
 }
 
 /* Team Input Toggle */
@@ -2154,42 +2266,20 @@ textarea:focus,
   }
 }
 
-/* Step Labels */
-.stepper-labels {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  margin-bottom: 1.5rem;
-  padding: 0 2rem;
-  position: relative;
-}
-
-.step-label {
-  font-size: 0.875rem;
-  color: #a1a1aa;
-  font-weight: 500;
-  text-align: center;
-  transition: color 0.3s ease;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  flex: 1;
-  position: relative;
-  margin-top: 0.75rem;
-  line-height: 1.2;
-  padding: 0 0.25rem;
-  max-width: 80px;
-}
-
-.step-label.active {
-  color: #3b82f6;
-  font-weight: 600;
-}
 
 /* Step Content */
 .step-content {
   min-height: 300px;
+}
+
+/* Step Navigation */
+.step-navigation {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 2rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 .step-panel {
@@ -3806,24 +3896,6 @@ textarea:focus,
     padding: 0 1rem;
   }
   
-  .stepper-circle {
-    width: 40px;
-    height: 40px;
-    font-size: 1rem;
-  }
-  
-  .stepper-labels {
-    padding: 0 0.5rem;
-    margin-top: 0.25rem;
-    gap: 0.5rem;
-  }
-  
-  .step-label {
-    font-size: 0.75rem;
-    max-width: 70px;
-    flex: 1;
-    padding: 0 0.125rem;
-  }
   
   .step-panel {
     padding: 2rem 1.5rem;
@@ -3868,6 +3940,13 @@ textarea:focus,
   .stepper-navigation {
     flex-direction: column;
     gap: 1rem;
+  }
+  
+  .step-navigation {
+    flex-direction: column;
+    gap: 1rem;
+    margin-top: 1.5rem;
+    padding-top: 1rem;
   }
   
   .nav-button {
@@ -4501,7 +4580,7 @@ textarea:focus,
   }
   
   .hero {
-    padding: 4rem 0 2rem;
+    padding: 5rem 0 2rem;
   }
   
   .hero-content {
@@ -4534,19 +4613,6 @@ textarea:focus,
     padding: 1rem 0.75rem;
   }
   
-  .stepper-circle {
-    width: 35px;
-    height: 35px;
-    font-size: 0.875rem;
-  }
-  
-  .step-label {
-    font-size: 0.75rem;
-    max-width: 70px;
-    width: 100%;
-    line-height: 1.2;
-    text-align: center;
-  }
   
   .velocity-grid-minimal {
     grid-template-columns: repeat(3, 1fr);
@@ -4637,24 +4703,9 @@ textarea:focus,
   }
   
   /* Touch-friendly targets */
-  .stepper-circle {
+  .step-circle {
     min-width: 44px;
     min-height: 44px;
-  }
-  
-  .stepper-labels {
-    padding: 0 0.25rem;
-    margin-top: 0.5rem;
-    gap: 0.25rem;
-  }
-  
-  .step-label {
-    font-size: 0.625rem;
-    max-width: 60px;
-    flex: 1;
-    text-align: center;
-    line-height: 1.1;
-    padding: 0 0.125rem;
   }
   
   .remove-absence-button-minimal {
