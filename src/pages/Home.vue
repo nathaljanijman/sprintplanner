@@ -531,6 +531,8 @@
                       @click="addAbsence" 
                       :disabled="!newAbsence.developerId || !newAbsence.hours"
                       class="add-absence-button-minimal"
+                      aria-label="Voeg afwezigheid toe"
+                      title="Klik om afwezigheid toe te voegen"
                     >
                       +
                     </button>
@@ -3340,6 +3342,26 @@ textarea:focus,
     margin-bottom: 1.5rem;
   }
   
+  .form-row-minimal {
+    gap: 1rem;
+    flex-direction: column;
+  }
+  
+  .form-group-minimal {
+    width: 100%;
+  }
+  
+  .absence-select-minimal, .absence-input-minimal {
+    min-height: 48px;
+    font-size: 1rem;
+    padding: 0.75rem;
+  }
+  
+  .add-absence-button-minimal {
+    min-height: 48px;
+    min-width: 48px;
+  }
+  
   .summary-card-minimal {
     padding: 1.5rem;
   }
@@ -4401,7 +4423,18 @@ textarea:focus,
 /* Extra small mobile devices */
 @media (max-width: 480px) {
   .hero-container {
-    padding: 0 0.75rem;
+    padding: 0 1rem;
+    gap: 1.5rem;
+  }
+  
+  .hero-content {
+    text-align: center;
+  }
+  
+  .subtitle {
+    margin-left: auto;
+    margin-right: auto;
+    max-width: 90%;
   }
   
   .step-panel {
@@ -4415,9 +4448,11 @@ textarea:focus,
   }
   
   .step-label {
-    font-size: 0.625rem;
-    max-width: 60px;
+    font-size: 0.75rem;
+    max-width: 70px;
     width: 100%;
+    line-height: 1.2;
+    text-align: center;
   }
   
   .velocity-grid-minimal {
@@ -4430,8 +4465,9 @@ textarea:focus,
   }
   
   .velocity-input-minimal {
-    font-size: 0.875rem;
-    padding: 0.375rem;
+    font-size: 1rem;
+    padding: 0.75rem;
+    min-height: 44px;
   }
   
   .sprint-number {
@@ -4451,16 +4487,54 @@ textarea:focus,
   }
   
   .nav-button {
-    padding: 0.75rem 1.5rem;
-    font-size: 0.875rem;
+    padding: 1rem 2rem;
+    font-size: 1rem;
+    min-height: 48px;
+    width: 100%;
+    max-width: 200px;
+  }
+  
+  .stepper-navigation {
+    flex-direction: column;
+    gap: 1rem;
+    align-items: center;
+  }
+  
+  .nav-spacer {
+    display: none;
   }
   
   .result-number {
     font-size: 2.5rem;
   }
   
+  .results-grid {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+  
+  .result-card {
+    padding: 1.5rem;
+  }
+  
   .main-result {
     padding: 1.5rem 1rem;
+  }
+  
+  /* Touch-friendly targets */
+  .stepper-circle {
+    min-width: 44px;
+    min-height: 44px;
+  }
+  
+  .remove-absence-button-minimal {
+    min-width: 44px;
+    min-height: 44px;
+  }
+  
+  .toggle-button {
+    min-height: 60px;
+    padding: 1rem;
   }
 }
 </style>
