@@ -1339,12 +1339,7 @@ onMounted(() => {
 .hero-content {
   text-align: left;
   z-index: 2;
-}
-
-.hero-visual {
-  display: flex;
-  justify-content: center;
-  align-items: center;
+  padding: 2rem 0;
 }
 
 .title {
@@ -1364,9 +1359,14 @@ onMounted(() => {
   line-height: 1.6;
   margin-bottom: 1.5rem;
   max-width: 500px;
-  margin-left: auto;
-  margin-right: auto;
 }
+
+.hero-visual {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
 
 .cta-button {
   display: inline-flex;
@@ -1673,11 +1673,26 @@ onMounted(() => {
   
   .hero-content {
     text-align: center;
+    padding: 1rem 0;
+  }
+  
+  .title {
+    font-size: 2.5rem;
+    margin-bottom: 1rem;
   }
   
   .subtitle {
+    font-size: 1.125rem;
     margin-left: auto;
     margin-right: auto;
+    max-width: 80%;
+    margin-bottom: 2rem;
+  }
+  
+  .cta-button {
+    width: 100%;
+    max-width: 250px;
+    margin: 0 auto;
   }
   
   
@@ -4429,12 +4444,26 @@ textarea:focus,
   
   .hero-content {
     text-align: center;
+    padding: 1rem 0;
+  }
+  
+  .title {
+    font-size: 2rem;
+    margin-bottom: 1rem;
   }
   
   .subtitle {
+    font-size: 1rem;
     margin-left: auto;
     margin-right: auto;
     max-width: 90%;
+    margin-bottom: 2rem;
+  }
+  
+  .cta-button {
+    width: 100%;
+    max-width: 300px;
+    margin: 0 auto;
   }
   
   .step-panel {
