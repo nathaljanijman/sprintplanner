@@ -28,16 +28,35 @@
       <div class="cookie-content">
         <div class="cookie-text">
           <h4 id="cookie-title">Cookie Instellingen</h4>
-          <p id="cookie-description">We gebruiken lokale opslag om je sprint planning data op je apparaat op te slaan. Geen data wordt verzonden naar externe servers.</p>
+          <p id="cookie-description">We gebruiken cookies en lokale opslag om je sprint planning data en voorkeuren lokaal op je apparaat op te slaan. Geen data wordt verzonden naar externe servers.</p>
+
+          <div class="cookie-categories">
+            <div class="cookie-category">
+              <h5>Essentiële Cookies (Vereist)</h5>
+              <p>Noodzakelijk voor het functioneren van de applicatie. Kan niet worden uitgeschakeld.</p>
+              <ul>
+                <li>Sprint planning data (lokale opslag)</li>
+                <li>Taal voorkeuren</li>
+                <li>Cookie toestemming status</li>
+              </ul>
+            </div>
+          </div>
+
+          <div class="data-controller">
+            <h5>Data Beheerder</h5>
+            <p>Sprint Planner (sprintplanner.nl)<br>
+            Data bewaring: Tot handmatig verwijderd door gebruiker<br>
+            Juridische basis: Gerechtvaardigd belang (Art. 6(1)(f) AVG)</p>
+          </div>
         </div>
         <div class="cookie-actions">
           <button @click="acceptCookies" class="cookie-button primary" aria-describedby="accept-description">
-            Accepteren
+            Alles Accepteren
           </button>
           <router-link to="/privacy" class="cookie-button secondary">
-            Meer info
+            Privacybeleid
           </router-link>
-          <span id="accept-description" class="sr-only">Accepteer lokale opslag om de applicatie te gebruiken</span>
+          <span id="accept-description" class="sr-only">Accepteer essentiële cookies en ga door met het gebruiken van de applicatie</span>
         </div>
       </div>
     </div>
@@ -45,10 +64,10 @@
     <!-- Navigation -->
     <nav class="navbar" role="navigation" aria-label="Main navigation">
       <div class="nav-container">
-        <router-link to="/" class="logo-link">
-          <img src="/logo-icon.png" alt="Sprint Planner" class="nav-logo" />
-          <span class="nav-brand-text">Sprint Planner.</span>
-        </router-link>
+        <div class="nav-brand">
+          <img src="/logo.svg" alt="Sprint Planner" class="nav-logo" />
+          <h2>Sprint Planner</h2>
+        </div>
         <div class="nav-links">
           <a 
             href="https://www.linkedin.com/in/nathalja-nijman-86410389/" 
@@ -68,9 +87,9 @@
 
     <!-- Main Content -->
     <main id="main-content">
-    <!-- Hero Section -->
+      <!-- Hero Section -->
       <section class="hero" aria-labelledby="hero-title">
-      <div class="hero-container">
+        <div class="hero-container">
         <div class="hero-content">
             <h1 id="hero-title" class="title">Sprint Planner</h1>
             <p class="subtitle">De eenvoudigste manier om je sprints te plannen en je team's velocity te tracken</p>
@@ -189,7 +208,7 @@
             <div class="progress-bar">
               <div 
                 class="progress-fill"
-                :style="{ width: ((currentStep - 1) / (steps.length - 1)) * 100 + '%' }"
+                :style="{ width: `${((currentStep - 1) / (steps.length - 1)) * 100}%` }"
                 aria-hidden="true"
               ></div>
             </div>
@@ -203,7 +222,7 @@
                   'active': index + 1 === currentStep,
                   'completed': index + 1 < currentStep 
                 }"
-                :aria-label="'Stap ' + (index + 1) + ': ' + step.title"
+                :aria-label="`Stap ${index + 1}: ${step.title}`"
                 role="button"
                 tabindex="0"
                 @click="goToStep(index + 1)"
@@ -234,8 +253,8 @@
               
               <!-- Input Method Toggle -->
               <div class="input-method-toggle">
-                <button
-                  @click="velocityInputMethod = 'manual'; updateStepCompletion()"
+                <button 
+                  @click="velocityInputMethod = 'manual'"
                   class="toggle-button"
                   :class="{ 'active': velocityInputMethod === 'manual' }"
                 >
@@ -245,8 +264,8 @@
                   </div>
                 </button>
                 
-                <button
-                  @click="velocityInputMethod = 'individual'; updateStepCompletion()"
+                <button 
+                  @click="velocityInputMethod = 'individual'"
                   class="toggle-button"
                   :class="{ 'active': velocityInputMethod === 'individual' }"
                 >
@@ -317,17 +336,6 @@
                   <div class="summary-value-minimal">{{ displayAverageVelocity }}</div>
                   <div class="summary-subtitle">story points per sprint</div>
                 </div>
-              </div>
-
-              <!-- Navigation for Step 1 -->
-              <div class="step-navigation">
-                <button
-                  @click="nextStep"
-                  class="nav-button primary"
-                  :disabled="!canProceed"
-                >
-                  Volgende
-                </button>
               </div>
             </div>
 
@@ -494,23 +502,6 @@
                 </div>
 
                 <!-- Simplified Team Summary -->
-
-              <!-- Navigation for Step 2 -->
-              <div class="step-navigation">
-                <button
-                  @click="previousStep"
-                  class="nav-button secondary"
-                >
-                  Vorige
-                </button>
-                <button
-                  @click="nextStep"
-                  class="nav-button primary"
-                  :disabled="!canProceed"
-                >
-                  Volgende
-                </button>
-              </div>
             </div>
 
             <!-- Step 3: Availability -->
@@ -588,23 +579,6 @@
                   <div class="final-value-minimal">{{ finalCapacity }} uur</div>
                 </div>
               </div>
-
-              <!-- Navigation for Step 3 -->
-              <div class="step-navigation">
-                <button
-                  @click="previousStep"
-                  class="nav-button secondary"
-                >
-                  Vorige
-                </button>
-                <button
-                  @click="nextStep"
-                  class="nav-button primary"
-                  :disabled="!canProceed"
-                >
-                  Volgende
-                </button>
-              </div>
             </div>
 
             <!-- Step 4: Results -->
@@ -646,27 +620,38 @@
                     </div>
                   </div>
                 </div>
-
-              <!-- Navigation for Step 4 -->
+              </div>
+              
+              <!-- Navigation within step -->
               <div class="step-navigation">
-                <button
-                  @click="previousStep"
+                <button 
+                  v-if="currentStep > 1" 
+                  @click="previousStep" 
                   class="nav-button secondary"
                 >
                   Vorige
                 </button>
-                <button
-                  @click="resetStepper"
+                <div class="nav-spacer"></div>
+                <button 
+                  v-if="currentStep < 4" 
+                  @click="nextStep" 
+                  class="nav-button primary"
+                  :disabled="!canProceed"
+                >
+                  Volgende
+                </button>
+                <button 
+                  v-if="currentStep === 4" 
+                  @click="resetStepper" 
                   class="nav-button primary"
                 >
                   Start Over
                 </button>
               </div>
-              </div>
-
             </div>
           </div>
         </div>
+      </div>
     </section>
     </main>
 
@@ -676,11 +661,8 @@
         <div class="footer-content">
           <div class="footer-content-minimal">
             <div class="footer-brand-minimal">
+              <h3>Sprint Planner</h3>
               <p class="footer-copyright">© 2025 sprintplanner.nl</p>
-              <router-link to="/" class="footer-logo-link">
-                <img src="/logo-icon.png" alt="Sprint Planner" class="footer-logo" />
-                <span class="footer-brand-text">Sprint Planner.</span>
-              </router-link>
             </div>
             <div class="footer-links-minimal">
               <router-link to="/privacy" class="footer-link-minimal">Privacy</router-link>
@@ -736,7 +718,7 @@ const showError = (message) => {
 // Stepper data
 const currentStep = ref(1)
 const canProceed = ref(false)
-const velocityInputMethod = ref('manual')
+const velocityInputMethod = ref('average')
 const manualAverageVelocity = ref(0)
 const cookieConsentAccepted = ref(false)
 
@@ -1258,52 +1240,30 @@ onMounted(() => {
   left: 0;
   right: 0;
   z-index: 1000;
-  background: rgba(0, 0, 0, 0.9);
+  background: rgba(0, 0, 0, 0.8);
   backdrop-filter: blur(20px);
   border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-  height: 70px;
 }
 
 .nav-container {
   max-width: 1200px;
   margin: 0 auto;
-  padding: 0 2rem;
+  padding: 1rem 2rem;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  height: 70px;
 }
 
-
-.logo-link {
+.nav-brand {
   display: flex;
   align-items: center;
-  text-decoration: none;
-  gap: 0.25rem;
-}
-
-.nav-brand-text {
-  font-size: 1.5rem;
-  font-weight: 600;
-  margin: 0;
-  background: linear-gradient(135deg, var(--text-primary), var(--accent-primary));
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
+  gap: 0.75rem;
 }
 
 .nav-logo {
+  width: 32px;
+  height: 32px;
   flex-shrink: 0;
-  cursor: pointer;
-  transition: opacity 0.2s ease;
-}
-
-.nav-logo:hover {
-  opacity: 0.8;
-}
-.nav-logo {
-  height: 40px;
-  width: auto;
 }
 
 .nav-brand h2 {
@@ -1372,16 +1332,10 @@ onMounted(() => {
 }
 
 @media (max-width: 768px) {
-  .nav-logo-desktop {
-    display: none;
+  .nav-logo {
+    width: 28px;
+    height: 28px;
   }
-
-  .nav-logo-mobile {
-    display: block;
-    width: 36px;
-    height: 36px;
-  }
-
   
   .nav-brand h2 {
     font-size: 1.25rem;
@@ -1409,7 +1363,7 @@ onMounted(() => {
 
 /* Hero Section */
 .hero {
-  padding: 10rem 0 4rem;
+  padding: 8rem 0 3rem;
   position: relative;
   overflow: hidden;
   margin-top: 0;
@@ -1713,43 +1667,11 @@ onMounted(() => {
   gap: 1rem;
 }
 
-.footer-logo-link {
-  display: flex;
-  align-items: center;
-  text-decoration: none;
-  gap: 0.5rem;
-}
-
-.footer-brand-text {
-  font-size: 1.1rem;
+.footer-brand-minimal h3 {
+  font-size: 1.25rem;
   font-weight: 600;
+  color: #ffffff;
   margin: 0;
-  background: linear-gradient(135deg, var(--text-primary), var(--accent-primary));
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-}
-
-.footer-logo {
-  height: 32px;
-  width: auto;
-  transition: opacity 0.2s ease;
-}
-
-.footer-logo:hover {
-  opacity: 0.8;
-}
-
-.footer-logo-desktop {
-  height: 80px !important;
-  width: auto !important;
-  display: block !important;
-}
-
-.footer-logo-mobile {
-  width: 32px;
-  height: 32px;
-  display: none;
 }
 
 .footer-copyright {
@@ -1783,17 +1705,13 @@ onMounted(() => {
     flex-direction: column;
     gap: 1rem;
   }
-
-  .nav-brand-text {
-    display: none;
-  }
-
+  
   .nav-links {
     gap: 1.5rem;
   }
   
   .hero {
-    padding: 8rem 0 3rem;
+    padding: 0.5rem 0 1.5rem;
   }
   
   .hero-container {
@@ -1804,7 +1722,7 @@ onMounted(() => {
   }
   
   .hero {
-    padding: 8rem 0 3rem;
+    padding: 6rem 0 2.5rem;
   }
   
   .hero-content {
@@ -1856,15 +1774,7 @@ onMounted(() => {
     text-align: center;
     gap: 1.5rem;
   }
-
-  .footer-logo-desktop {
-    display: none;
-  }
-
-  .footer-logo-mobile {
-    display: block;
-  }
-
+  
   .footer-links-minimal {
     gap: 1.5rem;
   }
@@ -2364,14 +2274,12 @@ textarea:focus,
 
 /* Step Navigation */
 .step-navigation {
-  display: flex !important;
-  justify-content: flex-end;
+  display: flex;
+  justify-content: space-between;
   align-items: center;
-  margin-top: 1rem;
-  padding: 0;
-  border: none;
-  background: transparent;
-  gap: 0.75rem;
+  margin-top: 2rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 .step-panel {
@@ -3935,19 +3843,18 @@ textarea:focus,
 }
 
 .nav-button {
-  padding: 0.5rem 1rem !important;
-  border-radius: 0.375rem;
-  font-weight: 500;
-  font-size: 0.875rem !important;
+  padding: 1rem 2rem;
+  border-radius: 0.75rem;
+  font-weight: 600;
+  font-size: 1rem;
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: all 0.3s ease;
   border: none;
-  min-width: auto !important;
+  min-width: 140px;
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 0.25rem;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  gap: 0.5rem;
 }
 
 .nav-button.primary {
@@ -4044,10 +3951,7 @@ textarea:focus,
   
   .nav-button {
     width: 100%;
-    max-width: 250px;
-    padding: 1.25rem 2.5rem;
-    font-size: 1.1rem;
-    min-height: 56px;
+    max-width: 200px;
   }
   
   .input-method-toggle {
@@ -4676,7 +4580,7 @@ textarea:focus,
   }
   
   .hero {
-    padding: 7rem 0 2.5rem;
+    padding: 5rem 0 2rem;
   }
   
   .hero-content {
@@ -4754,11 +4658,11 @@ textarea:focus,
   }
   
   .nav-button {
-    padding: 1.25rem 2.5rem;
-    font-size: 1.1rem;
-    min-height: 56px;
+    padding: 1rem 2rem;
+    font-size: 1rem;
+    min-height: 48px;
     width: 100%;
-    max-width: 250px;
+    max-width: 200px;
   }
   
   .stepper-navigation {
@@ -4822,79 +4726,6 @@ textarea:focus,
   .input-method-toggle .toggle-button {
     min-height: 70px;
     padding: 1.25rem;
-  }
-}
-
-/* Mobile UX Optimizations - Senior UX Review */
-@media (max-width: 768px) {
-  /* Critical: Improve step navigation touch targets */
-  .step-navigation {
-    flex-direction: column !important;
-    gap: 1rem !important;
-    margin-top: 2rem !important;
-    padding: 1.5rem !important;
-    background: rgba(59, 130, 246, 0.05) !important;
-    border: 1px solid rgba(59, 130, 246, 0.1) !important;
-    border-radius: 0.75rem !important;
-  }
-
-  .nav-button {
-    width: 100% !important;
-    padding: 1rem 1.5rem !important;
-    font-size: 1rem !important;
-    min-height: 52px !important;
-    border-radius: 0.5rem !important;
-    font-weight: 600 !important;
-    max-width: none !important;
-  }
-
-  /* Enhanced input field touch targets */
-  .manual-velocity-input,
-  .config-input-minimal,
-  .absence-input-minimal {
-    min-height: 52px !important;
-    font-size: 1rem !important;
-    padding: 1rem !important;
-  }
-
-  /* Better visual feedback on touch */
-  .toggle-button {
-    min-height: 64px !important;
-    padding: 1rem !important;
-  }
-
-  /* Improved step header readability */
-  .step-header h3 {
-    font-size: 1.75rem !important;
-    margin-bottom: 1rem !important;
-  }
-
-  .step-header p {
-    font-size: 1.1rem !important;
-    line-height: 1.5 !important;
-  }
-
-  /* Progress bar enhancement */
-  .stepper-progress {
-    margin-bottom: 2rem !important;
-    padding: 0 1rem !important;
-  }
-}
-
-/* Extra mobile optimizations for very small screens */
-@media (max-width: 480px) {
-  .step-panel {
-    padding: 1.5rem 1rem !important;
-  }
-
-  .nav-button {
-    padding: 1.25rem 1rem !important;
-    font-size: 1.1rem !important;
-    min-height: 56px !important;
-  }
-
-  .step-header h3 {
-    font-size: 1.5rem !important;
   }
 }
 </style>

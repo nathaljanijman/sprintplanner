@@ -1,0 +1,26 @@
+<svg width="400" height="100" viewBox="0 0 400 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Logo Icon Circle - exact match to original -->
+  <circle cx="50" cy="50" r="35" fill="#4285f4"/>
+
+  <!-- Chart/Arrow Icon - matching original design -->
+  <g transform="translate(50, 50)">
+    <!-- Mountain/chart path -->
+    <path d="M-15 8 L-8 -5 L0 2 L8 -8 L15 -2"
+          stroke="white"
+          stroke-width="3"
+          fill="none"
+          stroke-linecap="round"
+          stroke-linejoin="round"/>
+
+    <!-- Arrow -->
+    <path d="M10 -6 L15 -2 L12 1"
+          stroke="white"
+          stroke-width="2.5"
+          fill="none"
+          stroke-linecap="round"
+          stroke-linejoin="round"/>
+  </g>
+
+  <!-- Text: SprintPlanner. -->
+  <text x="110" y="60" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="28" font-weight="600" fill="#4285f4">SprintPlanner.</text>
+</svg>
