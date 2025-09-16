@@ -1320,9 +1320,10 @@ onMounted(() => {
 
 /* Hero Section */
 .hero {
-  padding: 5rem 0 2rem;
+  padding: 6rem 0 3rem;
   position: relative;
   overflow: hidden;
+  margin-top: 0;
 }
 
 .hero-container {
@@ -1340,6 +1341,10 @@ onMounted(() => {
   text-align: left;
   z-index: 2;
   padding: 2rem 0;
+  min-height: 300px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
 }
 
 .title {
@@ -1359,6 +1364,8 @@ onMounted(() => {
   line-height: 1.6;
   margin-bottom: 1.5rem;
   max-width: 500px;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
 }
 
 .hero-visual {
@@ -1671,9 +1678,14 @@ onMounted(() => {
     min-height: auto;
   }
   
+  .hero {
+    padding: 5rem 0 2rem;
+  }
+  
   .hero-content {
     text-align: center;
     padding: 1rem 0;
+    min-height: 250px;
   }
   
   .title {
@@ -1687,6 +1699,7 @@ onMounted(() => {
     margin-right: auto;
     max-width: 80%;
     margin-bottom: 2rem;
+    word-wrap: break-word;
   }
   
   .cta-button {
@@ -4442,9 +4455,14 @@ textarea:focus,
     gap: 1.5rem;
   }
   
+  .hero {
+    padding: 4rem 0 2rem;
+  }
+  
   .hero-content {
     text-align: center;
     padding: 1rem 0;
+    min-height: 200px;
   }
   
   .title {
@@ -4458,6 +4476,7 @@ textarea:focus,
     margin-right: auto;
     max-width: 90%;
     margin-bottom: 2rem;
+    word-wrap: break-word;
   }
   
   .cta-button {
