@@ -65,6 +65,7 @@
     <nav class="navbar" role="navigation" aria-label="Main navigation">
       <div class="nav-container">
         <div class="nav-brand">
+          <img src="/logo.svg" alt="Sprint Planner" class="nav-logo" />
           <h2>Sprint Planner</h2>
         </div>
         <div class="nav-links">
@@ -1232,6 +1233,18 @@ onMounted(() => {
   align-items: center;
 }
 
+.nav-brand {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.nav-logo {
+  width: 32px;
+  height: 32px;
+  flex-shrink: 0;
+}
+
 .nav-brand h2 {
   font-size: 1.5rem;
   font-weight: 700;
@@ -1298,6 +1311,15 @@ onMounted(() => {
 }
 
 @media (max-width: 768px) {
+  .nav-logo {
+    width: 28px;
+    height: 28px;
+  }
+  
+  .nav-brand h2 {
+    font-size: 1.25rem;
+  }
+  
   .linkedin-text {
     font-size: 0.75rem;
   }
