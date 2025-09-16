@@ -10,7 +10,6 @@
         <div class="nav-links">
           <router-link to="/" class="nav-link">{{ $t('nav.home') }}</router-link>
           <router-link to="/planner" class="nav-link">{{ $t('nav.planner') }}</router-link>
-          <LanguageSwitcher />
         </div>
       </div>
     </nav>
@@ -402,7 +401,6 @@
 <script setup>
 import { ref, computed, onMounted } from 'vue'
 import { useI18n } from 'vue-i18n'
-import LanguageSwitcher from '../components/LanguageSwitcher.vue'
 
 const { t } = useI18n()
 
