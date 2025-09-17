@@ -111,7 +111,7 @@
                         fill="none" 
                         class="simple-trend"/>
                   <circle cx="260" cy="20" r="4" fill="#3b82f6" class="trend-dot"/>
-                </svg>
+            </svg>
               </div>
               <div class="chart-labels">
                 <span>Sprint 18</span>
@@ -179,8 +179,8 @@
             <h3>Simpel & snel</h3>
             <p>Intuïtieve interface die je binnen seconden resultaten geeft</p>
           </div>
-        </div>
-      </div>
+            </div>
+          </div>
     </section>
 
     <!-- Planner Widget -->
@@ -189,7 +189,7 @@
         <div class="section-header">
           <h2 id="planner-title" class="section-title">Sprint Planner</h2>
           <p class="section-subtitle">Plan je volgende sprint in 4 eenvoudige stappen</p>
-        </div>
+            </div>
         
         <div class="progress-container" role="group" aria-labelledby="progress-title">
           <h3 id="progress-title" class="sr-only">Sprint planning wizard</h3>
@@ -205,12 +205,12 @@
             </div>
             
             <div class="progress-steps">
-                <div 
-                  v-for="(step, index) in steps" 
-                  :key="index"
+            <div 
+              v-for="(step, index) in steps" 
+              :key="index"
                   class="progress-step"
-                  :class="{ 
-                    'active': index + 1 === currentStep,
+              :class="{ 
+                'active': index + 1 === currentStep, 
                     'completed': index + 1 < currentStep,
                     'clickable': index + 1 < currentStep || index + 1 === currentStep
                   }"
@@ -227,12 +227,12 @@
                       <path d="M20 6L9 17l-5-5"/>
                     </svg>
                     <span v-else aria-hidden="true">{{ index + 1 }}</span>
-                  </div>
+          </div>
                   <div class="step-label">
                     <span class="step-title">{{ step.title }}</span>
                     <span v-if="index + 1 < currentStep" class="step-status">Voltooid</span>
                     <span v-else-if="index + 1 === currentStep" class="step-status current">Huidig</span>
-                  </div>
+        </div>
                   <div :id="'step-' + (index + 1) + '-description'" class="sr-only">
                     {{ index + 1 === 1 ? 'Configureer je team velocity door historische data in te voeren of een gemiddelde waarde op te geven.' : '' }}
                     {{ index + 1 === 2 ? 'Stel je team capaciteit in door het aantal developers en hun beschikbare uren per week te definiëren.' : '' }}
@@ -241,8 +241,8 @@
                   </div>
                 </div>
             </div>
+      </div>
           </div>
-        </div>
 
 
           <!-- Step Content -->
@@ -256,7 +256,7 @@
               
               <!-- Input Method Toggle -->
               <div class="input-method-toggle">
-                <button
+                <button 
                   @click="velocityInputMethod = 'manual'; updateStepCompletion()"
                   class="toggle-button"
                   :class="{ 'active': velocityInputMethod === 'manual' }"
@@ -267,7 +267,7 @@
                   </div>
                 </button>
                 
-                <button
+                <button 
                   @click="velocityInputMethod = 'individual'; updateStepCompletion()"
                   class="toggle-button"
                   :class="{ 'active': velocityInputMethod === 'individual' }"
@@ -294,7 +294,7 @@
                       :id="`sprint-${index}`"
                       v-model.number="sprint.velocity" 
                       type="number" 
-                      min="0"
+                      min="0" 
                       placeholder="0"
                       :class="['velocity-input-minimal', { 'error': !isFieldValid(`sprint-${index}`) }]"
                       @input="validateField(`sprint-${index}`, sprint.velocity, { required: true, min: 1 }); updateStepCompletion()"
@@ -350,17 +350,6 @@
                 </div>
               </div>
 
-              <!-- Navigation for Step 1 -->
-              <div class="step-navigation" style="display: flex !important; justify-content: flex-end !important; margin-top: 3rem !important; padding: 2rem !important; background: rgba(255,255,255,0.05) !important; border: 1px solid rgba(255, 255, 255, 0.1) !important; border-radius: 1rem !important; gap: 1rem !important;">
-                <button
-                  @click="nextStep"
-                  class="nav-button primary"
-                  :disabled="!canProceed"
-                  style="display: inline-flex !important; align-items: center !important; justify-content: center !important; padding: 1rem 2rem !important; background: #3b82f6 !important; border: 1px solid #3b82f6 !important; border-radius: 0.5rem !important; color: white !important; font-size: 1rem !important; font-weight: 500 !important; cursor: pointer !important; transition: all 0.2s ease !important; min-width: 120px !important;"
-                >
-                  Volgende
-                </button>
-              </div>
             </div>
 
             <!-- Step 2: Team Capacity -->
@@ -369,13 +358,13 @@
               <div class="step-header">
                 <h3>{{ steps[1].title }}</h3>
                 <p>Configureer je team capaciteit op basis van contracturen of individuele developers</p>
-                </div>
-
+              </div>
+              
                 
-
+                
                 <!-- Team Input Method Toggle -->
                 <div class="team-input-toggle" style="display: grid !important; grid-template-columns: 1fr 1fr !important; gap: 1rem !important; margin-bottom: 2rem !important; padding: 1rem !important; background: rgba(255, 255, 255, 0.1) !important; border-radius: 1rem !important;">
-                  <button
+                  <button 
                   @click="setTeamMethod('average')"
                   :class="['toggle-button', { active: teamInputMethod === 'average' }]"
                   aria-pressed="teamInputMethod === 'average'"
@@ -392,7 +381,7 @@
                     </div>
                   </button>
                   
-                  <button
+                  <button 
                   @click="setTeamMethod('individual')"
                   :class="['toggle-button', { active: teamInputMethod === 'individual' }]"
                   aria-pressed="teamInputMethod === 'individual'"
@@ -409,7 +398,7 @@
                     </div>
                   </button>
                 </div>
-
+                
               <!-- Individual Developers Section -->
               <div v-if="teamInputMethod === 'individual'" style="background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1); padding: 2rem; margin: 2rem 0; border-radius: 1rem;">
                 <h4 style="color: #3b82f6; margin-bottom: 1rem; font-size: 1.2rem;">Individuele Developers</h4>
@@ -424,7 +413,7 @@
                         type="text"
                         placeholder="Bijv. Jan de Vries"
                         style="width: 100%; padding: 0.75rem; background: rgba(255, 255, 255, 0.1); border: 1px solid rgba(255, 255, 255, 0.2); border-radius: 0.5rem; color: white; font-size: 1rem;">
-                    </div>
+                      </div>
                     <div>
                       <label style="display: block; color: #ffffff; font-size: 0.875rem; margin-bottom: 0.5rem;">Uren per week</label>
                       <input
@@ -434,19 +423,19 @@
                         min="1"
                         max="60"
                         style="width: 100%; padding: 0.75rem; background: rgba(255, 255, 255, 0.1); border: 1px solid rgba(255, 255, 255, 0.2); border-radius: 0.5rem; color: white; font-size: 1rem;">
-                    </div>
+                      </div>
                     <button
                       @click="addDeveloper"
                       style="padding: 0.75rem 1.5rem; background: #3b82f6; border: none; border-radius: 0.5rem; color: white; font-weight: 500; cursor: pointer;">
                       Toevoegen
-                    </button>
+                      </button>
+                    </div>
                   </div>
-                </div>
 
                 <!-- Developer List -->
                 <div v-if="developers.length === 0" style="color: #a1a1aa; font-size: 0.875rem; text-align: center; padding: 2rem;">
                   Nog geen developers toegevoegd. Voeg je eerste developer toe om te beginnen.
-                </div>
+                      </div>
 
                 <div v-if="developers.length > 0" style="margin-top: 1.5rem;">
                   <h5 style="color: #ffffff; margin-bottom: 1rem; font-size: 1rem;">Team Overzicht</h5>
@@ -457,14 +446,14 @@
                     </div>
                     <button @click="removeDeveloper(developer.id)" style="background: rgba(239, 68, 68, 0.2); border: 1px solid rgba(239, 68, 68, 0.5); color: #ef4444; padding: 0.5rem; border-radius: 0.25rem; cursor: pointer; font-size: 0.875rem;">
                       Verwijder
-                    </button>
-                  </div>
+                        </button>
+                      </div>
 
                   <div style="background: rgba(59, 130, 246, 0.1); border: 1px solid rgba(59, 130, 246, 0.3); padding: 1rem; border-radius: 0.5rem; margin-top: 1rem; text-align: center;">
                     <span style="color: #3b82f6; font-weight: 600;">Totaal: {{ totalIndividualHours }} uur/week</span>
+                    </div>
                   </div>
                 </div>
-              </div>
 
               <!-- Average Team Hours Option -->
               <div v-if="teamInputMethod === 'average'" class="average-team-section">
@@ -481,8 +470,8 @@
                         @input="updateStepCompletion"
                       />
                       <span class="input-suffix-minimal">weken</span>
-                      </div>
-                      </div>
+                    </div>
+                    </div>
 
                   <div class="config-item-minimal">
                     <label>Aantal developers</label>
@@ -499,10 +488,10 @@
                       />
                       <div v-if="!isFieldValid('teamMembers')" id="team-members-error" class="field-error">
                         {{ getFieldError('teamMembers') }}
-                      </div>
-                      <span class="input-suffix-minimal">personen</span>
-                    </div>
                   </div>
+                      <span class="input-suffix-minimal">personen</span>
+                </div>
+              </div>
 
                   <div class="config-item-minimal">
                     <label>Gemiddelde uren per week</label>
@@ -519,12 +508,12 @@
                       />
                       <div v-if="!isFieldValid('averageHours')" id="average-hours-error" class="field-error">
                         {{ getFieldError('averageHours') }}
-                      </div>
+                  </div>
                       <span class="input-suffix-minimal">uur</span>
-                      </div>
-                      </div>
                     </div>
-                
+                    </div>
+                    </div>
+                    
                 <!-- Team Capacity Summary for Average -->
                 <div class="team-capacity-summary-minimal">
                   <div class="compact-result-card" @click="toggleTeamCapacityDetails">
@@ -532,9 +521,9 @@
                     <div class="compact-result-label">uur</div>
                     <div v-if="showTeamCapacityDetails" class="compact-result-details">
                       {{ capacity.teamMembers }} personen × {{ capacity.sprintWeeks }} weken × {{ averageTeamHours }}u/week
-                    </div>
-                  </div>
                 </div>
+              </div>
+            </div>
 
               <!-- Individual Developers Option -->
               <div v-if="teamInputMethod === 'individual'" style="background: rgba(59, 130, 246, 0.1); border: 1px solid rgba(59, 130, 246, 0.3); padding: 2rem; margin: 2rem 0; border-radius: 1rem;">
@@ -550,7 +539,7 @@
                         placeholder="Bijv. Jan de Vries"
                         class="developer-input-minimal"
                       />
-                    </div>
+              </div>
                     <div class="form-group-minimal">
                       <label>Uren per week</label>
                       <input
@@ -561,7 +550,7 @@
                         class="hours-input-minimal"
                       />
                   </div>
-                <button
+                <button 
                       @click="addDeveloper"
                       :disabled="!newDeveloper.name.trim() || !newDeveloper.contractHoursPerWeek"
                       class="add-button-minimal"
@@ -578,8 +567,8 @@
                   </div>
                     <button @click="removeDeveloper(developer.id)" class="remove-button-minimal">
                       Verwijderen
-                    </button>
-                    </div>
+                </button>
+              </div>
                     </div>
                     
                 <!-- Team Capacity Summary for Individual -->
@@ -592,35 +581,17 @@
                     </div>
                   </div>
                 </div>
-              </div>
-
-              <!-- Navigation for Step 2 -->
-              <div class="step-navigation" style="display: flex !important; justify-content: space-between !important; margin-top: 3rem !important; padding: 2rem !important; background: rgba(255,255,255,0.05) !important; border: 1px solid rgba(255, 255, 255, 0.1) !important; border-radius: 1rem !important; gap: 1rem !important;">
-                <button
-                  @click="previousStep"
-                  class="nav-button secondary"
-                  style="display: inline-flex !important; align-items: center !important; justify-content: center !important; padding: 1rem 2rem !important; background: rgba(255, 255, 255, 0.1) !important; border: 1px solid rgba(255, 255, 255, 0.2) !important; border-radius: 0.5rem !important; color: white !important; font-size: 1rem !important; font-weight: 500 !important; cursor: pointer !important; transition: all 0.2s ease !important; min-width: 120px !important;"
-                >
-                  Vorige
-                </button>
-                <button
-                  @click="nextStep"
-                  class="nav-button primary"
-                  :disabled="!canProceed"
-                  style="display: inline-flex !important; align-items: center !important; justify-content: center !important; padding: 1rem 2rem !important; background: #3b82f6 !important; border: 1px solid #3b82f6 !important; border-radius: 0.5rem !important; color: white !important; font-size: 1rem !important; font-weight: 500 !important; cursor: pointer !important; transition: all 0.2s ease !important; min-width: 120px !important;"
-                >
-                  Volgende
-                </button>
-              </div>
-            </div>
-
+                    </div>
+                    
+                    </div>
+                    
             <!-- Step 3: Availability -->
             <div v-if="currentStep === 3" class="step-panel availability-step">
               <div class="step-header">
                 <h3>Team beschikbaarheid</h3>
                 <p>Stel team beschikbaarheid en buffer in voor realistische sprint planning</p>
-              </div>
-
+                    </div>
+                    
               <!-- Hours-based Availability -->
               <div class="hours-availability-section">
                 <div class="add-absence-form-minimal">
@@ -643,7 +614,7 @@
                         class="absence-input-minimal"
                         placeholder="Bijv. 8"
                       />
-                    </div>
+                  </div>
                     <button
                       @click="addAbsence"
                       :disabled="!newAbsence.developerId || !newAbsence.hours"
@@ -652,19 +623,19 @@
                       title="Klik om afwezigheid toe te voegen"
                     >
                       +
-                    </button>
-                  </div>
+                  </button>
                 </div>
-
+                    </div>
+                    
                 <div v-if="allAbsences.length > 0" class="absences-list-minimal">
                   <div v-for="absence in allAbsences" :key="absence.id" class="absence-item-minimal">
                     <div class="absence-info-minimal">
                       <div class="absence-details-minimal">{{ getDeveloperName(absence.developerId) }} - {{ absence.hours }} uur afwezigheid</div>
-                    </div>
+                        </div>
                     <button @click="removeAbsence(absence.id)" class="remove-absence-button-minimal">
-                      ×
-                    </button>
-                  </div>
+                          ×
+                        </button>
+                      </div>
                 </div>
               </div>
 
@@ -681,8 +652,8 @@
                       step="1"
                       class="buffer-input"
                     />
-                    <span class="input-suffix">%</span>
-                  </div>
+                      <span class="input-suffix">%</span>
+                    </div>
                   <div class="help-text">Voor bugs, urgente issues (marktgemiddelde: 15-20%)</div>
                 </div>
               </div>
@@ -697,27 +668,9 @@
                     <div v-if="totalAbsenceHours > 0">- {{ totalAbsenceHours }} uur afwezigheid</div>
                     <div>- {{ bufferPercentage }}% buffer</div>
                   </div>
-                </div>
-              </div>
-
-              <!-- Navigation for Step 3 -->
-              <div class="step-navigation" style="display: flex !important; justify-content: space-between !important; margin-top: 3rem !important; padding: 2rem !important; background: rgba(255,255,255,0.05) !important; border: 1px solid rgba(255, 255, 255, 0.1) !important; border-radius: 1rem !important; gap: 1rem !important;">
-                <button
-                  @click="previousStep"
-                  class="nav-button secondary"
-                  style="display: inline-flex !important; align-items: center !important; justify-content: center !important; padding: 1rem 2rem !important; background: rgba(255, 255, 255, 0.1) !important; border: 1px solid rgba(255, 255, 255, 0.2) !important; border-radius: 0.5rem !important; color: white !important; font-size: 1rem !important; font-weight: 500 !important; cursor: pointer !important; transition: all 0.2s ease !important; min-width: 120px !important;"
-                >
-                  Vorige
-                </button>
-                <button
-                  @click="nextStep"
-                  class="nav-button primary"
-                  :disabled="!canProceed"
-                  style="display: inline-flex !important; align-items: center !important; justify-content: center !important; padding: 1rem 2rem !important; background: #3b82f6 !important; border: 1px solid #3b82f6 !important; border-radius: 0.5rem !important; color: white !important; font-size: 1rem !important; font-weight: 500 !important; cursor: pointer !important; transition: all 0.2s ease !important; min-width: 120px !important;"
-                >
-                  Volgende
-                </button>
-              </div>
+                    </div>
+                    </div>
+                    
             </div>
 
             <!-- Step 4: Results -->
@@ -756,33 +709,70 @@
                     <div class="result-info">
                       <div class="result-label">Vertrouwen</div>
                       <div class="result-value confidence" :class="confidence.toLowerCase()">{{ confidence }}</div>
-                    </div>
-                  </div>
-                </div>
-
-              <!-- Navigation for Step 4 -->
-              <div class="step-navigation" style="display: flex !important; justify-content: space-between !important; margin-top: 3rem !important; padding: 2rem !important; background: rgba(255,255,255,0.05) !important; border: 1px solid rgba(255, 255, 255, 0.1) !important; border-radius: 1rem !important; gap: 1rem !important;">
-                <button
-                  @click="previousStep"
-                  class="nav-button secondary"
-                  style="display: inline-flex !important; align-items: center !important; justify-content: center !important; padding: 1rem 2rem !important; background: rgba(255, 255, 255, 0.1) !important; border: 1px solid rgba(255, 255, 255, 0.2) !important; border-radius: 0.5rem !important; color: white !important; font-size: 1rem !important; font-weight: 500 !important; cursor: pointer !important; transition: all 0.2s ease !important; min-width: 120px !important;"
-                >
-                  Vorige
-                </button>
-                <button
-                  @click="resetStepper"
-                  class="nav-button primary"
-                  style="display: inline-flex !important; align-items: center !important; justify-content: center !important; padding: 1rem 2rem !important; background: #10b981 !important; border: 1px solid #10b981 !important; border-radius: 0.5rem !important; color: white !important; font-size: 1rem !important; font-weight: 500 !important; cursor: pointer !important; transition: all 0.2s ease !important; min-width: 120px !important;"
-                >
-                  Start Over
-                </button>
               </div>
+            </div>
+          </div>
+
               </div>
 
           </div>
             </div>
           </div>
         </div>
+
+        <!-- Universal Navigation Component -->
+        <div class="universal-navigation">
+          <div class="nav-container">
+            <div class="nav-spacer"></div>
+            <div class="nav-buttons">
+              <!-- Previous Button -->
+              <button 
+                v-if="currentStep > 1"
+                @click="goToPreviousStep"
+                class="nav-btn prev-btn"
+                :disabled="isNavigating"
+                aria-label="Ga naar vorige stap"
+              >
+                <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M15 18l-6-6 6-6"/>
+                </svg>
+                <span class="nav-text">Vorige</span>
+              </button>
+
+              <!-- Next Button -->
+              <button 
+                v-if="currentStep < 4"
+                @click="goToNextStep"
+                class="nav-btn next-btn"
+                :disabled="!canProceed || isNavigating"
+                :class="{ 'disabled': !canProceed }"
+                aria-label="Ga naar volgende stap"
+              >
+                <span class="nav-text">Volgende</span>
+                <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M9 18l6-6-6-6"/>
+                </svg>
+              </button>
+
+              <!-- Start Over Button -->
+              <button 
+                v-if="currentStep === 4"
+                @click="resetStepper"
+                class="nav-btn reset-btn"
+                :disabled="isNavigating"
+                aria-label="Start opnieuw"
+              >
+                <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/>
+                  <path d="M3 3v5h5"/>
+                </svg>
+                <span class="nav-text">Start Over</span>
+              </button>
+            </div>
+            <div class="nav-spacer"></div>
+          </div>
+        </div>
+
       </div>
     </section>
     </main>
@@ -794,7 +784,7 @@
           <div class="footer-content-minimal">
             <div class="footer-brand-minimal">
               <p class="footer-copyright">© 2025 sprintplanner.nl</p>
-            </div>
+          </div>
             <div class="footer-links-minimal">
               <router-link to="/privacy" class="footer-link-minimal">Privacy</router-link>
               <router-link to="/data-deletion" class="footer-link-minimal">Delete Data</router-link>
@@ -857,6 +847,9 @@ const validationErrors = ref({})
 const isFieldValid = (field) => !validationErrors.value[field]
 const getFieldError = (field) => validationErrors.value[field] || ''
 
+// Navigation state
+const isNavigating = ref(false)
+
 // Validation functions
 const validateField = (field, value, rules) => {
   const errors = []
@@ -905,9 +898,7 @@ const validateStep = (step) => {
       })
     }
   } else if (step === 2) {
-    console.log('Validating step 2, teamInputMethod:', teamInputMethod.value)
     if (teamInputMethod.value === 'average') {
-      console.log('Validating average method - teamMembers:', capacity.value.teamMembers, 'averageHours:', averageTeamHours.value)
       isValid = validateField('teamMembers', capacity.value.teamMembers, { 
         required: true, 
         min: 1 
@@ -918,7 +909,6 @@ const validateStep = (step) => {
         max: 40
       }) && isValid
     } else {
-      console.log('Validating individual method - developers:', developers.value.length)
       // Validate individual developers
       developers.value.forEach((dev, index) => {
         isValid = validateField(`dev-name-${index}`, dev.name, { 
@@ -933,7 +923,6 @@ const validateStep = (step) => {
         }) && isValid
       })
     }
-    console.log('Step 2 validation result:', isValid)
   }
   
   return isValid
@@ -1167,13 +1156,10 @@ const updateStepCompletion = () => {
     }
   } else if (currentStep.value === 2) {
     // Step 2: Check if team capacity is configured
-    console.log('Step 2 validation - isStepValid:', isStepValid, 'teamInputMethod:', teamInputMethod.value)
     if (teamInputMethod.value === 'average') {
       canProceed.value = isStepValid && capacity.value.teamMembers > 0 && averageTeamHours.value > 0
-      console.log('Average method - canProceed:', canProceed.value, 'teamMembers:', capacity.value.teamMembers, 'averageHours:', averageTeamHours.value)
     } else {
       canProceed.value = isStepValid && developers.value.length > 0
-      console.log('Individual method - canProceed:', canProceed.value, 'developers count:', developers.value.length)
     }
   } else if (currentStep.value === 3) {
     // Step 3: Availability is always optional - allow proceeding
@@ -1273,48 +1259,65 @@ const getAbsenceTypeColor = (type) => {
   return colors[type] || '#6b7280'
 }
 
-const nextStep = () => {
-  console.log(' NEXT CLICKED - Current step:', currentStep.value)
-  console.log(' canProceed:', canProceed.value)
-
-  if (!canProceed.value) {
-    showError('Please complete all required fields before continuing')
-    return
-  }
-
-  if (currentStep.value < 4) {
-    showLoading('Processing step...')
+// New Navigation Functions
+const goToNextStep = async () => {
+  if (isNavigating.value || !canProceed.value) return
+  
+  isNavigating.value = true
+  showLoading('Verwerken...')
+  
+  try {
     // Simulate processing time for better UX
-    setTimeout(() => {
+    await new Promise(resolve => setTimeout(resolve, 300))
+    
+    if (currentStep.value < 4) {
       currentStep.value++
       updateStepCompletion()
-      showSuccess(`Moved to step ${currentStep.value}`)
+      showSuccess(`Stap ${currentStep.value} geladen`)
       
-      // Scroll to top of widget after step change
+      // Scroll to top of widget
       setTimeout(() => {
         const widget = document.getElementById('planner-widget')
         if (widget) {
           widget.scrollIntoView({ behavior: 'smooth', block: 'start' })
         }
       }, 100)
-    }, 500)
+    }
+  } catch (error) {
+    showError('Er is een fout opgetreden')
+  } finally {
+    isNavigating.value = false
   }
 }
 
-const previousStep = () => {
-  if (currentStep.value > 1) {
+const goToPreviousStep = async () => {
+  if (isNavigating.value || currentStep.value <= 1) return
+  
+  isNavigating.value = true
+  
+  try {
+    await new Promise(resolve => setTimeout(resolve, 150))
+    
     currentStep.value--
     updateStepCompletion()
     
-    // Scroll to top of widget after step change
+    // Scroll to top of widget
     setTimeout(() => {
       const widget = document.getElementById('planner-widget')
       if (widget) {
         widget.scrollIntoView({ behavior: 'smooth', block: 'start' })
       }
     }, 100)
+  } catch (error) {
+    showError('Er is een fout opgetreden')
+  } finally {
+    isNavigating.value = false
   }
 }
+
+// Legacy functions for compatibility
+const nextStep = goToNextStep
+const previousStep = goToPreviousStep
 
 const goToStep = (stepNumber) => {
   // Only allow going to completed steps or current step
@@ -2108,7 +2111,7 @@ onMounted(() => {
   .nav-brand-text {
     display: none;
   }
-
+  
   .nav-links {
     gap: 1.5rem;
   }
@@ -5588,6 +5591,189 @@ textarea:focus,
 
   .compact-result-value {
     font-size: 1.75rem;
+  }
+}
+
+/* Universal Navigation Component */
+.universal-navigation {
+  position: sticky;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: rgba(0, 0, 0, 0.95);
+  backdrop-filter: blur(20px);
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  padding: 1rem 0;
+  z-index: 100;
+  margin-top: 2rem;
+}
+
+.nav-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 2rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.nav-spacer {
+  flex: 1;
+}
+
+.nav-buttons {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.nav-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1.5rem;
+  border-radius: 0.75rem;
+  font-weight: 600;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  border: none;
+  min-height: 48px;
+  min-width: 120px;
+  justify-content: center;
+  position: relative;
+  overflow: hidden;
+}
+
+.nav-btn::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+  transition: left 0.5s ease;
+}
+
+.nav-btn:hover::before {
+  left: 100%;
+}
+
+.nav-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.nav-btn:disabled::before {
+  display: none;
+}
+
+.prev-btn {
+  background: rgba(255, 255, 255, 0.1);
+  color: #ffffff;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.prev-btn:hover:not(:disabled) {
+  background: rgba(255, 255, 255, 0.15);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(255, 255, 255, 0.1);
+}
+
+.next-btn {
+  background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+  color: white;
+  box-shadow: 0 4px 20px rgba(59, 130, 246, 0.3);
+}
+
+.next-btn:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 30px rgba(59, 130, 246, 0.4);
+}
+
+.next-btn.disabled {
+  background: rgba(107, 114, 128, 0.3);
+  color: rgba(255, 255, 255, 0.5);
+  box-shadow: none;
+}
+
+.reset-btn {
+  background: linear-gradient(135deg, #10b981, #059669);
+  color: white;
+  box-shadow: 0 4px 20px rgba(16, 185, 129, 0.3);
+}
+
+.reset-btn:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 30px rgba(16, 185, 129, 0.4);
+}
+
+.nav-icon {
+  width: 20px;
+  height: 20px;
+  transition: transform 0.3s ease;
+}
+
+.nav-btn:hover:not(:disabled) .nav-icon {
+  transform: scale(1.1);
+}
+
+.nav-text {
+  position: relative;
+  z-index: 1;
+  font-weight: 600;
+}
+
+/* Mobile Navigation */
+@media (max-width: 768px) {
+  .universal-navigation {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    padding: 1rem;
+    background: rgba(0, 0, 0, 0.98);
+  }
+  
+  .nav-container {
+    padding: 0;
+    flex-direction: column;
+    gap: 1rem;
+  }
+  
+  .nav-spacer {
+    display: none;
+  }
+  
+  .nav-buttons {
+    width: 100%;
+    justify-content: center;
+    gap: 0.75rem;
+  }
+  
+  .nav-btn {
+    flex: 1;
+    max-width: 150px;
+    padding: 1rem 1.5rem;
+    font-size: 1rem;
+    min-height: 52px;
+  }
+}
+
+@media (max-width: 480px) {
+  .nav-buttons {
+    flex-direction: column;
+    width: 100%;
+  }
+  
+  .nav-btn {
+    width: 100%;
+    max-width: none;
+    padding: 1.25rem 2rem;
+    font-size: 1.1rem;
+    min-height: 56px;
   }
 }
 </style>
