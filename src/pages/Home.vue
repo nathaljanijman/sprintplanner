@@ -2,6 +2,7 @@
   <div class="home">
     <!-- Skip Navigation for Accessibility -->
     <a href="#main-content" class="skip-link">Ga naar hoofdinhoud</a>
+    <a href="#planner-widget" class="skip-link">Ga naar Sprint Planner</a>
 
     <!-- Global Loading State -->
     <div v-if="isLoading" class="loading-overlay" role="status" aria-live="polite">
@@ -72,11 +73,20 @@
       <section class="hero" aria-labelledby="hero-title">
       <div class="hero-container">
         <div class="hero-content">
-            <h1 id="hero-title" class="title">Sprint Planner</h1>
-            <p class="subtitle">De eenvoudigste manier om je sprints te plannen en je team's velocity te tracken</p>
-            <button @click="scrollToWidget" class="cta-button" aria-describedby="cta-description">
-              Probeer Sprint Planner
-            </button>
+            <h1 id="hero-title" class="title">
+              Plan je sprints <span class="title-highlight">slimmer</span> en <span class="title-highlight">sneller</span>
+            </h1>
+            <p class="subtitle">
+              De eenvoudigste manier om je team's velocity te tracken en realistische sprint planning te maken. 
+              <strong>Geen complexe tools, gewoon resultaat.</strong>
+            </p>
+            <div class="hero-cta">
+              <button @click="scrollToWidget" class="cta-button primary" aria-describedby="cta-description">
+                <span class="cta-text">Start je Sprint Planning</span>
+                <span class="cta-icon">→</span>
+              </button>
+              <p class="cta-subtext">Gratis • Geen registratie • Direct resultaat</p>
+            </div>
             <span id="cta-description" class="sr-only">Scroll naar sprint planning tool hieronder</span>
           </div>
         <div class="hero-visual">
@@ -195,29 +205,41 @@
             </div>
             
             <div class="progress-steps">
-              <div 
-                v-for="(step, index) in steps" 
-                :key="index"
-                class="progress-step"
-                :class="{ 
-                  'active': index + 1 === currentStep,
-                  'completed': index + 1 < currentStep 
-                }"
-                :aria-label="'Stap ' + (index + 1) + ': ' + step.title"
-                role="button"
-                tabindex="0"
-                @click="goToStep(index + 1)"
-                @keydown.enter="goToStep(index + 1)"
-                @keydown.space.prevent="goToStep(index + 1)"
-              >
-                <div class="step-circle">
-                  <svg v-if="index + 1 < currentStep" class="check-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
-                    <path d="M20 6L9 17l-5-5"/>
-                  </svg>
-                  <span v-else aria-hidden="true">{{ index + 1 }}</span>
+                <div 
+                  v-for="(step, index) in steps" 
+                  :key="index"
+                  class="progress-step"
+                  :class="{ 
+                    'active': index + 1 === currentStep,
+                    'completed': index + 1 < currentStep,
+                    'clickable': index + 1 < currentStep || index + 1 === currentStep
+                  }"
+                  :data-step="index + 1"
+                  :aria-label="'Stap ' + (index + 1) + ': ' + step.title + (index + 1 < currentStep ? ' (voltooid)' : '')"
+                  :aria-describedby="'step-' + (index + 1) + '-description'"
+                  role="button"
+                  :tabindex="index + 1 <= currentStep ? '0' : '-1'"
+                  @click="goToStep(index + 1)"
+                  @keydown="handleStepperKeydown($event, index + 1)"
+                >
+                  <div class="step-circle">
+                    <svg v-if="index + 1 < currentStep" class="check-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true">
+                      <path d="M20 6L9 17l-5-5"/>
+                    </svg>
+                    <span v-else aria-hidden="true">{{ index + 1 }}</span>
+                  </div>
+                  <div class="step-label">
+                    <span class="step-title">{{ step.title }}</span>
+                    <span v-if="index + 1 < currentStep" class="step-status">Voltooid</span>
+                    <span v-else-if="index + 1 === currentStep" class="step-status current">Huidig</span>
+                  </div>
+                  <div :id="'step-' + (index + 1) + '-description'" class="sr-only">
+                    {{ index + 1 === 1 ? 'Configureer je team velocity door historische data in te voeren of een gemiddelde waarde op te geven.' : '' }}
+                    {{ index + 1 === 2 ? 'Stel je team capaciteit in door het aantal developers en hun beschikbare uren per week te definiëren.' : '' }}
+                    {{ index + 1 === 3 ? 'Voeg eventuele afwezigheden en buffers toe voor realistische sprint planning.' : '' }}
+                    {{ index + 1 === 4 ? 'Bekijk je gepersonaliseerde sprint planning aanbevelingen en resultaten.' : '' }}
+                  </div>
                 </div>
-                <div class="step-label">{{ step.title }}</div>
-              </div>
             </div>
           </div>
         </div>
@@ -272,13 +294,17 @@
                       :id="`sprint-${index}`"
                       v-model.number="sprint.velocity" 
                       type="number" 
-                      min="0" 
+                      min="0"
                       placeholder="0"
-                      class="velocity-input-minimal"
-                      @input="updateStepCompletion"
+                      :class="['velocity-input-minimal', { 'error': !isFieldValid(`sprint-${index}`) }]"
+                      @input="validateField(`sprint-${index}`, sprint.velocity, { required: true, min: 1 }); updateStepCompletion()"
                       :aria-label="`Sprint ${index + 1} velocity in story points`"
-                      aria-describedby="velocity-hint"
+                      :aria-describedby="`velocity-hint sprint-${index}-error`"
+                      :aria-invalid="!isFieldValid(`sprint-${index}`)"
                     />
+                    <div v-if="!isFieldValid(`sprint-${index}`)" :id="`sprint-${index}-error`" class="field-error">
+                      {{ getFieldError(`sprint-${index}`) }}
+                    </div>
                     <div class="sprint-label">Sprint</div>
                   </div>
                   <p id="velocity-hint" class="sr-only">Voer het aantal story points in dat per sprint is voltooid</p>
@@ -299,9 +325,14 @@
                       type="number" 
                       min="0" 
                       placeholder="Voer gemiddelde velocity in"
-                      class="manual-velocity-input"
-                      @input="updateStepCompletion"
+                      :class="['manual-velocity-input', { 'error': !isFieldValid('manualVelocity') }]"
+                      @input="validateField('manualVelocity', manualAverageVelocity, { required: true, min: 1 }); updateStepCompletion()"
+                      :aria-invalid="!isFieldValid('manualVelocity')"
+                      :aria-describedby="'manual-velocity-error'"
                     />
+                    <div v-if="!isFieldValid('manualVelocity')" id="manual-velocity-error" class="field-error">
+                      {{ getFieldError('manualVelocity') }}
+                    </div>
                     <div class="input-suffix">story points</div>
                   </div>
                 </div>
@@ -461,9 +492,14 @@
                         type="number"
                         min="1"
                         max="20"
-                        class="config-input-minimal"
-                        @input="updateStepCompletion"
+                        :class="['config-input-minimal', { 'error': !isFieldValid('teamMembers') }]"
+                        @input="validateField('teamMembers', capacity.teamMembers, { required: true, min: 1 }); updateStepCompletion()"
+                        :aria-invalid="!isFieldValid('teamMembers')"
+                        :aria-describedby="'team-members-error'"
                       />
+                      <div v-if="!isFieldValid('teamMembers')" id="team-members-error" class="field-error">
+                        {{ getFieldError('teamMembers') }}
+                      </div>
                       <span class="input-suffix-minimal">personen</span>
                     </div>
                   </div>
@@ -476,9 +512,14 @@
                         type="number"
                         min="10"
                         max="60"
-                        class="config-input-minimal"
-                        @input="updateStepCompletion"
+                        :class="['config-input-minimal', { 'error': !isFieldValid('averageHours') }]"
+                        @input="validateField('averageHours', averageTeamHours, { required: true, min: 1, max: 40 }); updateStepCompletion()"
+                        :aria-invalid="!isFieldValid('averageHours')"
+                        :aria-describedby="'average-hours-error'"
                       />
+                      <div v-if="!isFieldValid('averageHours')" id="average-hours-error" class="field-error">
+                        {{ getFieldError('averageHours') }}
+                      </div>
                       <span class="input-suffix-minimal">uur</span>
                       </div>
                       </div>
@@ -753,10 +794,6 @@
           <div class="footer-content-minimal">
             <div class="footer-brand-minimal">
               <p class="footer-copyright">© 2025 sprintplanner.nl</p>
-              <router-link to="/" class="footer-logo-link">
-                <img src="/logo-icon.png" alt="Sprint Planner" class="footer-logo" />
-                <span class="footer-brand-text">Sprint Planner.</span>
-              </router-link>
             </div>
             <div class="footer-links-minimal">
               <router-link to="/privacy" class="footer-link-minimal">Privacy</router-link>
@@ -814,6 +851,93 @@ const currentStep = ref(1)
 const canProceed = ref(false)
 const velocityInputMethod = ref('manual')
 const manualAverageVelocity = ref(0)
+
+// Validation state
+const validationErrors = ref({})
+const isFieldValid = (field) => !validationErrors.value[field]
+const getFieldError = (field) => validationErrors.value[field] || ''
+
+// Validation functions
+const validateField = (field, value, rules) => {
+  const errors = []
+  
+  if (rules.required && (!value || value === '')) {
+    errors.push('Dit veld is verplicht')
+  }
+  
+  if (rules.min && value < rules.min) {
+    errors.push(`Minimum waarde is ${rules.min}`)
+  }
+  
+  if (rules.max && value > rules.max) {
+    errors.push(`Maximum waarde is ${rules.max}`)
+  }
+  
+  if (rules.pattern && !rules.pattern.test(value)) {
+    errors.push(rules.message || 'Ongeldige invoer')
+  }
+  
+  if (errors.length > 0) {
+    validationErrors.value[field] = errors[0]
+  } else {
+    delete validationErrors.value[field]
+  }
+  
+  return errors.length === 0
+}
+
+const validateStep = (step) => {
+  let isValid = true
+  
+  if (step === 1) {
+    if (velocityInputMethod.value === 'manual') {
+      isValid = validateField('manualVelocity', manualAverageVelocity.value, { 
+        required: true, 
+        min: 1 
+      }) && isValid
+    } else {
+      // Validate sprint velocities
+      sprints.value.forEach((sprint, index) => {
+        isValid = validateField(`sprint-${index}`, sprint.velocity, { 
+          required: true, 
+          min: 1 
+        }) && isValid
+      })
+    }
+  } else if (step === 2) {
+    console.log('Validating step 2, teamInputMethod:', teamInputMethod.value)
+    if (teamInputMethod.value === 'average') {
+      console.log('Validating average method - teamMembers:', capacity.value.teamMembers, 'averageHours:', averageTeamHours.value)
+      isValid = validateField('teamMembers', capacity.value.teamMembers, { 
+        required: true, 
+        min: 1 
+      }) && isValid
+      isValid = validateField('averageHours', averageTeamHours.value, { 
+        required: true, 
+        min: 1,
+        max: 40
+      }) && isValid
+    } else {
+      console.log('Validating individual method - developers:', developers.value.length)
+      // Validate individual developers
+      developers.value.forEach((dev, index) => {
+        isValid = validateField(`dev-name-${index}`, dev.name, { 
+          required: true,
+          pattern: /^.{2,}$/,
+          message: 'Naam moet minimaal 2 karakters zijn'
+        }) && isValid
+        isValid = validateField(`dev-hours-${index}`, dev.contractHoursPerWeek, { 
+          required: true, 
+          min: 1,
+          max: 40
+        }) && isValid
+      })
+    }
+    console.log('Step 2 validation result:', isValid)
+  }
+  
+  return isValid
+}
 const cookieConsentAccepted = ref(false)
 
 const steps = [
@@ -848,6 +972,7 @@ console.log('teamInputMethod initialized to:', teamInputMethod.value)
 const setTeamMethod = (method) => {
   console.log('Setting team method to:', method)
   teamInputMethod.value = method
+  updateStepCompletion()
 }
 
 // Availability input method toggle
@@ -1029,32 +1154,30 @@ const toggleFinalCapacityDetails = () => {
 // Stepper methods - SIMPLIFIED
 const updateStepCompletion = () => {
   console.log(' updateStepCompletion called, currentStep:', currentStep.value)
-  console.log(' velocityInputMethod:', velocityInputMethod.value)
-  console.log(' manualAverageVelocity:', manualAverageVelocity.value)
-  console.log(' sprints:', sprints.value)
+  
+  // Validate current step
+  const isStepValid = validateStep(currentStep.value)
   
   if (currentStep.value === 1) {
     // Step 1: Check if velocity is entered
     if (velocityInputMethod.value === 'manual') {
-      canProceed.value = manualAverageVelocity.value > 0
-      console.log(' Manual velocity check:', manualAverageVelocity.value > 0)
+      canProceed.value = isStepValid && manualAverageVelocity.value > 0
     } else {
-      canProceed.value = sprints.value.some(s => s.velocity > 0)
-      console.log(' Individual sprints check:', sprints.value.some(s => s.velocity > 0))
+      canProceed.value = isStepValid && sprints.value.some(s => s.velocity > 0)
     }
   } else if (currentStep.value === 2) {
     // Step 2: Check if team capacity is configured
+    console.log('Step 2 validation - isStepValid:', isStepValid, 'teamInputMethod:', teamInputMethod.value)
     if (teamInputMethod.value === 'average') {
-      canProceed.value = capacity.value.teamMembers > 0 && averageTeamHours.value > 0
-      console.log(' Average team capacity check:', capacity.value.teamMembers > 0 && averageTeamHours.value > 0)
+      canProceed.value = isStepValid && capacity.value.teamMembers > 0 && averageTeamHours.value > 0
+      console.log('Average method - canProceed:', canProceed.value, 'teamMembers:', capacity.value.teamMembers, 'averageHours:', averageTeamHours.value)
     } else {
-      canProceed.value = developers.value.length > 0
-      console.log(' Individual team capacity check:', developers.value.length > 0)
+      canProceed.value = isStepValid && developers.value.length > 0
+      console.log('Individual method - canProceed:', canProceed.value, 'developers count:', developers.value.length)
     }
   } else if (currentStep.value === 3) {
     // Step 3: Availability is always optional - allow proceeding
     canProceed.value = true
-    console.log(' Step 3: allowing proceed (availability optional)')
   } else {
     // Step 4: Always allow proceeding
     canProceed.value = true
@@ -1193,7 +1316,41 @@ const previousStep = () => {
   }
 }
 
-// goToStep function removed - stepper circles are now display-only
+const goToStep = (stepNumber) => {
+  // Only allow going to completed steps or current step
+  if (stepNumber <= currentStep.value) {
+    currentStep.value = stepNumber
+    updateStepCompletion()
+    
+    // Scroll to top of widget
+    setTimeout(() => {
+      const widget = document.getElementById('planner-widget')
+      if (widget) {
+        widget.scrollIntoView({ behavior: 'smooth', block: 'start' })
+      }
+    }, 100)
+  }
+}
+
+// Keyboard navigation for stepper
+const handleStepperKeydown = (event, stepNumber) => {
+  if (event.key === 'Enter' || event.key === ' ') {
+    event.preventDefault()
+    goToStep(stepNumber)
+  } else if (event.key === 'ArrowRight' || event.key === 'ArrowDown') {
+    event.preventDefault()
+    const nextStep = Math.min(stepNumber + 1, currentStep.value)
+    if (nextStep !== stepNumber) {
+      document.querySelector(`[data-step="${nextStep}"]`)?.focus()
+    }
+  } else if (event.key === 'ArrowLeft' || event.key === 'ArrowUp') {
+    event.preventDefault()
+    const prevStep = Math.max(1, stepNumber - 1)
+    if (prevStep !== stepNumber) {
+      document.querySelector(`[data-step="${prevStep}"]`)?.focus()
+    }
+  }
+}
 
 const resetStepper = () => {
   currentStep.value = 1
@@ -1386,7 +1543,7 @@ onMounted(() => {
   display: flex;
   align-items: center;
   text-decoration: none;
-  gap: 0.25rem;
+  gap: 0.125rem;
 }
 
 .nav-brand-text {
@@ -1537,18 +1694,28 @@ onMounted(() => {
   text-align: left;
   z-index: 2;
   padding: 2rem 0;
-  min-height: 300px;
+  min-height: 400px;
   display: flex;
   flex-direction: column;
   justify-content: center;
+  align-items: flex-start;
+  gap: 1.5rem;
 }
 
+
 .title {
-  font-size: clamp(2rem, 5vw, 3rem);
-  font-weight: 800;
+  font-size: clamp(2.5rem, 6vw, 4rem);
+  font-weight: 900;
   line-height: 1.1;
-  margin-bottom: 1rem;
+  margin-bottom: 0;
   background: linear-gradient(135deg, var(--text-primary), var(--accent-primary));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.title-highlight {
+  background: linear-gradient(135deg, #3b82f6, #1d4ed8);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
@@ -1571,19 +1738,91 @@ onMounted(() => {
 }
 
 
+/* Hero CTA Section */
+.hero-cta {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  align-items: flex-start;
+}
+
 .cta-button {
   display: inline-flex;
   align-items: center;
-  gap: 0.5rem;
-  padding: 0.75rem 1.5rem;
+  gap: 0.75rem;
+  padding: 1rem 2rem;
   background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
   color: white;
   text-decoration: none;
-  border-radius: 0.5rem;
-  font-weight: 600;
-  font-size: 1rem;
+  border-radius: 0.75rem;
+  font-weight: 700;
+  font-size: 1.125rem;
   transition: all 0.3s ease;
+  border: none;
+  cursor: pointer;
   box-shadow: 0 4px 20px rgba(59, 130, 246, 0.3);
+  position: relative;
+  overflow: hidden;
+}
+
+.cta-button::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+  transition: left 0.5s ease;
+}
+
+.cta-button:hover::before {
+  left: 100%;
+}
+
+.cta-text {
+  position: relative;
+  z-index: 1;
+}
+
+.cta-subtext {
+  font-size: 0.875rem;
+  color: var(--text-secondary);
+  margin: 0;
+  font-weight: 500;
+}
+
+/* Form Validation Styles */
+.field-error {
+  color: #ef4444;
+  font-size: 0.75rem;
+  margin-top: 0.25rem;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.field-error::before {
+  content: '⚠';
+  font-size: 0.875rem;
+}
+
+.velocity-input-minimal.error,
+.manual-velocity-input.error,
+.config-input-minimal.error,
+.developer-input.error {
+  border-color: #ef4444;
+  background-color: rgba(239, 68, 68, 0.05);
+  box-shadow: 0 0 0 1px rgba(239, 68, 68, 0.2);
+}
+
+.velocity-input-minimal.error:focus,
+.manual-velocity-input.error:focus,
+.config-input-minimal.error:focus,
+.developer-input.error:focus {
+  border-color: #ef4444;
+  box-shadow: 0 0 0 2px rgba(239, 68, 68, 0.2);
 }
 
 .cta-button:hover {
@@ -1592,9 +1831,10 @@ onMounted(() => {
 }
 
 .cta-icon {
-  width: 1.25rem;
-  height: 1.25rem;
-  transition: transform 0.2s ease;
+  position: relative;
+  z-index: 1;
+  font-size: 1.25rem;
+  transition: transform 0.3s ease;
 }
 
 .cta-button:hover .cta-icon {
@@ -1820,32 +2060,6 @@ onMounted(() => {
   gap: 1rem;
 }
 
-.footer-logo-link {
-  display: flex;
-  align-items: center;
-  text-decoration: none;
-  gap: 0.5rem;
-}
-
-.footer-brand-text {
-  font-size: 1.1rem;
-  font-weight: 600;
-  margin: 0;
-  background: linear-gradient(135deg, var(--text-primary), var(--accent-primary));
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-}
-
-.footer-logo {
-  height: 32px;
-  width: auto;
-  transition: opacity 0.2s ease;
-}
-
-.footer-logo:hover {
-  opacity: 0.8;
-}
 
 .footer-logo-desktop {
   height: 80px !important;
@@ -1915,9 +2129,18 @@ onMounted(() => {
   }
   
   .hero-content {
-    text-align: center;
+    text-align: left;
     padding: 1rem 0;
-    min-height: 250px;
+    min-height: 300px;
+    align-items: flex-start;
+  }
+  
+  .hero-badge {
+    align-self: flex-start;
+  }
+  
+  .hero-cta {
+    align-items: flex-start;
   }
   
   .title {
@@ -1936,8 +2159,10 @@ onMounted(() => {
   
   .cta-button {
     width: 100%;
-    max-width: 250px;
-    margin: 0 auto;
+    max-width: 300px;
+    margin: 0;
+    padding: 0.875rem 1.5rem;
+    font-size: 1rem;
   }
   
   
@@ -2252,6 +2477,25 @@ textarea:focus,
   text-align: center;
   line-height: 1.2;
   transition: color 0.3s ease;
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.step-title {
+  font-weight: 600;
+}
+
+.step-status {
+  font-size: 0.625rem;
+  color: #10b981;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.step-status.current {
+  color: #3b82f6;
 }
 
 .progress-step.active .step-label {
@@ -2269,16 +2513,25 @@ textarea:focus,
   stroke-width: 2.5;
 }
 
-.progress-step:hover .step-circle {
+.progress-step.clickable {
+  cursor: pointer;
+}
+
+.progress-step.clickable:hover .step-circle {
   transform: scale(1.05);
 }
 
-.progress-step:focus .step-circle {
+.progress-step.clickable:focus .step-circle {
   outline: 2px solid #3b82f6;
   outline-offset: 2px;
 }
 
-/* Mobile Responsiveness for Progress Bar */
+.progress-step:not(.clickable) {
+  cursor: default;
+  opacity: 0.5;
+}
+
+/* Mobile Touch Targets & Typography */
 @media (max-width: 768px) {
   .progress-bar-wrapper {
     padding: 0 1rem;
@@ -2291,19 +2544,68 @@ textarea:focus,
   }
   
   .step-circle {
-    width: 35px;
-    height: 35px;
-    font-size: 0.75rem;
+    width: 44px;
+    height: 44px;
+    font-size: 0.875rem;
     margin-bottom: 0.5rem;
+    min-height: 44px;
+    min-width: 44px;
   }
   
   .step-label {
-    font-size: 0.625rem;
+    font-size: 0.75rem;
+    line-height: 1.3;
+    font-weight: 500;
     max-width: 80px;
   }
   
   .progress-step {
     max-width: 100px;
+    min-height: 60px;
+  }
+  
+  /* Touch-friendly buttons */
+  .toggle-button,
+  .nav-button,
+  .cta-button,
+  .add-btn,
+  .remove-btn {
+    min-height: 44px;
+    min-width: 44px;
+    padding: 0.75rem 1rem;
+    font-size: 1rem;
+    touch-action: manipulation;
+  }
+  
+  /* Form inputs */
+  .velocity-input-minimal,
+  .manual-velocity-input,
+  .config-input-minimal,
+  .developer-input {
+    min-height: 44px;
+    font-size: 1rem;
+    padding: 0.75rem;
+  }
+  
+  /* Typography improvements */
+  .title {
+    font-size: clamp(2rem, 8vw, 3rem);
+    line-height: 1.2;
+  }
+  
+  .subtitle {
+    font-size: 1.125rem;
+    line-height: 1.5;
+  }
+  
+  .step-header h3 {
+    font-size: 1.5rem;
+    line-height: 1.3;
+  }
+  
+  .step-header p {
+    font-size: 1rem;
+    line-height: 1.4;
   }
 }
 
