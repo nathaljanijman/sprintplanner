@@ -179,8 +179,8 @@
             <h3>Simpel & snel</h3>
             <p>Intuïtieve interface die je binnen seconden resultaten geeft</p>
           </div>
-        </div>
-      </div>
+            </div>
+          </div>
     </section>
 
     <!-- Planner Widget -->
@@ -189,7 +189,7 @@
         <div class="section-header">
           <h2 id="planner-title" class="section-title">Sprint Planner</h2>
           <p class="section-subtitle">Plan je volgende sprint in 4 eenvoudige stappen</p>
-        </div>
+            </div>
         
         <div class="progress-container" role="group" aria-labelledby="progress-title">
           <h3 id="progress-title" class="sr-only">Sprint planning wizard</h3>
@@ -242,10 +242,10 @@
                   </div>
                 </div>
             </div>
+      </div>
           </div>
-        </div>
 
-        <!-- Step Content -->
+          <!-- Step Content -->
           <div class="step-content">
             <!-- Step 1: Historical Velocity -->
             <div v-if="currentStep === 1" class="step-panel velocity-step">
@@ -715,12 +715,12 @@
                       <div class="result-label">Vertrouwen</div>
                       <div class="result-value confidence" :class="confidence.toLowerCase()">{{ confidence }}</div>
                     </div>
+                    </div>
                   </div>
                 </div>
               </div>
             </div>
           </div>
-        </div>
 
         <!-- Universal Navigation Component -->
         <div class="universal-navigation">
@@ -2384,8 +2384,14 @@ textarea:focus,
   background: rgba(255, 255, 255, 0.02);
 }
 
+.planner-widget .container {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 0 2rem;
+}
+
 .progress-container {
-  max-width: 900px;
+  max-width: 100%;
   margin: 0 auto;
 }
 
