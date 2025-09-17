@@ -179,8 +179,8 @@
             <h3>Simpel & snel</h3>
             <p>Intuïtieve interface die je binnen seconden resultaten geeft</p>
           </div>
-            </div>
-          </div>
+        </div>
+      </div>
     </section>
 
     <!-- Planner Widget -->
@@ -189,7 +189,7 @@
         <div class="section-header">
           <h2 id="planner-title" class="section-title">Sprint Planner</h2>
           <p class="section-subtitle">Plan je volgende sprint in 4 eenvoudige stappen</p>
-            </div>
+        </div>
         
         <div class="progress-container" role="group" aria-labelledby="progress-title">
           <h3 id="progress-title" class="sr-only">Sprint planning wizard</h3>
@@ -203,8 +203,9 @@
                 aria-hidden="true"
               ></div>
             </div>
+          </div>
             
-            <div class="progress-steps">
+          <div class="progress-steps">
             <div 
               v-for="(step, index) in steps" 
               :key="index"
@@ -241,11 +242,10 @@
                   </div>
                 </div>
             </div>
-      </div>
           </div>
+        </div>
 
-
-          <!-- Step Content -->
+        <!-- Step Content -->
           <div class="step-content">
             <!-- Step 1: Historical Velocity -->
             <div v-if="currentStep === 1" class="step-panel velocity-step">
@@ -358,9 +358,9 @@
               <div class="step-header">
                 <h3>{{ steps[1].title }}</h3>
                 <p>Configureer je team capaciteit op basis van contracturen of individuele developers</p>
-              </div>
+                </div>
                 
-              <!-- Team Input Method Toggle -->
+                <!-- Team Input Method Toggle -->
                 <div class="team-input-toggle" style="display: grid !important; grid-template-columns: 1fr 1fr !important; gap: 1rem !important; margin-bottom: 2rem !important; padding: 1rem !important; background: rgba(255, 255, 255, 0.1) !important; border-radius: 1rem !important;">
                   <button 
                   @click="setTeamMethod('average')"
@@ -612,7 +612,7 @@
                         class="absence-input-minimal"
                         placeholder="Bijv. 8"
                       />
-                    </div>
+                  </div>
                     <button
                       @click="addAbsence"
                       :disabled="!newAbsence.developerId || !newAbsence.hours"
@@ -621,29 +621,29 @@
                       title="Klik om afwezigheid toe te voegen"
                     >
                       +
-                    </button>
-                  </div>
+                  </button>
                 </div>
+                    </div>
                     
                 <div v-if="allAbsences.length > 0" class="absences-list-minimal">
                   <div v-for="absence in allAbsences" :key="absence.id" class="absence-item-minimal">
                     <div class="absence-info-minimal">
                       <div class="absence-details-minimal">{{ getDeveloperName(absence.developerId) }} - {{ absence.hours }} uur afwezigheid</div>
-                    </div>
+                        </div>
                     <button @click="removeAbsence(absence.id)" class="remove-absence-button-minimal">
-                      ×
-                    </button>
-                  </div>
+                          ×
+                        </button>
                 </div>
-                
+              </div>
+
                 <!-- Empty state when no developers available -->
                 <div v-if="(teamInputMethod === 'average' && capacity.teamMembers === 0) || (teamInputMethod === 'individual' && developers.length === 0)" class="empty-state">
                   <div class="empty-icon">👥</div>
                   <h4>Geen developers beschikbaar</h4>
                   <p>Voeg eerst developers toe in de vorige stap om afwezigheden in te kunnen stellen.</p>
+                  </div>
                 </div>
-              </div>
-
+                
               <!-- Buffer Setting -->
               <div class="buffer-section-minimal">
                 <div class="buffer-input-group">
@@ -720,6 +720,7 @@
               </div>
             </div>
           </div>
+        </div>
 
         <!-- Universal Navigation Component -->
         <div class="universal-navigation">
@@ -727,8 +728,8 @@
             <div class="nav-spacer"></div>
             <div class="nav-buttons">
               <!-- Previous Button -->
-              <button 
-                v-if="currentStep > 1"
+            <button 
+              v-if="currentStep > 1" 
                 @click="goToPreviousStep"
                 class="nav-btn prev-btn"
                 :disabled="isNavigating"
@@ -738,11 +739,11 @@
                   <path d="M15 18l-6-6 6-6"/>
                 </svg>
                 <span class="nav-text">Vorige</span>
-              </button>
+            </button>
 
               <!-- Next Button -->
-              <button 
-                v-if="currentStep < 4"
+            <button 
+              v-if="currentStep < 4" 
                 @click="goToNextStep"
                 class="nav-btn next-btn"
                 :disabled="!canProceed || isNavigating"
@@ -753,12 +754,12 @@
                 <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                   <path d="M9 18l6-6-6-6"/>
                 </svg>
-              </button>
+            </button>
 
               <!-- Start Over Button -->
-              <button 
-                v-if="currentStep === 4"
-                @click="resetStepper"
+            <button 
+              v-if="currentStep === 4" 
+              @click="resetStepper" 
                 class="nav-btn reset-btn"
                 :disabled="isNavigating"
                 aria-label="Start opnieuw"
@@ -768,10 +769,10 @@
                   <path d="M3 3v5h5"/>
                 </svg>
                 <span class="nav-text">Start Over</span>
-              </button>
-            </div>
-            <div class="nav-spacer"></div>
+            </button>
           </div>
+            <div class="nav-spacer"></div>
+        </div>
         </div>
 
       </div>
