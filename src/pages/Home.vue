@@ -65,11 +65,12 @@
     <nav class="navbar" role="navigation" aria-label="Main navigation">
       <div class="nav-container">
         <div class="nav-brand">
+          <img src="/logo.svg" alt="Sprint Planner" class="nav-logo" />
           <h2>Sprint Planner</h2>
         </div>
         <div class="nav-links">
           <a 
-            href="https://linkedin.com/in/nathaljanijman" 
+            href="https://www.linkedin.com/in/nathalja-nijman-86410389/" 
             target="_blank" 
             rel="noopener noreferrer" 
             class="nav-link linkedin-link"
@@ -94,9 +95,6 @@
             <p class="subtitle">De eenvoudigste manier om je sprints te plannen en je team's velocity te tracken</p>
             <button @click="scrollToWidget" class="cta-button" aria-describedby="cta-description">
               Probeer Sprint Planner
-              <svg class="cta-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
-              <path d="M5 12h14M12 5l7 7-7 7"/>
-            </svg>
             </button>
             <span id="cta-description" class="sr-only">Scroll naar sprint planning tool hieronder</span>
           </div>
@@ -788,6 +786,43 @@ const newAbsenceLegacy = ref({
   reason: ''
 })
 
+// Real-time validation system
+const validationErrors = ref({})
+const validationWarnings = ref({})
+
+const validateInput = (value, type, context = {}) => {
+  const errors = []
+  const warnings = []
+  
+  switch (type) {
+    case 'velocity':
+      if (value < 0) errors.push('Velocity moet positief zijn')
+      if (value > 1000) warnings.push('Velocity lijkt onrealistisch hoog')
+      break
+    case 'hours':
+      if (value < 1) errors.push('Uren moeten minimaal 1 zijn')
+      if (value > 60) errors.push('Uren mogen maximaal 60 per week zijn')
+      if (value > 40) warnings.push('Meer dan 40 uur per week kan leiden tot burn-out')
+      break
+    case 'teamMembers':
+      if (value < 1) errors.push('Team moet minimaal 1 persoon hebben')
+      if (value > 20) warnings.push('Teams groter dan 20 personen zijn moeilijk te beheren')
+      break
+    case 'buffer':
+      if (value < 0) errors.push('Buffer percentage moet positief zijn')
+      if (value > 50) warnings.push('Buffer hoger dan 50% lijkt onrealistisch')
+      break
+  }
+  
+  return { errors, warnings }
+}
+
+const updateValidation = (field, value, type) => {
+  const validation = validateInput(value, type)
+  validationErrors.value[field] = validation.errors
+  validationWarnings.value[field] = validation.warnings
+}
+
 // Computed properties - CORRECTED LOGIC
 const averageVelocity = computed(() => {
   console.log('averageVelocity computed - method:', velocityInputMethod.value)
@@ -1230,6 +1265,18 @@ onMounted(() => {
   align-items: center;
 }
 
+.nav-brand {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.nav-logo {
+  height: 32px;
+  width: auto;
+  flex-shrink: 0;
+}
+
 .nav-brand h2 {
   font-size: 1.5rem;
   font-weight: 700;
@@ -1337,6 +1384,11 @@ onMounted(() => {
 .hero-content {
   text-align: left;
   z-index: 2;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-start;
+  gap: 1.5rem;
 }
 
 .hero-visual {
@@ -1670,12 +1722,14 @@ onMounted(() => {
   }
   
   .hero-content {
-    text-align: center;
+    text-align: left;
+    align-items: flex-start;
+    gap: 1rem;
   }
   
   .subtitle {
-    margin-left: auto;
-    margin-right: auto;
+    margin-left: 0;
+    margin-right: 0;
   }
   
   
