@@ -614,7 +614,7 @@
                         class="absence-input-minimal"
                         placeholder="Bijv. 8"
                       />
-                  </div>
+                    </div>
                     <button
                       @click="addAbsence"
                       :disabled="!newAbsence.developerId || !newAbsence.hours"
@@ -623,19 +623,26 @@
                       title="Klik om afwezigheid toe te voegen"
                     >
                       +
-                  </button>
+                    </button>
+                  </div>
                 </div>
-                    </div>
                     
                 <div v-if="allAbsences.length > 0" class="absences-list-minimal">
                   <div v-for="absence in allAbsences" :key="absence.id" class="absence-item-minimal">
                     <div class="absence-info-minimal">
                       <div class="absence-details-minimal">{{ getDeveloperName(absence.developerId) }} - {{ absence.hours }} uur afwezigheid</div>
-                        </div>
+                    </div>
                     <button @click="removeAbsence(absence.id)" class="remove-absence-button-minimal">
-                          ×
-                        </button>
-                      </div>
+                      ×
+                    </button>
+                  </div>
+                </div>
+                
+                <!-- Empty state when no developers available -->
+                <div v-if="(teamInputMethod === 'average' && capacity.teamMembers === 0) || (teamInputMethod === 'individual' && developers.length === 0)" class="empty-state">
+                  <div class="empty-icon">👥</div>
+                  <h4>Geen developers beschikbaar</h4>
+                  <p>Voeg eerst developers toe in de vorige stap om afwezigheden in te kunnen stellen.</p>
                 </div>
               </div>
 
@@ -967,11 +974,8 @@ const setTeamMethod = (method) => {
 // Availability input method toggle
 const availabilityInputMethod = ref('percentage') // 'percentage' or 'hours'
 
-// Individual developers with absences - start with 2 default developers
-const developers = ref([
-  { id: 1, name: 'Developer 1', contractHoursPerWeek: 40, absences: [] },
-  { id: 2, name: 'Developer 2', contractHoursPerWeek: 40, absences: [] }
-])
+// Individual developers with absences - start empty
+const developers = ref([])
 
 // Average team hours (for simple input)
 const averageTeamHours = ref(40)
@@ -5313,6 +5317,36 @@ textarea:focus,
 /* Step 3: Hours-based Availability Controls */
 .hours-availability-section {
   margin: 2rem 0;
+}
+
+/* Empty State */
+.empty-state {
+  text-align: center;
+  padding: 3rem 2rem;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 1rem;
+  margin: 2rem 0;
+}
+
+.empty-icon {
+  font-size: 3rem;
+  margin-bottom: 1rem;
+  opacity: 0.7;
+}
+
+.empty-state h4 {
+  color: #ffffff;
+  font-size: 1.25rem;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+}
+
+.empty-state p {
+  color: #a1a1aa;
+  font-size: 1rem;
+  line-height: 1.5;
+  margin: 0;
 }
 
 .add-absence-form-minimal {
