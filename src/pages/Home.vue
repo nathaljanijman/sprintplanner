@@ -359,10 +359,8 @@
                 <h3>{{ steps[1].title }}</h3>
                 <p>Configureer je team capaciteit op basis van contracturen of individuele developers</p>
               </div>
-              
                 
-                
-                <!-- Team Input Method Toggle -->
+              <!-- Team Input Method Toggle -->
                 <div class="team-input-toggle" style="display: grid !important; grid-template-columns: 1fr 1fr !important; gap: 1rem !important; margin-bottom: 2rem !important; padding: 1rem !important; background: rgba(255, 255, 255, 0.1) !important; border-radius: 1rem !important;">
                   <button 
                   @click="setTeamMethod('average')"
@@ -696,7 +694,7 @@
                 
                 <div class="results-grid">
                   <div class="result-item">
-                    <div class="result-icon"></div>
+                    <div class="result-icon">📊</div>
                     <div class="result-info">
                       <div class="result-label">Gemiddelde velocity</div>
                       <div class="result-value">{{ averageVelocity }}</div>
@@ -704,7 +702,7 @@
                   </div>
                   
                   <div class="result-item">
-                    <div class="result-icon"></div>
+                    <div class="result-icon">👥</div>
                     <div class="result-info">
                       <div class="result-label">Team capaciteit</div>
                       <div class="result-value">{{ teamCapacity }}</div>
@@ -712,20 +710,16 @@
                   </div>
                   
                   <div class="result-item">
-                    <div class="result-icon"></div>
+                    <div class="result-icon">🎯</div>
                     <div class="result-info">
                       <div class="result-label">Vertrouwen</div>
                       <div class="result-value confidence" :class="confidence.toLowerCase()">{{ confidence }}</div>
+                    </div>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
-
-              </div>
-
-          </div>
-            </div>
-          </div>
-        </div>
 
         <!-- Universal Navigation Component -->
         <div class="universal-navigation">
