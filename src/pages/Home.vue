@@ -1605,6 +1605,10 @@ const trackWidgetCompletion = () => {
   }
   
   sendEvent()
+  
+  // Also track locally as backup
+  trackLocalSession()
+  
   console.log('GA4: Widget completed!', {
     totalTime: totalTime,
     sessionId: analytics.value.sessionId
@@ -1693,10 +1697,48 @@ const showAnalyticsDashboard = () => {
   }
 }
 
+// Simple local analytics as backup
+const localAnalytics = {
+  sessions: JSON.parse(localStorage.getItem('sprintplanner_sessions') || '[]'),
+  
+  trackSession: (data) => {
+    const session = {
+      id: Date.now(),
+      timestamp: new Date().toISOString(),
+      ...data
+    }
+    localAnalytics.sessions.push(session)
+    localStorage.setItem('sprintplanner_sessions', JSON.stringify(localAnalytics.sessions))
+    console.log('📊 Local analytics tracked:', session)
+  },
+  
+  getStats: () => {
+    const sessions = localAnalytics.sessions
+    const completed = sessions.filter(s => s.completed)
+    return {
+      totalSessions: sessions.length,
+      completedSessions: completed.length,
+      completionRate: sessions.length > 0 ? (completed.length / sessions.length * 100).toFixed(1) + '%' : '0%',
+      averageTime: completed.length > 0 ? Math.round(completed.reduce((sum, s) => sum + (s.totalTime || 0), 0) / completed.length / 1000) + 's' : '0s'
+    }
+  }
+}
+
+// Track session completion
+const trackLocalSession = () => {
+  const totalTime = Date.now() - analytics.value.startTime
+  localAnalytics.trackSession({
+    completed: true,
+    totalTime: totalTime,
+    steps: analytics.value.steps.completed.length
+  })
+}
+
 // Make analytics dashboard available globally for development
 if (process.env.NODE_ENV === 'development') {
   window.showAnalyticsDashboard = showAnalyticsDashboard
   window.analytics = analytics
+  window.localAnalytics = localAnalytics
 }
 
 // Average team hours (for simple input)
