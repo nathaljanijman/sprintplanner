@@ -1,45 +1,23 @@
 <svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
-  <!-- Sprint Planner Favicon - Minimalist Velocity Line -->
-  
-  <!-- Background Circle -->
-  <circle cx="16" cy="16" r="15" fill="url(#gradient1)" stroke="url(#gradient2)" stroke-width="1"/>
-  
-  <!-- Minimalist Velocity Line -->
-  <g transform="translate(4, 4)">
-    <!-- Clean velocity line with subtle curve -->
-    <path d="M2 12 Q6 8 10 4 Q14 0 18 2" 
-          stroke="white" 
-          stroke-width="2" 
-          fill="none" 
+  <!-- Logo Icon Circle - Sprint Planner favicon -->
+  <circle cx="16" cy="16" r="11" fill="#4285f4"/>
+
+  <!-- Chart/Arrow Icon - matching logo design -->
+  <g transform="translate(16, 16)">
+    <!-- Sprint velocity chart path -->
+    <path d="M-5 2.5 L-2.5 -1.5 L0 0.5 L2.5 -2.5 L5 -0.5"
+          stroke="white"
+          stroke-width="1"
+          fill="none"
           stroke-linecap="round"
-          opacity="0.9"/>
-    
-    <!-- Minimal dots for sprint points -->
-    <circle cx="2" cy="12" r="1" fill="white" opacity="0.8"/>
-    <circle cx="6" cy="8" r="1" fill="white" opacity="0.8"/>
-    <circle cx="10" cy="4" r="1" fill="white" opacity="0.8"/>
-    <circle cx="14" cy="0" r="1" fill="white" opacity="0.8"/>
-    <circle cx="18" cy="2" r="1" fill="white" opacity="0.8"/>
-    
-    <!-- Subtle velocity indicator arrow -->
-    <path d="M16 4 L18 2 L16 0" 
-          stroke="white" 
-          stroke-width="1" 
-          fill="none" 
+          stroke-linejoin="round"/>
+
+    <!-- Progress arrow -->
+    <path d="M3.5 -2 L5 -0.5 L4 0.5"
+          stroke="white"
+          stroke-width="0.8"
+          fill="none"
           stroke-linecap="round"
-          opacity="0.7"/>
+          stroke-linejoin="round"/>
   </g>
-  
-  <!-- Gradients -->
-  <defs>
-    <linearGradient id="gradient1" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" style="stop-color:#3b82f6;stop-opacity:1" />
-      <stop offset="100%" style="stop-color:#1d4ed8;stop-opacity:1" />
-    </linearGradient>
-    
-    <linearGradient id="gradient2" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" style="stop-color:#60a5fa;stop-opacity:0.8" />
-      <stop offset="100%" style="stop-color:#3b82f6;stop-opacity:1" />
-    </linearGradient>
-  </defs>
 </svg>

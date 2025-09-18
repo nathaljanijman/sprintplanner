@@ -1,0 +1,78 @@
+<svg width="1200" height="630" viewBox="0 0 1200 630" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background -->
+  <rect width="1200" height="630" fill="url(#bgGradient)"/>
+
+  <!-- Grid pattern for tech feel -->
+  <defs>
+    <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
+      <path d="M 40 0 L 0 0 0 40" fill="none" stroke="rgba(255,255,255,0.05)" stroke-width="1"/>
+    </pattern>
+
+    <linearGradient id="bgGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#1e293b;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#0f172a;stop-opacity:1" />
+    </linearGradient>
+
+    <linearGradient id="logoGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#4285f4;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#1d4ed8;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+
+  <rect width="1200" height="630" fill="url(#grid)"/>
+
+  <!-- Logo -->
+  <g transform="translate(150, 200)">
+    <circle cx="0" cy="0" r="60" fill="url(#logoGradient)"/>
+    <g transform="translate(0, 0)">
+      <!-- Sprint velocity chart -->
+      <path d="M-25 12 L-12 -8 L0 4 L12 -12 L25 -4"
+            stroke="white"
+            stroke-width="4"
+            fill="none"
+            stroke-linecap="round"
+            stroke-linejoin="round"/>
+      <!-- Arrow -->
+      <path d="M18 -8 L25 -4 L20 2"
+            stroke="white"
+            stroke-width="3"
+            fill="none"
+            stroke-linecap="round"
+            stroke-linejoin="round"/>
+    </g>
+  </g>
+
+  <!-- Main Title -->
+  <text x="280" y="180" font-family="system-ui, -apple-system, sans-serif" font-size="64" font-weight="700" fill="white">
+    Sprint Planner
+  </text>
+
+  <!-- Subtitle -->
+  <text x="280" y="240" font-family="system-ui, -apple-system, sans-serif" font-size="32" font-weight="400" fill="#94a3b8">
+    Plan je sprint in 4 eenvoudige stappen
+  </text>
+
+  <!-- Features -->
+  <g transform="translate(280, 300)">
+    <text x="0" y="0" font-family="system-ui, -apple-system, sans-serif" font-size="24" font-weight="500" fill="#60a5fa">
+      ✓ Team velocity berekening
+    </text>
+    <text x="0" y="40" font-family="system-ui, -apple-system, sans-serif" font-size="24" font-weight="500" fill="#60a5fa">
+      ✓ Capaciteit planning
+    </text>
+    <text x="0" y="80" font-family="system-ui, -apple-system, sans-serif" font-size="24" font-weight="500" fill="#60a5fa">
+      ✓ Realistische sprint doelen
+    </text>
+  </g>
+
+  <!-- CTA -->
+  <rect x="280" y="450" width="300" height="60" rx="30" fill="url(#logoGradient)"/>
+  <text x="430" y="490" font-family="system-ui, -apple-system, sans-serif" font-size="24" font-weight="600" fill="white" text-anchor="middle">
+    Start gratis
+  </text>
+
+  <!-- Website URL -->
+  <text x="280" y="550" font-family="system-ui, -apple-system, sans-serif" font-size="18" font-weight="400" fill="#64748b">
+    sprintplanner.pages.dev
+  </text>
+</svg>
