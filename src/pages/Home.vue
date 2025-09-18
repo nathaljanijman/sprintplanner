@@ -306,6 +306,19 @@
                       <path d="M9 18l6-6-6-6"/>
                     </svg>
                   </button>
+
+                  <div class="welcome-or">of</div>
+
+                  <button @click="openLoadModal" class="welcome-load-btn">
+                    <svg class="welcome-load-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/>
+                      <polyline points="14,2 14,8 20,8"/>
+                      <path d="M16 13H8"/>
+                      <path d="M16 17H8"/>
+                      <polyline points="10,9 9,9 8,9"/>
+                    </svg>
+                    Bestaande planning laden
+                  </button>
                 </div>
               </div>
             </div>
@@ -917,6 +930,51 @@
             </div>
           </div>
 
+        <!-- Loaded Planning Context Banner -->
+        <div v-if="currentStep > 0 && currentPlanningKey" class="loaded-planning-banner">
+          <div class="banner-content">
+            <div class="banner-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/>
+                <polyline points="14,2 14,8 20,8"/>
+                <path d="M16 13H8"/>
+                <path d="M16 17H8"/>
+              </svg>
+            </div>
+            <div class="banner-text">
+              <div class="banner-title">{{ loadedPlanningBannerTitle }}</div>
+              <div class="banner-subtitle">{{ loadedPlanningBannerSubtitle }}</div>
+            </div>
+            <button @click="currentPlanningKey = null" class="banner-dismiss" aria-label="Banner sluiten">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <line x1="18" y1="6" x2="6" y2="18"/>
+                <line x1="6" y1="6" x2="18" y2="18"/>
+              </svg>
+            </button>
+          </div>
+        </div>
+
+        <!-- Planning Actions -->
+        <div v-if="currentStep === 4" class="planning-actions">
+          <div class="action-buttons">
+            <button @click="showSaveModal = true" class="action-btn save-btn">
+              <svg class="action-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M19 21H5a2 2 0 01-2-2V5a2 2 0 012-2h11l5 5v11a2 2 0 01-2 2z"/>
+                <polyline points="17,21 17,13 7,13 7,21"/>
+                <polyline points="7,3 7,8 15,8"/>
+              </svg>
+              <span>Planning opslaan</span>
+            </button>
+
+            <button @click="showFeedbackModal = true" class="action-btn feedback-btn">
+              <svg class="action-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/>
+              </svg>
+              <span>Feedback geven</span>
+            </button>
+          </div>
+        </div>
+
         <!-- Universal Navigation Component -->
         <div v-if="currentStep > 0" class="universal-navigation">
           <div class="nav-container">
@@ -991,6 +1049,178 @@
         </div>
       </div>
     </footer>
+  </div>
+
+  <!-- Save Planning Modal -->
+  <div v-if="showSaveModal" class="modal-overlay" @click="showSaveModal = false">
+    <div class="modal-content" @click.stop>
+      <div class="modal-header">
+        <h3>Planning opslaan</h3>
+        <button @click="showSaveModal = false" class="close-button" aria-label="Sluiten">×</button>
+      </div>
+      <div class="modal-body">
+        <div v-if="savedPlanningKey" class="success-state">
+          <div class="success-icon">✓</div>
+          <p>Planning succesvol opgeslagen!</p>
+          <div class="key-display">
+            <label>Planning code:</label>
+            <div class="key-value">{{ savedPlanningKey }}</div>
+            <button @click="copyToClipboard(savedPlanningKey)" class="copy-button">
+              Kopiëren
+            </button>
+          </div>
+          <p class="key-info">Bewaar deze code om je planning later te laden.</p>
+        </div>
+        <div v-else class="save-form">
+          <p>Sla je huidige planning op om later te laden of te delen.</p>
+          <button @click="savePlanningData" class="save-button" :disabled="isSaving">
+            {{ isSaving ? 'Opslaan...' : 'Opslaan' }}
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Load Planning Modal - Modern UX 2025 -->
+  <div v-if="showLoadModal" class="modal-overlay-modern" @click="showLoadModal = false">
+    <div class="modal-content-modern" @click.stop>
+      <!-- Hero Section -->
+      <div class="modal-hero">
+        <div class="modal-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/>
+            <polyline points="14,2 14,8 20,8"/>
+            <path d="M16 13H8"/>
+            <path d="M16 17H8"/>
+          </svg>
+        </div>
+        <h2>Planning laden</h2>
+        <p class="modal-subtitle">Voer je planning code in om een bestaande sprint planning te laden</p>
+      </div>
+
+      <!-- Content Section -->
+      <div class="modal-content-section">
+        <div class="input-group-modern">
+          <label for="planningKey" class="input-label-modern">Planning code</label>
+          <div class="input-wrapper-modern">
+            <input
+              id="planningKey"
+              v-model="loadKey"
+              type="text"
+              placeholder="Bijv. ABC123XY"
+              class="input-modern"
+              :class="{ 'error': loadError }"
+              @input="loadError = ''"
+            >
+            <div v-if="loadKey" class="input-status">
+              <svg class="check-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <polyline points="20,6 9,17 4,12"/>
+              </svg>
+            </div>
+          </div>
+          <div v-if="loadError" class="error-message-modern">
+            <svg class="error-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="12" cy="12" r="10"/>
+              <line x1="12" y1="8" x2="12" y2="12"/>
+              <line x1="12" y1="16" x2="12.01" y2="16"/>
+            </svg>
+            {{ loadError }}
+          </div>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="modal-actions-modern">
+          <button @click="showLoadModal = false" class="btn-secondary-modern">
+            Annuleren
+          </button>
+          <button
+            @click="loadPlanningData(loadKey)"
+            class="btn-primary-modern"
+            :disabled="!loadKey || isLoading"
+            :class="{ 'loading': isLoading }"
+          >
+            <span v-if="!isLoading">Planning laden</span>
+            <span v-else class="loading-content">
+              <svg class="loading-spinner" viewBox="0 0 24 24">
+                <circle cx="12" cy="12" r="10" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-dasharray="31.416" stroke-dashoffset="31.416">
+                  <animate attributeName="stroke-dasharray" dur="2s" values="0 31.416;15.708 15.708;0 31.416" repeatCount="indefinite"/>
+                  <animate attributeName="stroke-dashoffset" dur="2s" values="0;-15.708;-31.416" repeatCount="indefinite"/>
+                </circle>
+              </svg>
+              Laden...
+            </span>
+          </button>
+        </div>
+
+        <!-- Help Section -->
+        <div class="modal-help">
+          <div class="help-item">
+            <svg class="help-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="12" cy="12" r="10"/>
+              <path d="M9.09 9a3 3 0 015.83 1c0 2-3 3-3 3"/>
+              <line x1="12" y1="17" x2="12.01" y2="17"/>
+            </svg>
+            <span>Planning codes zijn 8 karakters lang (bijv. ABC123XY)</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Close Button -->
+      <button @click="showLoadModal = false" class="close-button-modern" aria-label="Sluiten">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <line x1="18" y1="6" x2="6" y2="18"/>
+          <line x1="6" y1="6" x2="18" y2="18"/>
+        </svg>
+      </button>
+    </div>
+  </div>
+
+  <!-- Feedback Modal -->
+  <div v-if="showFeedbackModal" class="modal-overlay" @click="showFeedbackModal = false">
+    <div class="modal-content" @click.stop>
+      <div class="modal-header">
+        <h3>Feedback geven</h3>
+        <button @click="showFeedbackModal = false" class="close-button" aria-label="Sluiten">×</button>
+      </div>
+      <div class="modal-body">
+        <div v-if="feedbackSubmitted" class="success-state">
+          <div class="success-icon">✓</div>
+          <p>Bedankt voor je feedback!</p>
+          <p class="feedback-info">Je feedback helpt ons het model te verbeteren.</p>
+        </div>
+        <div v-else class="feedback-form">
+          <p>Hoe accuraat was de voorspelling voor jouw sprint?</p>
+
+          <div class="rating-section">
+            <label>Accuraatheid:</label>
+            <div class="rating-buttons">
+              <button
+                v-for="rating in [1,2,3,4,5]"
+                :key="rating"
+                @click="feedbackRating = rating"
+                :class="['rating-button', { active: feedbackRating === rating }]"
+              >
+                {{ rating }}
+              </button>
+            </div>
+          </div>
+
+          <div class="feedback-text">
+            <label for="feedbackComment">Opmerkingen (optioneel):</label>
+            <textarea
+              id="feedbackComment"
+              v-model="feedbackComment"
+              placeholder="Wat kunnen we verbeteren?"
+              class="feedback-textarea"
+            ></textarea>
+          </div>
+
+          <button @click="submitFeedback" class="submit-button" :disabled="!feedbackRating || isSubmittingFeedback">
+            {{ isSubmittingFeedback ? 'Versturen...' : 'Versturen' }}
+          </button>
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -1272,6 +1502,67 @@ const getPeriodLabel = (index) => {
 
 // Simplified disclosure state
 const showAllDetails = ref(false)
+
+// Loaded Planning Banner Context
+const loadedPlanningBannerTitle = computed(() => {
+  if (!currentPlanningKey.value) return ''
+
+  switch(currentStep.value) {
+    case 1:
+      return 'Planning geladen - Controleer velocity'
+    case 2:
+      return 'Planning geladen - Controleer team capaciteit'
+    case 3:
+      return 'Planning geladen - Controleer beschikbaarheid'
+    case 4:
+      return 'Planning geladen - Resultaten'
+    default:
+      return 'Planning geladen'
+  }
+})
+
+const loadedPlanningBannerSubtitle = computed(() => {
+  if (!currentPlanningKey.value) return ''
+
+  switch(currentStep.value) {
+    case 1:
+      return `Code: ${currentPlanningKey.value} • Wijzig indien nodig en ga verder`
+    case 2:
+      return `Code: ${currentPlanningKey.value} • Wijzig team instellingen indien nodig`
+    case 3:
+      return `Code: ${currentPlanningKey.value} • Wijzig beschikbaarheid indien nodig`
+    case 4:
+      return `Code: ${currentPlanningKey.value} • Je planning is klaar!`
+    default:
+      return `Code: ${currentPlanningKey.value}`
+  }
+})
+
+// Data Persistence System
+const currentPlanningKey = ref(null)
+const showSaveModal = ref(false)
+const showLoadModal = ref(false)
+const loadKey = ref('')
+const saveSuccess = ref(false)
+const savedPlanningKey = ref('')
+const isSaving = ref(false)
+const loadError = ref('')
+
+// Feedback System
+const showFeedbackModal = ref(false)
+const feedbackData = ref({
+  actualPoints: null,
+  sprintRating: null,
+  issues: [],
+  meetingsOverhead: null,
+  contextSwitchingOverhead: null,
+  bufferSufficient: null,
+  additionalComments: ''
+})
+const feedbackSubmitted = ref(false)
+const feedbackRating = ref(null)
+const feedbackComment = ref('')
+const isSubmittingFeedback = ref(false)
 
 // Helper function to get developer name
 const getDeveloperName = (developerId) => {
@@ -1617,10 +1908,283 @@ const resetStepper = () => {
   updateStepCompletion()
 }
 
+// Planning Data Management Functions
+const generatePlanningKey = () => {
+  return Math.random().toString(36).substring(2, 10).toUpperCase()
+}
+
+const getCurrentPlanningData = () => {
+  return {
+    velocity: {
+      method: velocityInputMethod.value,
+      manualValue: manualAverageVelocity.value,
+      sprints: sprints.value,
+      average: averageVelocity.value
+    },
+    capacity: capacity.value,
+    team: {
+      method: teamInputMethod.value,
+      developers: developers.value
+    },
+    absences: generalAbsences.value,
+    buffer: bufferPercentage.value,
+    results: {
+      recommendedPoints: recommendedSprintPoints.value,
+      finalCapacity: finalCapacity.value,
+      totalContractHours: totalContractHours.value
+    },
+    metadata: {
+      created: new Date().toISOString(),
+      version: '1.0',
+      userAgent: navigator.userAgent.substring(0, 100)
+    }
+  }
+}
+
+const openLoadModal = () => {
+  showLoadModal.value = true
+}
+
+const copyToClipboard = async (text) => {
+  try {
+    await navigator.clipboard.writeText(text)
+    // Could add a toast notification here
+  } catch (err) {
+    // Fallback for older browsers
+    const textArea = document.createElement('textarea')
+    textArea.value = text
+    document.body.appendChild(textArea)
+    textArea.select()
+    document.execCommand('copy')
+    document.body.removeChild(textArea)
+  }
+}
+
+const savePlanningData = async () => {
+  try {
+    console.log('Starting to save planning data...')
+    isSaving.value = true
+    const key = generatePlanningKey()
+    console.log('Generated key:', key)
+
+    const data = getCurrentPlanningData()
+    console.log('Planning data:', data)
+
+    const planningData = {
+      key,
+      data,
+      saved: new Date().toISOString()
+    }
+
+    localStorage.setItem(`sprint_planning_${key}`, JSON.stringify(planningData))
+
+    currentPlanningKey.value = key
+    savedPlanningKey.value = key
+    saveSuccess.value = true
+
+    return key
+  } catch (error) {
+    console.error('Failed to save planning data:', error)
+    showError('Er ging iets mis bij het opslaan van je planning')
+  } finally {
+    isSaving.value = false
+  }
+}
+
+const loadPlanningData = async (key) => {
+  try {
+    loadError.value = ''
+
+    // Step 1: Validate key format
+    if (!key || key.length !== 8) {
+      loadError.value = 'Planning code moet 8 karakters lang zijn'
+      return false
+    }
+
+    // Step 2: Start loading with progress indication
+    showLoading('Planning zoeken...')
+    await new Promise(resolve => setTimeout(resolve, 300)) // UX: Brief pause for feedback
+
+    const savedData = localStorage.getItem(`sprint_planning_${key.toUpperCase()}`)
+
+    if (!savedData) {
+      loadError.value = 'Planning niet gevonden. Controleer je code en probeer opnieuw.'
+      isLoading.value = false
+      return false
+    }
+
+    // Step 3: Parse and validate data
+    showLoading('Planning gegevens verwerken...')
+    await new Promise(resolve => setTimeout(resolve, 200))
+
+    const planningData = JSON.parse(savedData)
+    const data = planningData.data
+
+    // Step 4: Restore data with progress
+    showLoading('Planning gegevens laden...')
+    await new Promise(resolve => setTimeout(resolve, 200))
+
+    // Restore velocity data
+    velocityInputMethod.value = data.velocity.method
+    manualAverageVelocity.value = data.velocity.manualValue
+    sprints.value = data.velocity.sprints
+
+    // Restore capacity data
+    capacity.value = data.capacity
+
+    // Restore team data
+    teamInputMethod.value = data.team.method
+    developers.value = data.team.developers
+
+    // Restore other data
+    generalAbsences.value = data.absences || []
+    bufferPercentage.value = data.buffer
+
+    // Step 5: Navigate to results with smooth transition
+    currentPlanningKey.value = key.toUpperCase()
+
+    showLoading('Resultaten voorbereiden...')
+    await new Promise(resolve => setTimeout(resolve, 300))
+
+    console.log('About to close modal and navigate...')
+
+    // Close modal first
+    showLoadModal.value = false
+    loadKey.value = ''
+
+    console.log('Modal closed, navigating to step 1...')
+
+    // Navigate to velocity step to allow review/editing
+    currentStep.value = 1
+
+    console.log('Navigated to step 1, hiding loading...')
+
+    // Always hide loading
+    isLoading.value = false
+
+    console.log('Loading hidden successfully!')
+
+    // Step 6: Success feedback with context
+    try {
+      const savedDate = new Date(planningData.saved).toLocaleDateString('nl-NL', {
+        day: 'numeric',
+        month: 'long',
+        year: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit'
+      })
+
+      showSuccess(`Planning geladen! Opgeslagen op ${savedDate}. Je kunt de gegevens controleren en aanpassen.`)
+    } catch (dateError) {
+      // Fallback if date parsing fails
+      showSuccess('Planning succesvol geladen! Je kunt de gegevens controleren en aanpassen.')
+    }
+
+    return true
+
+  } catch (error) {
+    console.error('Failed to load planning data:', error)
+    loadError.value = 'Er ging iets mis bij het laden van je planning'
+    isLoading.value = false
+    return false
+  }
+}
+
+// Feedback System Functions
+const submitFeedback = async () => {
+  try {
+    isSubmittingFeedback.value = true
+
+    const feedback = {
+      planningKey: currentPlanningKey.value,
+      rating: feedbackRating.value,
+      comment: feedbackComment.value,
+      originalPlanning: getCurrentPlanningData(),
+      submitted: new Date().toISOString()
+    }
+
+    const existingFeedback = JSON.parse(localStorage.getItem('sprint_feedback') || '[]')
+    existingFeedback.push(feedback)
+    localStorage.setItem('sprint_feedback', JSON.stringify(existingFeedback))
+
+    feedbackSubmitted.value = true
+    showSuccess('Bedankt voor je feedback! Dit helpt ons het model te verbeteren.')
+
+    // Reset feedback form after a delay
+    setTimeout(() => {
+      feedbackSubmitted.value = false
+      feedbackRating.value = null
+      feedbackComment.value = ''
+      showFeedbackModal.value = false
+    }, 2000)
+
+  } catch (error) {
+    console.error('Failed to submit feedback:', error)
+    showError('Er ging iets mis bij het versturen van je feedback')
+  } finally {
+    isSubmittingFeedback.value = false
+  }
+}
+
+// QR Code generation
+const generateQRCodeURL = (key) => {
+  const url = `${window.location.origin}?load=${key}`
+  return `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(url)}`
+}
+
+// Check for load parameter on page load
+const checkForLoadParameter = () => {
+  const urlParams = new URLSearchParams(window.location.search)
+  const loadParam = urlParams.get('load')
+
+  if (loadParam) {
+    loadKey.value = loadParam
+    loadPlanningData(loadParam)
+    window.history.replaceState({}, document.title, window.location.pathname)
+  }
+}
+
 onMounted(() => {
   // Always start at step 0
   currentStep.value = 0
-  
+
+  // Check for load parameter
+  checkForLoadParameter()
+
+  // Create a test planning for development
+  const testPlanningData = {
+    key: 'TEST1234',
+    data: {
+      velocity: {
+        method: 'manual',
+        manualValue: 45,
+        sprints: [42, 38, 50, 47, 43, 40],
+        average: 45
+      },
+      capacity: {
+        sprintWeeks: 2,
+        teamMembers: 3,
+        availability: 85,
+        capacityFactor: 0.85
+      },
+      team: {
+        method: 'average',
+        developers: []
+      },
+      absences: [],
+      buffer: 15,
+      results: {
+        recommendedPoints: 38,
+        finalCapacity: 160,
+        totalContractHours: 120
+      }
+    },
+    saved: new Date().toISOString()
+  }
+
+  localStorage.setItem('sprint_planning_TEST1234', JSON.stringify(testPlanningData))
+  console.log('Test planning created with code: TEST1234')
+
   // Check cookie consent
   const cookieConsent = localStorage.getItem('sprintplanner-cookie-consent')
   if (cookieConsent) {
@@ -6323,6 +6887,10 @@ textarea:focus,
     color: white !important;
   }
 
+  .result-value {
+    color: white !important;
+  }
+
   .feature-card {
     background: rgba(255, 255, 255, 0.05) !important;
     border: 1px solid rgba(255, 255, 255, 0.1) !important;
@@ -6934,6 +7502,791 @@ textarea:focus,
   .detail-block {
     padding: 1rem;
     margin-bottom: 1.5rem;
+  }
+}
+
+/* Planning Actions */
+.planning-actions {
+  margin: 2rem 0;
+  display: flex;
+  justify-content: center;
+}
+
+.action-buttons {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.action-btn {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.875rem 1.5rem;
+  background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
+  color: white;
+  border: none;
+  border-radius: 12px;
+  font-weight: 600;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  min-width: 140px;
+}
+
+.action-btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 6px 20px rgba(59, 130, 246, 0.3);
+}
+
+.action-icon {
+  width: 18px;
+  height: 18px;
+}
+
+/* Modal Styles */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.8);
+  backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+  padding: 1rem;
+}
+
+.modal-content {
+  background: #1a1a1a;
+  border-radius: 16px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  max-width: 500px;
+  width: 100%;
+  max-height: 90vh;
+  overflow: hidden;
+  box-shadow: 0 25px 50px rgba(0, 0, 0, 0.5);
+}
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1.5rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.modal-header h3 {
+  color: white;
+  font-size: 1.25rem;
+  font-weight: 600;
+  margin: 0;
+}
+
+.close-button {
+  background: none;
+  border: none;
+  color: #a1a1aa;
+  font-size: 1.5rem;
+  cursor: pointer;
+  padding: 0.5rem;
+  border-radius: 8px;
+  transition: all 0.2s ease;
+}
+
+.close-button:hover {
+  background: rgba(255, 255, 255, 0.1);
+  color: white;
+}
+
+.modal-body {
+  padding: 1.5rem;
+  color: white;
+}
+
+.success-state {
+  text-align: center;
+}
+
+.success-icon {
+  width: 60px;
+  height: 60px;
+  background: #10b981;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 2rem;
+  color: white;
+  margin: 0 auto 1rem;
+}
+
+.key-display {
+  background: rgba(255, 255, 255, 0.05);
+  padding: 1rem;
+  border-radius: 12px;
+  margin: 1rem 0;
+}
+
+.key-display label {
+  display: block;
+  color: #a1a1aa;
+  font-size: 0.875rem;
+  margin-bottom: 0.5rem;
+}
+
+.key-value {
+  font-family: 'Courier New', monospace;
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--accent-primary);
+  text-align: center;
+  letter-spacing: 0.1em;
+  margin-bottom: 1rem;
+}
+
+.copy-button, .save-button, .load-button, .submit-button {
+  background: var(--accent-primary);
+  color: white;
+  border: none;
+  padding: 0.75rem 1.5rem;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  width: 100%;
+}
+
+.copy-button:hover, .save-button:hover, .load-button:hover, .submit-button:hover {
+  background: var(--accent-secondary);
+  transform: translateY(-1px);
+}
+
+.copy-button:disabled, .save-button:disabled, .load-button:disabled, .submit-button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.key-info {
+  color: #a1a1aa;
+  font-size: 0.875rem;
+  margin-top: 1rem;
+}
+
+.key-input {
+  width: 100%;
+  padding: 0.75rem;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  color: white;
+  font-size: 1rem;
+  margin: 0.5rem 0 1rem;
+}
+
+.key-input:focus {
+  outline: none;
+  border-color: var(--accent-primary);
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+.error-message {
+  color: #ef4444;
+  font-size: 0.875rem;
+  margin-top: 0.5rem;
+}
+
+.rating-section {
+  margin: 1.5rem 0;
+}
+
+.rating-section label {
+  display: block;
+  color: #a1a1aa;
+  font-size: 0.875rem;
+  margin-bottom: 0.75rem;
+}
+
+.rating-buttons {
+  display: flex;
+  gap: 0.5rem;
+  justify-content: center;
+}
+
+.rating-button {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  border: 2px solid rgba(255, 255, 255, 0.2);
+  background: rgba(255, 255, 255, 0.05);
+  color: #a1a1aa;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.rating-button:hover {
+  border-color: var(--accent-primary);
+  color: var(--accent-primary);
+}
+
+.rating-button.active {
+  background: var(--accent-primary);
+  border-color: var(--accent-primary);
+  color: white;
+}
+
+.feedback-text {
+  margin: 1.5rem 0;
+}
+
+.feedback-text label {
+  display: block;
+  color: #a1a1aa;
+  font-size: 0.875rem;
+  margin-bottom: 0.5rem;
+}
+
+.feedback-textarea {
+  width: 100%;
+  min-height: 100px;
+  padding: 0.75rem;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  color: white;
+  font-size: 0.9rem;
+  resize: vertical;
+  font-family: inherit;
+}
+
+.feedback-textarea:focus {
+  outline: none;
+  border-color: var(--accent-primary);
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+@media (max-width: 768px) {
+  .action-buttons {
+    flex-direction: column;
+    width: 100%;
+    max-width: 300px;
+  }
+
+  .action-btn {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .modal-content {
+    margin: 1rem;
+    max-height: calc(100vh - 2rem);
+  }
+
+  .modal-header, .modal-body {
+    padding: 1rem;
+  }
+
+  .rating-buttons {
+    gap: 0.75rem;
+  }
+
+  .rating-button {
+    width: 45px;
+    height: 45px;
+  }
+}
+
+/* Welcome Page Load Button */
+.welcome-or {
+  text-align: center;
+  color: #a1a1aa;
+  font-size: 0.875rem;
+  margin: 1rem 0;
+}
+
+.welcome-load-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  width: 100%;
+  padding: 0.875rem 1.5rem;
+  background: rgba(255, 255, 255, 0.05);
+  color: white;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  font-weight: 500;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.welcome-load-btn:hover {
+  background: rgba(255, 255, 255, 0.1);
+  border-color: var(--accent-primary);
+  transform: translateY(-1px);
+}
+
+.welcome-load-icon {
+  width: 18px;
+  height: 18px;
+}
+
+/* Modern Modal UX 2025 */
+.modal-overlay-modern {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.4);
+  backdrop-filter: blur(8px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+  padding: 1rem;
+  animation: fadeIn 0.2s ease-out;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.modal-content-modern {
+  background: linear-gradient(145deg, #1a1a1a, #0f0f0f);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 24px;
+  max-width: 480px;
+  width: 100%;
+  max-height: 90vh;
+  overflow: hidden;
+  box-shadow:
+    0 25px 50px rgba(0, 0, 0, 0.7),
+    0 0 0 1px rgba(255, 255, 255, 0.05),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1);
+  position: relative;
+  animation: slideUp 0.3s ease-out;
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.modal-hero {
+  text-align: center;
+  padding: 2rem 2rem 1rem;
+  background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
+  position: relative;
+  overflow: hidden;
+}
+
+.modal-hero::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: radial-gradient(circle at 30% 20%, rgba(255, 255, 255, 0.1), transparent 50%);
+  pointer-events: none;
+}
+
+.modal-icon {
+  width: 60px;
+  height: 60px;
+  background: rgba(255, 255, 255, 0.15);
+  border-radius: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 1rem;
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.modal-icon svg {
+  width: 28px;
+  height: 28px;
+  color: white;
+}
+
+.modal-hero h2 {
+  color: white;
+  font-size: 1.5rem;
+  font-weight: 700;
+  margin: 0 0 0.5rem;
+  text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+}
+
+.modal-subtitle {
+  color: rgba(255, 255, 255, 0.9);
+  font-size: 0.9rem;
+  margin: 0;
+  line-height: 1.5;
+}
+
+.modal-content-section {
+  padding: 2rem;
+}
+
+.input-group-modern {
+  margin-bottom: 2rem;
+}
+
+.input-label-modern {
+  display: block;
+  color: #e5e5e5;
+  font-size: 0.875rem;
+  font-weight: 600;
+  margin-bottom: 0.75rem;
+  letter-spacing: 0.025em;
+}
+
+.input-wrapper-modern {
+  position: relative;
+}
+
+.input-modern {
+  width: 100%;
+  padding: 1rem 1rem 1rem 1rem;
+  background: rgba(255, 255, 255, 0.03);
+  border: 2px solid rgba(255, 255, 255, 0.08);
+  border-radius: 16px;
+  color: white;
+  font-size: 1rem;
+  font-weight: 500;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  transition: all 0.2s ease;
+  outline: none;
+}
+
+.input-modern:focus {
+  border-color: var(--accent-primary);
+  background: rgba(255, 255, 255, 0.05);
+  box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.1);
+}
+
+.input-modern.error {
+  border-color: #ef4444;
+  background: rgba(239, 68, 68, 0.05);
+}
+
+.input-modern::placeholder {
+  color: #71717a;
+  text-transform: none;
+  letter-spacing: normal;
+  font-weight: 400;
+}
+
+.input-status {
+  position: absolute;
+  right: 1rem;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 20px;
+  height: 20px;
+  background: #10b981;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: checkmark 0.3s ease-out;
+}
+
+@keyframes checkmark {
+  from { opacity: 0; transform: translateY(-50%) scale(0.5); }
+  to { opacity: 1; transform: translateY(-50%) scale(1); }
+}
+
+.check-icon {
+  width: 12px;
+  height: 12px;
+  color: white;
+}
+
+.error-message-modern {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-top: 0.75rem;
+  color: #ef4444;
+  font-size: 0.875rem;
+  font-weight: 500;
+}
+
+.error-icon {
+  width: 16px;
+  height: 16px;
+  flex-shrink: 0;
+}
+
+.modal-actions-modern {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.btn-secondary-modern {
+  flex: 1;
+  padding: 1rem 1.5rem;
+  background: rgba(255, 255, 255, 0.05);
+  color: #a1a1aa;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  font-weight: 600;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.btn-secondary-modern:hover {
+  background: rgba(255, 255, 255, 0.08);
+  color: white;
+  transform: translateY(-1px);
+}
+
+.btn-primary-modern {
+  flex: 1;
+  padding: 1rem 1.5rem;
+  background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
+  color: white;
+  border: none;
+  border-radius: 12px;
+  font-weight: 600;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.btn-primary-modern:hover:not(:disabled) {
+  transform: translateY(-1px);
+  box-shadow: 0 8px 25px rgba(59, 130, 246, 0.3);
+}
+
+.btn-primary-modern:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.btn-primary-modern.loading {
+  pointer-events: none;
+}
+
+.loading-content {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+}
+
+.loading-spinner {
+  width: 16px;
+  height: 16px;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+.modal-help {
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  border-radius: 12px;
+  padding: 1rem;
+}
+
+.help-item {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  color: #a1a1aa;
+  font-size: 0.875rem;
+}
+
+.help-icon {
+  width: 16px;
+  height: 16px;
+  color: var(--accent-primary);
+  flex-shrink: 0;
+}
+
+.close-button-modern {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  background: rgba(255, 255, 255, 0.1);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  backdrop-filter: blur(10px);
+}
+
+.close-button-modern:hover {
+  background: rgba(255, 255, 255, 0.2);
+  transform: scale(1.1);
+}
+
+.close-button-modern svg {
+  width: 14px;
+  height: 14px;
+}
+
+@media (max-width: 768px) {
+  .modal-content-modern {
+    margin: 1rem;
+    border-radius: 20px;
+  }
+
+  .modal-hero {
+    padding: 1.5rem 1.5rem 1rem;
+  }
+
+  .modal-content-section {
+    padding: 1.5rem;
+  }
+
+  .modal-actions-modern {
+    flex-direction: column;
+  }
+
+  .btn-secondary-modern,
+  .btn-primary-modern {
+    width: 100%;
+  }
+}
+
+/* Loaded Planning Banner */
+.loaded-planning-banner {
+  margin: 1.5rem 0;
+  display: flex;
+  justify-content: center;
+  animation: bannerSlideIn 0.4s ease-out;
+}
+
+@keyframes bannerSlideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.banner-content {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  background: linear-gradient(135deg, rgba(16, 185, 129, 0.1), rgba(5, 150, 105, 0.1));
+  border: 1px solid rgba(16, 185, 129, 0.2);
+  border-radius: 12px;
+  padding: 1rem 1.5rem;
+  max-width: 400px;
+  width: 100%;
+}
+
+.banner-icon {
+  width: 40px;
+  height: 40px;
+  background: rgba(16, 185, 129, 0.15);
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.banner-icon svg {
+  width: 20px;
+  height: 20px;
+  color: #10b981;
+}
+
+.banner-text {
+  flex: 1;
+}
+
+.banner-title {
+  color: #10b981;
+  font-weight: 600;
+  font-size: 0.9rem;
+  margin-bottom: 0.25rem;
+}
+
+.banner-subtitle {
+  color: rgba(16, 185, 129, 0.8);
+  font-size: 0.8rem;
+  font-family: 'Courier New', monospace;
+  letter-spacing: 0.5px;
+}
+
+.banner-dismiss {
+  background: none;
+  border: none;
+  color: rgba(16, 185, 129, 0.6);
+  cursor: pointer;
+  padding: 0.25rem;
+  border-radius: 6px;
+  transition: all 0.2s ease;
+  flex-shrink: 0;
+}
+
+.banner-dismiss:hover {
+  background: rgba(16, 185, 129, 0.1);
+  color: #10b981;
+}
+
+.banner-dismiss svg {
+  width: 16px;
+  height: 16px;
+}
+
+@media (max-width: 768px) {
+  .loaded-planning-banner {
+    margin: 1rem;
+  }
+
+  .banner-content {
+    padding: 0.875rem 1rem;
+  }
+
+  .banner-icon {
+    width: 36px;
+    height: 36px;
+  }
+
+  .banner-icon svg {
+    width: 18px;
+    height: 18px;
   }
 }
 </style>
