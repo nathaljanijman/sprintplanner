@@ -1539,6 +1539,9 @@ const initializeAnalytics = () => {
       event_label: 'Widget Started',
       value: 1
     })
+    console.log('✅ GA4: Widget start event sent')
+  } else {
+    console.log('❌ GA4: gtag not available - check tracking ID')
   }
   
   analytics.value.startTime = Date.now()
@@ -1560,6 +1563,9 @@ const trackStepCompletion = (stepNumber, stepName) => {
         time_spent: timeSpent
       }
     })
+    console.log(`✅ GA4: Step ${stepNumber} (${stepName}) event sent`)
+  } else {
+    console.log(`❌ GA4: gtag not available for step ${stepNumber}`)
   }
   
   analytics.value.currentStep = stepNumber
