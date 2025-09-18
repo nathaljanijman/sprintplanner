@@ -2247,6 +2247,7 @@ onMounted(() => {
   
   .footer {
     padding: 1.5rem 0;
+    margin-bottom: 100px; /* Add space above fixed navigation */
   }
   
   .footer-content-minimal {
