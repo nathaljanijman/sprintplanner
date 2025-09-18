@@ -251,6 +251,54 @@
           <!-- Step Content -->
           <div class="step-content">
 
+            <!-- Step 0: Welcome -->
+            <div v-if="currentStep === 0" class="step-panel welcome-step">
+              <div class="welcome-content">
+                <h2 class="welcome-title">Sprint Planning</h2>
+                <p class="welcome-subtitle">Plan je volgende sprint in 3 eenvoudige stappen</p>
+
+                <div class="welcome-benefits">
+                  <h3>Wat je krijgt:</h3>
+                  <ul class="benefits-list">
+                    <li>Realistische sprint capaciteit</li>
+                    <li>Data-gedreven velocity insights</li>
+                    <li>Accurate planning voor je team</li>
+                  </ul>
+                </div>
+
+                <div class="welcome-steps">
+                  <h3>De stappen:</h3>
+                  <div class="steps-overview">
+                    <div class="step-item">
+                      <span class="step-number">1</span>
+                      <div class="step-details">
+                        <span class="step-name">Team Velocity</span>
+                        <span class="step-time">2 minuten</span>
+                      </div>
+                    </div>
+                    <div class="step-item">
+                      <span class="step-number">2</span>
+                      <div class="step-details">
+                        <span class="step-name">Team Capaciteit</span>
+                        <span class="step-time">2 minuten</span>
+                      </div>
+                    </div>
+                    <div class="step-item">
+                      <span class="step-number">3</span>
+                      <div class="step-details">
+                        <span class="step-name">Beschikbaarheid</span>
+                        <span class="step-time">1 minuut</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="welcome-tip">
+                  <p><strong>Pro tip:</strong> Heb je laatste sprint gegevens bij de hand</p>
+                </div>
+              </div>
+            </div>
+
             <!-- Step 3: Availability -->
             <div v-if="currentStep === 3" class="step-panel availability-step">
               <div class="step-header">
@@ -704,8 +752,8 @@
               </div>
             </div>
 
-            <!-- Step 4: Results -->
-            <div v-if="currentStep === 4" class="step-panel">
+            <!-- Step 3: Results -->
+            <div v-if="currentStep === 3" class="step-panel">
               <div class="step-header">
                 <h3>{{ steps[3].title }}</h3>
                 <p>Je gepersonaliseerde sprint planning aanbevelingen</p>
@@ -754,8 +802,8 @@
             <div class="nav-spacer"></div>
             <div class="nav-buttons">
               <!-- Previous Button -->
-            <button 
-              v-if="currentStep > 1" 
+            <button
+              v-if="currentStep > 0" 
                 @click="goToPreviousStep"
                 class="nav-btn prev-btn"
                 :disabled="isNavigating"
@@ -769,7 +817,7 @@
 
               <!-- Next Button -->
             <button
-              v-if="currentStep < 4"
+              v-if="currentStep < 3"
 @click="goToNextStep"
                 class="nav-btn next-btn"
                 :disabled="!canProceed || isNavigating"
@@ -783,8 +831,8 @@
             </button>
 
               <!-- Start Over Button -->
-            <button 
-              v-if="currentStep === 4" 
+            <button
+              v-if="currentStep === 3" 
               @click="resetStepper" 
                 class="nav-btn reset-btn"
                 :disabled="isNavigating"
@@ -869,7 +917,7 @@ const showError = (message) => {
 }
 
 // Stepper data
-const currentStep = ref(1)
+const currentStep = ref(0)
 const canProceed = ref(false)
 const velocityInputMethod = ref('manual')
 const manualAverageVelocity = ref(0)
@@ -1176,7 +1224,10 @@ const updateStepCompletion = () => {
   // Validate current step
   const isStepValid = validateStep(currentStep.value)
   
-  if (currentStep.value === 1) {
+  if (currentStep.value === 0) {
+    // Step 0: Welcome screen - always allow proceeding
+    canProceed.value = true
+  } else if (currentStep.value === 1) {
     // Step 1: Check if velocity is entered
     if (velocityInputMethod.value === 'manual') {
       canProceed.value = isStepValid && manualAverageVelocity.value > 0
@@ -1191,7 +1242,7 @@ const updateStepCompletion = () => {
       canProceed.value = isStepValid && developers.value.length > 0
     }
   } else if (currentStep.value === 3) {
-    // Step 3: Availability is always optional - allow proceeding
+    // Step 3: Results - allow proceeding
     canProceed.value = true
   } else {
     // Step 4: Always allow proceeding
@@ -1299,7 +1350,7 @@ const goToNextStep = async () => {
     // Simulate processing time for better UX
     await new Promise(resolve => setTimeout(resolve, 300))
     
-    if (currentStep.value < 4) {
+    if (currentStep.value < 3) {
       currentStep.value++
       updateStepCompletion()
       showSuccess(`Stap ${currentStep.value} geladen`)
@@ -1320,7 +1371,7 @@ const goToNextStep = async () => {
 }
 
 const goToPreviousStep = async () => {
-  if (isNavigating.value || currentStep.value <= 1) return
+  if (isNavigating.value || currentStep.value <= 0) return
   
   isNavigating.value = true
   
@@ -1385,7 +1436,7 @@ const handleStepperKeydown = (event, stepNumber) => {
 }
 
 const resetStepper = () => {
-  currentStep.value = 1
+  currentStep.value = 0
   sprints.value = [
     { velocity: 0 },
     { velocity: 0 },
@@ -1406,8 +1457,8 @@ const resetStepper = () => {
 }
 
 onMounted(() => {
-  // Always start at step 1
-  currentStep.value = 1
+  // Always start at step 0
+  currentStep.value = 0
   
   // Check cookie consent
   const cookieConsent = localStorage.getItem('sprintplanner-cookie-consent')
@@ -5712,6 +5763,155 @@ textarea:focus,
   .summary-card-minimal {
     background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary)) !important;
     border: 1px solid rgba(59, 130, 246, 0.3) !important;
+  }
+}
+
+/* Welcome Step Styling */
+.welcome-step {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 1rem;
+  padding: 2rem;
+  backdrop-filter: blur(20px);
+  text-align: center;
+}
+
+.welcome-content {
+  max-width: 500px;
+  margin: 0 auto;
+}
+
+.welcome-title {
+  font-size: 2rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: 0.5rem;
+  background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.welcome-subtitle {
+  font-size: 1.125rem;
+  color: var(--text-secondary);
+  margin-bottom: 2rem;
+}
+
+.welcome-benefits,
+.welcome-steps {
+  text-align: left;
+  margin-bottom: 2rem;
+}
+
+.welcome-benefits h3,
+.welcome-steps h3 {
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: 1rem;
+}
+
+.benefits-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.benefits-list li {
+  padding: 0.5rem 0;
+  color: var(--text-secondary);
+  position: relative;
+  padding-left: 1.5rem;
+}
+
+.benefits-list li::before {
+  content: "✓";
+  position: absolute;
+  left: 0;
+  color: var(--accent-primary);
+  font-weight: bold;
+}
+
+.steps-overview {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.step-item {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1rem;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 0.5rem;
+}
+
+.step-number {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 2rem;
+  height: 2rem;
+  background: var(--accent-primary);
+  color: white;
+  font-weight: bold;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.step-details {
+  flex: 1;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.step-name {
+  font-weight: 500;
+  color: var(--text-primary);
+}
+
+.step-time {
+  font-size: 0.875rem;
+  color: var(--text-secondary);
+}
+
+.welcome-tip {
+  text-align: center;
+  padding: 1rem;
+  background: rgba(59, 130, 246, 0.1);
+  border: 1px solid rgba(59, 130, 246, 0.3);
+  border-radius: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+.welcome-tip p {
+  margin: 0;
+  color: var(--text-secondary);
+  font-size: 0.875rem;
+}
+
+@media (max-width: 768px) {
+  .welcome-step {
+    padding: 1.5rem;
+  }
+
+  .welcome-title {
+    font-size: 1.75rem;
+  }
+
+  .step-item {
+    flex-direction: column;
+    text-align: center;
+    gap: 0.5rem;
+  }
+
+  .step-details {
+    flex-direction: column;
+    gap: 0.25rem;
   }
 }
 
