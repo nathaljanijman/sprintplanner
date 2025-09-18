@@ -2191,18 +2191,18 @@ onMounted(() => {
   }
   
   .hero-content {
-    text-align: left;
+    text-align: center;
     padding: 1rem 0;
     min-height: 300px;
-    align-items: flex-start;
+    align-items: center;
   }
-  
+
   .hero-badge {
-    align-self: flex-start;
+    align-self: center;
   }
-  
+
   .hero-cta {
-    align-items: flex-start;
+    align-items: center;
   }
   
   .title {
