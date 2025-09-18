@@ -954,6 +954,29 @@
           </div>
         </div>
 
+        <!-- Multi-Sprint Analytics Banner -->
+        <div v-if="currentStep === 4 && hasMultipleSprints" class="analytics-detection-banner">
+          <div class="banner-content-analytics">
+            <div class="banner-icon-analytics">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M3 3v18h18"/>
+                <path d="M8 17l4-4 4 4 6-6"/>
+                <circle cx="8" cy="17" r="1"/>
+                <circle cx="12" cy="13" r="1"/>
+                <circle cx="16" cy="17" r="1"/>
+                <circle cx="22" cy="11" r="1"/>
+              </svg>
+            </div>
+            <div class="banner-text-analytics">
+              <div class="banner-title-analytics">Meerdere sprints gevonden</div>
+              <div class="banner-subtitle-analytics">{{ sprintAnalyticsData.length }} sprints in planning serie</div>
+            </div>
+            <button @click="showAnalyticsDashboard = true" class="analytics-button">
+              Bekijk Analytics Dashboard
+            </button>
+          </div>
+        </div>
+
         <!-- Planning Actions -->
         <div v-if="currentStep === 4" class="planning-actions">
           <div class="action-buttons">
@@ -1222,6 +1245,94 @@
       </div>
     </div>
   </div>
+
+  <!-- Analytics Dashboard Modal -->
+  <div v-if="showAnalyticsDashboard" class="modal-overlay-analytics" @click="showAnalyticsDashboard = false">
+    <div class="modal-content-analytics" @click.stop>
+      <!-- Dashboard Header -->
+      <div class="dashboard-header">
+        <div class="header-content">
+          <div class="header-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M3 3v18h18"/>
+              <path d="M8 17l4-4 4 4 6-6"/>
+              <circle cx="8" cy="17" r="1"/>
+              <circle cx="12" cy="13" r="1"/>
+              <circle cx="16" cy="17" r="1"/>
+              <circle cx="22" cy="11" r="1"/>
+            </svg>
+          </div>
+          <div class="header-text">
+            <h2>Sprint Analytics Dashboard</h2>
+            <p>Analyse van {{ sprintAnalyticsData.length }} sprints in planning serie</p>
+          </div>
+        </div>
+        <button @click="showAnalyticsDashboard = false" class="close-button-analytics">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <line x1="18" y1="6" x2="6" y2="18"/>
+            <line x1="6" y1="6" x2="18" y2="18"/>
+          </svg>
+        </button>
+      </div>
+
+      <!-- Dashboard Content -->
+      <div class="dashboard-content">
+        <!-- Sprint Comparison Grid -->
+        <div class="analytics-section">
+          <h3 class="section-title">Sprint Vergelijking</h3>
+          <div class="comparison-grid">
+            <div class="grid-header">
+              <div class="grid-cell">Sprint</div>
+              <div class="grid-cell">Voorspeld</div>
+              <div class="grid-cell">Werkelijk</div>
+              <div class="grid-cell">Accuracy</div>
+              <div class="grid-cell">Team</div>
+              <div class="grid-cell">Duur</div>
+            </div>
+            <div v-for="(sprint, index) in sprintAnalyticsData" :key="sprint.key" class="grid-row">
+              <div class="grid-cell sprint-number">#{{ index + 1 }}</div>
+              <div class="grid-cell predicted">{{ sprint.predicted }} pts</div>
+              <div class="grid-cell actual">
+                <span v-if="sprint.actual">{{ sprint.actual }} pts</span>
+                <span v-else class="pending">In uitvoering</span>
+              </div>
+              <div class="grid-cell accuracy">
+                <span v-if="sprint.accuracy" :class="getAccuracyClass(sprint.accuracy)">
+                  {{ sprint.accuracy }}%
+                </span>
+                <span v-else class="pending">-</span>
+              </div>
+              <div class="grid-cell">{{ sprint.teamSize }} pers</div>
+              <div class="grid-cell">{{ sprint.duration }} wk</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Performance Metrics -->
+        <div class="analytics-section">
+          <h3 class="section-title">Performance Overzicht</h3>
+          <div class="metrics-grid-analytics">
+            <div class="metric-card">
+              <div class="metric-label">Gemiddelde Velocity</div>
+              <div class="metric-value">{{ averageVelocityMetric }} pts</div>
+            </div>
+            <div class="metric-card">
+              <div class="metric-label">Voorspelling Accuracy</div>
+              <div class="metric-value" :class="getAccuracyClass(overallAccuracy)">{{ overallAccuracy }}%</div>
+            </div>
+            <div class="metric-card">
+              <div class="metric-label">Afgeronde Sprints</div>
+              <div class="metric-value">{{ completedSprints }}/{{ sprintAnalyticsData.length }}</div>
+            </div>
+            <div class="metric-card">
+              <div class="metric-label">Best Performing Sprint</div>
+              <div class="metric-value">#{{ bestSprintNumber }}</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
 </template>
 
 <script setup>
@@ -1412,6 +1523,159 @@ const availabilityInputMethod = ref('percentage') // 'percentage' or 'hours'
 // Individual developers with absences - start empty
 const developers = ref([])
 
+// Google Analytics 4 Integration
+const analytics = ref({
+  sessionId: Date.now().toString(),
+  startTime: Date.now(),
+  currentStep: 0
+})
+
+// Initialize Google Analytics
+const initializeAnalytics = () => {
+  // Track widget start
+  if (typeof gtag !== 'undefined') {
+    gtag('event', 'widget_start', {
+      event_category: 'Sprint Planner',
+      event_label: 'Widget Started',
+      value: 1
+    })
+  }
+  
+  analytics.value.startTime = Date.now()
+  console.log('Google Analytics initialized for Sprint Planner')
+}
+
+// Track step completion with Google Analytics
+const trackStepCompletion = (stepNumber, stepName) => {
+  const timeSpent = Date.now() - analytics.value.startTime
+  
+  if (typeof gtag !== 'undefined') {
+    gtag('event', 'step_completed', {
+      event_category: 'Sprint Planner',
+      event_label: `Step ${stepNumber}: ${stepName}`,
+      value: stepNumber,
+      custom_parameters: {
+        step_name: stepName,
+        step_number: stepNumber,
+        time_spent: timeSpent
+      }
+    })
+  }
+  
+  analytics.value.currentStep = stepNumber
+  console.log(`GA4: Step ${stepNumber} (${stepName}) completed in ${timeSpent}ms`)
+}
+
+// Track widget completion with Google Analytics
+const trackWidgetCompletion = () => {
+  const totalTime = Date.now() - analytics.value.startTime
+  
+  if (typeof gtag !== 'undefined') {
+    gtag('event', 'widget_completed', {
+      event_category: 'Sprint Planner',
+      event_label: 'Widget Completed Successfully',
+      value: 1,
+      custom_parameters: {
+        total_time: totalTime,
+        completion_time: new Date().toISOString()
+      }
+    })
+  }
+  
+  console.log('GA4: Widget completed!', {
+    totalTime: totalTime,
+    sessionId: analytics.value.sessionId
+  })
+}
+
+// Track errors with Google Analytics
+const trackError = (error, context) => {
+  if (typeof gtag !== 'undefined') {
+    gtag('event', 'widget_error', {
+      event_category: 'Sprint Planner',
+      event_label: `Error in ${context}`,
+      value: 0,
+      custom_parameters: {
+        error_message: error.message || error,
+        error_context: context,
+        current_step: analytics.value.currentStep
+      }
+    })
+  }
+  
+  console.error('GA4: Error tracked:', error, context)
+}
+
+// Track user interactions
+const trackUserInteraction = (action, element) => {
+  if (typeof gtag !== 'undefined') {
+    gtag('event', 'user_interaction', {
+      event_category: 'Sprint Planner',
+      event_label: `${action}: ${element}`,
+      value: 1
+    })
+  }
+}
+
+// Track form submissions
+const trackFormSubmission = (formName, success = true) => {
+  if (typeof gtag !== 'undefined') {
+    gtag('event', 'form_submission', {
+      event_category: 'Sprint Planner',
+      event_label: `${formName} - ${success ? 'Success' : 'Failed'}`,
+      value: success ? 1 : 0
+    })
+  }
+}
+
+// Track navigation events
+const trackNavigation = (direction, fromStep, toStep) => {
+  if (typeof gtag !== 'undefined') {
+    gtag('event', 'navigation', {
+      event_category: 'Sprint Planner',
+      event_label: `${direction}: Step ${fromStep} → Step ${toStep}`,
+      value: toStep
+    })
+  }
+}
+
+// Development: Analytics dashboard (only in development)
+const showAnalyticsDashboard = () => {
+  if (process.env.NODE_ENV === 'development') {
+    console.log('📊 Sprint Planner Analytics Dashboard')
+    console.log('=====================================')
+    console.log('Session ID:', analytics.value.sessionId)
+    console.log('Current Step:', analytics.value.currentStep)
+    console.log('Time Elapsed:', Math.round((Date.now() - analytics.value.startTime) / 1000) + 's')
+    console.log('')
+    console.log('🔍 To view Google Analytics data:')
+    console.log('1. Open Google Analytics dashboard')
+    console.log('2. Go to Events > All Events')
+    console.log('3. Filter by "Sprint Planner" category')
+    console.log('4. Look for these events:')
+    console.log('   - widget_start: When widget is opened')
+    console.log('   - step_completed: When each step is completed')
+    console.log('   - widget_completed: When user reaches results')
+    console.log('   - user_interaction: Button clicks and form submissions')
+    console.log('   - navigation: Step navigation events')
+    console.log('   - form_submission: Form success/failure')
+    console.log('   - widget_error: Any errors that occur')
+    console.log('')
+    console.log('📈 Key Metrics to Track:')
+    console.log('- Completion rate (widget_completed / widget_start)')
+    console.log('- Step drop-off points (step_completed events)')
+    console.log('- Error frequency (widget_error events)')
+    console.log('- Average time per step (custom_parameters.time_spent)')
+    console.log('- Form submission success rate (form_submission events)')
+  }
+}
+
+// Make analytics dashboard available globally for development
+if (process.env.NODE_ENV === 'development') {
+  window.showAnalyticsDashboard = showAnalyticsDashboard
+  window.analytics = analytics
+}
+
 // Average team hours (for simple input)
 const averageTeamHours = ref(40)
 
@@ -1538,6 +1802,41 @@ const loadedPlanningBannerSubtitle = computed(() => {
   }
 })
 
+// Analytics Computed Properties
+const averageVelocityMetric = computed(() => {
+  if (sprintAnalyticsData.value.length === 0) return 0
+  const sum = sprintAnalyticsData.value.reduce((acc, sprint) => acc + sprint.velocity, 0)
+  return Math.round(sum / sprintAnalyticsData.value.length)
+})
+
+const overallAccuracy = computed(() => {
+  const completedSprintsWithAccuracy = sprintAnalyticsData.value.filter(sprint => sprint.accuracy !== null)
+  if (completedSprintsWithAccuracy.length === 0) return 0
+  const sum = completedSprintsWithAccuracy.reduce((acc, sprint) => acc + sprint.accuracy, 0)
+  return Math.round(sum / completedSprintsWithAccuracy.length)
+})
+
+const completedSprints = computed(() => {
+  return sprintAnalyticsData.value.filter(sprint => sprint.actual !== null).length
+})
+
+const bestSprintNumber = computed(() => {
+  const completedSprintsWithAccuracy = sprintAnalyticsData.value.filter(sprint => sprint.accuracy !== null)
+  if (completedSprintsWithAccuracy.length === 0) return 1
+
+  const bestSprint = completedSprintsWithAccuracy.reduce((best, current, index) => {
+    return current.accuracy > best.accuracy ? { ...current, index: index + 1 } : best
+  }, { accuracy: 0, index: 1 })
+
+  return bestSprint.index
+})
+
+const getAccuracyClass = (accuracy) => {
+  if (accuracy >= 90) return 'accuracy-high'
+  if (accuracy >= 75) return 'accuracy-medium'
+  return 'accuracy-low'
+}
+
 // Data Persistence System
 const currentPlanningKey = ref(null)
 const showSaveModal = ref(false)
@@ -1547,6 +1846,11 @@ const saveSuccess = ref(false)
 const savedPlanningKey = ref('')
 const isSaving = ref(false)
 const loadError = ref('')
+
+// Multi-Sprint Analytics System
+const hasMultipleSprints = ref(false)
+const sprintAnalyticsData = ref([])
+const showAnalyticsDashboard = ref(false)
 
 // Feedback System
 const showFeedbackModal = ref(false)
@@ -1744,6 +2048,10 @@ const addAbsence = () => {
       hours: newAbsence.value.hours
     })
     
+    // Track successful form submission
+    trackFormSubmission('Add Absence', true)
+    trackUserInteraction('Add', 'Developer Absence')
+    
     console.log('Added absence:', generalAbsences.value)
     
     // Reset form
@@ -1754,6 +2062,10 @@ const addAbsence = () => {
       }
       updateStepCompletion()
   } else {
+    // Track failed form submission
+    trackFormSubmission('Add Absence', false)
+    trackUserInteraction('Error', 'Form Validation Failed')
+    
     console.log('Missing required fields:', {
       developerId: newAbsence.value.developerId,
       hours: newAbsence.value.hours
@@ -1800,9 +2112,32 @@ const goToNextStep = async () => {
     await new Promise(resolve => setTimeout(resolve, 300))
     
     if (currentStep.value < 4) {
+      const previousStep = currentStep.value
       currentStep.value++
+      
+      // Track step completion
+      const stepNames = {
+        0: 'Welcome',
+        1: 'Velocity',
+        2: 'Team Capacity', 
+        3: 'Availability',
+        4: 'Results'
+      }
+      
+      if (previousStep > 0) {
+        trackStepCompletion(previousStep, stepNames[previousStep])
+      }
+      
+      // Track navigation
+      trackNavigation('Next', previousStep, currentStep.value)
+      
       updateStepCompletion()
       showSuccess(`Stap ${currentStep.value} geladen`)
+
+      // Track widget completion if reaching results
+      if (currentStep.value === 4) {
+        trackWidgetCompletion()
+      }
 
       // Scroll to top of widget
       setTimeout(() => {
@@ -1827,7 +2162,12 @@ const goToPreviousStep = async () => {
   try {
     await new Promise(resolve => setTimeout(resolve, 150))
     
+    const previousStep = currentStep.value
     currentStep.value--
+    
+    // Track navigation
+    trackNavigation('Previous', previousStep, currentStep.value)
+    
     updateStepCompletion()
     
     // Scroll to top of widget
@@ -1838,6 +2178,7 @@ const goToPreviousStep = async () => {
       }
     }, 100)
   } catch (error) {
+    trackError(error, 'goToPreviousStep')
     showError('Er is een fout opgetreden')
   } finally {
     isNavigating.value = false
@@ -1945,6 +2286,56 @@ const openLoadModal = () => {
   showLoadModal.value = true
 }
 
+// Multi-Sprint Detection & Analytics
+const checkForMultipleSprints = (planningKey) => {
+  try {
+    const keyPrefix = planningKey.substring(0, 6) // Use first 6 chars as project identifier
+    const allKeys = Object.keys(localStorage).filter(key =>
+      key.startsWith('sprint_planning_') &&
+      key.substring(16, 22) === keyPrefix
+    )
+
+    if (allKeys.length > 1) {
+      const sprintData = []
+
+      allKeys.forEach(key => {
+        try {
+          const data = JSON.parse(localStorage.getItem(key))
+          if (data && data.data && data.data.results) {
+            sprintData.push({
+              key: data.key,
+              saved: new Date(data.saved),
+              predicted: data.data.results.recommendedPoints,
+              actual: data.data.results.actualPoints || null,
+              teamSize: data.data.capacity.teamMembers,
+              duration: data.data.capacity.sprintWeeks,
+              velocity: data.data.velocity.average,
+              accuracy: data.data.results.actualPoints ?
+                Math.round((1 - Math.abs(data.data.results.recommendedPoints - data.data.results.actualPoints) / data.data.results.recommendedPoints) * 100) :
+                null
+            })
+          }
+        } catch (e) {
+          console.warn('Failed to parse sprint data:', e)
+        }
+      })
+
+      if (sprintData.length > 1) {
+        sprintAnalyticsData.value = sprintData.sort((a, b) => a.saved - b.saved)
+        hasMultipleSprints.value = true
+        return true
+      }
+    }
+
+    hasMultipleSprints.value = false
+    sprintAnalyticsData.value = []
+    return false
+  } catch (error) {
+    console.error('Error checking for multiple sprints:', error)
+    return false
+  }
+}
+
 const copyToClipboard = async (text) => {
   try {
     await navigator.clipboard.writeText(text)
@@ -2042,6 +2433,9 @@ const loadPlanningData = async (key) => {
 
     // Step 5: Navigate to results with smooth transition
     currentPlanningKey.value = key.toUpperCase()
+
+    // Check for multiple sprints with same prefix
+    checkForMultipleSprints(key.toUpperCase())
 
     showLoading('Resultaten voorbereiden...')
     await new Promise(resolve => setTimeout(resolve, 300))
@@ -2145,6 +2539,9 @@ const checkForLoadParameter = () => {
 }
 
 onMounted(() => {
+  // Initialize Google Analytics
+  initializeAnalytics()
+  
   // Always start at step 0
   currentStep.value = 0
 
@@ -2184,6 +2581,35 @@ onMounted(() => {
 
   localStorage.setItem('sprint_planning_TEST1234', JSON.stringify(testPlanningData))
   console.log('Test planning created with code: TEST1234')
+
+  // Create additional test plannings for analytics
+  const testPlanningData2 = {
+    key: 'TEST1235',
+    data: {
+      velocity: { method: 'manual', manualValue: 42, sprints: [40, 44, 38, 42, 45, 41], average: 42 },
+      capacity: { sprintWeeks: 2, teamMembers: 3, availability: 90, capacityFactor: 0.80 },
+      team: { method: 'average', developers: [] },
+      absences: [], buffer: 20,
+      results: { recommendedPoints: 40, actualPoints: 44, finalCapacity: 150, totalContractHours: 120 }
+    },
+    saved: new Date(Date.now() - 14 * 24 * 60 * 60 * 1000).toISOString() // 2 weeks ago
+  }
+
+  const testPlanningData3 = {
+    key: 'TEST1236',
+    data: {
+      velocity: { method: 'manual', manualValue: 48, sprints: [46, 50, 45, 48, 52, 47], average: 48 },
+      capacity: { sprintWeeks: 2, teamMembers: 4, availability: 85, capacityFactor: 0.90 },
+      team: { method: 'average', developers: [] },
+      absences: [], buffer: 15,
+      results: { recommendedPoints: 46, actualPoints: 42, finalCapacity: 180, totalContractHours: 160 }
+    },
+    saved: new Date(Date.now() - 28 * 24 * 60 * 60 * 1000).toISOString() // 4 weeks ago
+  }
+
+  localStorage.setItem('sprint_planning_TEST1235', JSON.stringify(testPlanningData2))
+  localStorage.setItem('sprint_planning_TEST1236', JSON.stringify(testPlanningData3))
+  console.log('Test analytics data created with codes: TEST1235, TEST1236')
 
   // Check cookie consent
   const cookieConsent = localStorage.getItem('sprintplanner-cookie-consent')
@@ -8287,6 +8713,344 @@ textarea:focus,
   .banner-icon svg {
     width: 18px;
     height: 18px;
+  }
+}
+
+/* Analytics Detection Banner */
+.analytics-detection-banner {
+  margin: 1.5rem 0;
+  display: flex;
+  justify-content: center;
+  animation: bannerSlideIn 0.4s ease-out;
+}
+
+.banner-content-analytics {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  background: linear-gradient(135deg, rgba(59, 130, 246, 0.1), rgba(37, 99, 235, 0.1));
+  border: 1px solid rgba(59, 130, 246, 0.2);
+  border-radius: 12px;
+  padding: 1rem 1.5rem;
+  max-width: 500px;
+  width: 100%;
+}
+
+.banner-icon-analytics {
+  width: 40px;
+  height: 40px;
+  background: rgba(59, 130, 246, 0.15);
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.banner-icon-analytics svg {
+  width: 20px;
+  height: 20px;
+  color: var(--accent-primary);
+}
+
+.banner-text-analytics {
+  flex: 1;
+}
+
+.banner-title-analytics {
+  color: var(--accent-primary);
+  font-weight: 600;
+  font-size: 0.9rem;
+  margin-bottom: 0.25rem;
+}
+
+.banner-subtitle-analytics {
+  color: rgba(59, 130, 246, 0.8);
+  font-size: 0.8rem;
+}
+
+.analytics-button {
+  background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
+  color: white;
+  border: none;
+  border-radius: 8px;
+  padding: 0.75rem 1rem;
+  font-weight: 600;
+  font-size: 0.85rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+}
+
+.analytics-button:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 6px 20px rgba(59, 130, 246, 0.3);
+}
+
+/* Analytics Dashboard Modal */
+.modal-overlay-analytics {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(8px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+  padding: 1rem;
+  animation: fadeIn 0.2s ease-out;
+}
+
+.modal-content-analytics {
+  background: #1a1a1a;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 16px;
+  max-width: 900px;
+  width: 100%;
+  max-height: 90vh;
+  overflow: hidden;
+  box-shadow: 0 25px 50px rgba(0, 0, 0, 0.7);
+  animation: slideUp 0.3s ease-out;
+}
+
+.dashboard-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1.5rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  background: linear-gradient(135deg, #1f1f1f, #161616);
+}
+
+.header-content {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.header-icon {
+  width: 48px;
+  height: 48px;
+  background: rgba(59, 130, 246, 0.15);
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.header-icon svg {
+  width: 24px;
+  height: 24px;
+  color: var(--accent-primary);
+}
+
+.header-text h2 {
+  color: white;
+  font-size: 1.25rem;
+  font-weight: 700;
+  margin: 0 0 0.25rem;
+}
+
+.header-text p {
+  color: #a1a1aa;
+  font-size: 0.875rem;
+  margin: 0;
+}
+
+.close-button-analytics {
+  background: rgba(255, 255, 255, 0.05);
+  color: #a1a1aa;
+  border: none;
+  border-radius: 8px;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.close-button-analytics:hover {
+  background: rgba(255, 255, 255, 0.1);
+  color: white;
+}
+
+.close-button-analytics svg {
+  width: 16px;
+  height: 16px;
+}
+
+.dashboard-content {
+  padding: 1.5rem;
+  max-height: calc(90vh - 120px);
+  overflow-y: auto;
+}
+
+.analytics-section {
+  margin-bottom: 2rem;
+}
+
+.analytics-section:last-child {
+  margin-bottom: 0;
+}
+
+.section-title {
+  color: white;
+  font-size: 1rem;
+  font-weight: 600;
+  margin: 0 0 1rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* Sprint Comparison Grid */
+.comparison-grid {
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.grid-header {
+  display: grid;
+  grid-template-columns: 80px 1fr 1fr 1fr 80px 80px;
+  background: rgba(255, 255, 255, 0.05);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.grid-row {
+  display: grid;
+  grid-template-columns: 80px 1fr 1fr 1fr 80px 80px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.grid-row:last-child {
+  border-bottom: none;
+}
+
+.grid-cell {
+  padding: 0.875rem 1rem;
+  color: #e5e5e5;
+  font-size: 0.875rem;
+  display: flex;
+  align-items: center;
+}
+
+.grid-header .grid-cell {
+  color: white;
+  font-weight: 600;
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.sprint-number {
+  font-weight: 600;
+  color: var(--accent-primary);
+}
+
+.predicted {
+  color: #fbbf24;
+}
+
+.actual {
+  color: #10b981;
+}
+
+.pending {
+  color: #6b7280;
+  font-style: italic;
+}
+
+.accuracy-high {
+  color: #10b981;
+  font-weight: 600;
+}
+
+.accuracy-medium {
+  color: #f59e0b;
+  font-weight: 600;
+}
+
+.accuracy-low {
+  color: #ef4444;
+  font-weight: 600;
+}
+
+/* Performance Metrics */
+.metrics-grid-analytics {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1rem;
+}
+
+.metric-card {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 12px;
+  padding: 1.25rem;
+  text-align: center;
+}
+
+.metric-label {
+  color: #a1a1aa;
+  font-size: 0.8rem;
+  font-weight: 500;
+  margin-bottom: 0.5rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.metric-value {
+  color: white;
+  font-size: 1.5rem;
+  font-weight: 700;
+}
+
+@media (max-width: 768px) {
+  .analytics-detection-banner {
+    margin: 1rem;
+  }
+
+  .banner-content-analytics {
+    padding: 0.875rem 1rem;
+    flex-direction: column;
+    text-align: center;
+    gap: 0.75rem;
+  }
+
+  .analytics-button {
+    width: 100%;
+  }
+
+  .modal-content-analytics {
+    margin: 1rem;
+    max-height: calc(100vh - 2rem);
+  }
+
+  .dashboard-header {
+    padding: 1rem;
+    flex-direction: column;
+    gap: 1rem;
+    text-align: center;
+  }
+
+  .grid-header,
+  .grid-row {
+    grid-template-columns: 60px 1fr 1fr 60px 60px 60px;
+    font-size: 0.75rem;
+  }
+
+  .grid-cell {
+    padding: 0.5rem 0.25rem;
+  }
+
+  .metrics-grid-analytics {
+    grid-template-columns: repeat(2, 1fr);
   }
 }
 </style>
