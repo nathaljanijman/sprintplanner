@@ -189,11 +189,13 @@
     <!-- Planner Widget -->
     <section id="planner-widget" class="planner-widget" aria-labelledby="planner-title" role="region">
       <div class="container">
+
+        <!-- Section Header -->
         <div class="section-header">
           <h2 id="planner-title" class="section-title">Sprint Planner</h2>
           <p class="section-subtitle">Plan je volgende sprint in 4 eenvoudige stappen</p>
-            </div>
-        
+        </div>
+
         <div class="progress-container" role="group" aria-labelledby="progress-title">
           <h3 id="progress-title" class="sr-only">Sprint planning wizard</h3>
           
@@ -254,8 +256,8 @@
             <!-- Step 0: Welcome -->
             <div v-if="currentStep === 0" class="step-panel welcome-step">
               <div class="welcome-content">
-                <h2 class="welcome-title">Sprint Planning</h2>
-                <p class="welcome-subtitle">Plan je volgende sprint in 3 eenvoudige stappen</p>
+                <h1 class="welcome-title">Welkom!</h1>
+                <p class="welcome-subtitle">Deze tool helpt je snel en effectief je volgende sprint te plannen</p>
 
                 <div class="welcome-benefits">
                   <h3>Wat je krijgt:</h3>
@@ -5791,10 +5793,10 @@ textarea:focus,
 }
 
 .welcome-title {
-  font-size: 2rem;
+  font-size: 3rem;
   font-weight: 700;
   color: var(--text-primary);
-  margin-bottom: 0.5rem;
+  margin-bottom: 1rem;
   background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
@@ -5951,7 +5953,7 @@ textarea:focus,
   }
 
   .welcome-title {
-    font-size: 1.75rem;
+    font-size: 2.25rem;
   }
 
   .step-item {
