@@ -1534,8 +1534,10 @@ const analytics = ref({
 const initializeAnalytics = () => {
   analytics.value.startTime = Date.now()
   console.log('Google Analytics initialized for Sprint Planner')
-  
-  // Wait for gtag to be available
+}
+
+// Track widget start when user clicks "Start je Planning"
+const trackWidgetStart = () => {
   const checkGtag = () => {
     if (typeof gtag !== 'undefined') {
       gtag('event', 'widget_start', {
@@ -2180,6 +2182,11 @@ const goToNextStep = async () => {
       const previousStep = currentStep.value
       currentStep.value++
       
+      // Track widget start when going from step 0 to 1
+      if (previousStep === 0 && currentStep.value === 1) {
+        trackWidgetStart()
+      }
+      
       // Track step completion
       const stepNames = {
         0: 'Welcome',
@@ -2604,8 +2611,9 @@ const checkForLoadParameter = () => {
 }
 
 onMounted(() => {
-  // Initialize Google Analytics
-  initializeAnalytics()
+  // Initialize analytics (but don't track widget start yet)
+  analytics.value.startTime = Date.now()
+  console.log('Google Analytics initialized for Sprint Planner')
   
   // Always start at step 0
   currentStep.value = 0
