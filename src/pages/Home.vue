@@ -296,6 +296,15 @@
                 <div class="welcome-tip">
                   <p><strong>Pro tip:</strong> Heb je laatste sprint gegevens bij de hand</p>
                 </div>
+
+                <div class="welcome-cta">
+                  <button @click="goToNextStep" class="welcome-start-btn" :disabled="isNavigating">
+                    Start je Planning
+                    <svg class="welcome-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <path d="M9 18l6-6-6-6"/>
+                    </svg>
+                  </button>
+                </div>
               </div>
             </div>
 
@@ -797,7 +806,7 @@
           </div>
 
         <!-- Universal Navigation Component -->
-        <div class="universal-navigation">
+        <div v-if="currentStep > 0" class="universal-navigation">
           <div class="nav-container">
             <div class="nav-spacer"></div>
             <div class="nav-buttons">
@@ -5892,6 +5901,48 @@ textarea:focus,
   margin: 0;
   color: var(--text-secondary);
   font-size: 0.875rem;
+}
+
+.welcome-cta {
+  margin-top: 2rem;
+  text-align: center;
+}
+
+.welcome-start-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 1rem 2rem;
+  background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
+  color: white;
+  border: none;
+  border-radius: 0.75rem;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+}
+
+.welcome-start-btn:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(59, 130, 246, 0.4);
+}
+
+.welcome-start-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.welcome-arrow {
+  width: 1.25rem;
+  height: 1.25rem;
+  transition: transform 0.2s ease;
+}
+
+.welcome-start-btn:hover:not(:disabled) .welcome-arrow {
+  transform: translateX(2px);
 }
 
 @media (max-width: 768px) {
