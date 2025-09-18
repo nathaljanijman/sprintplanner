@@ -718,50 +718,6 @@
                     </div>
                     
 
-            <!-- Step 3: Availability -->
-            <div v-show="true" class="step-panel availability-step" style="display: block !important;">
-              <div class="step-header">
-                <h3>Team beschikbaarheid</h3>
-                <p>Stel team beschikbaarheid en buffer in voor realistische sprint planning</p>
-              </div>
-
-              <!-- Afwezigheid formulier -->
-              <div style="background: rgba(255, 255, 255, 0.05); padding: 1.5rem; border-radius: 1rem; margin-bottom: 1.5rem; border: 1px solid rgba(255, 255, 255, 0.1);">
-                <h4 style="color: #ffffff; margin-bottom: 1rem;">Voeg afwezigheid toe</h4>
-                <div style="display: grid; gap: 1rem;">
-                  <div>
-                    <label style="display: block; margin-bottom: 0.5rem; color: #ffffff; font-weight: 600;">Developer:</label>
-                    <select v-model="newAbsence.developerId" style="width: 100%; padding: 0.75rem; border: 1px solid rgba(255, 255, 255, 0.2); border-radius: 0.5rem; background: rgba(255, 255, 255, 0.1); color: #ffffff;">
-                      <option value="" style="background: #1f2937; color: #ffffff;">Selecteer developer</option>
-                      <option v-for="i in 5" :key="i" :value="i" style="background: #1f2937; color: #ffffff;">Developer {{ i }}</option>
-                    </select>
-                  </div>
-                  <div>
-                    <label style="display: block; margin-bottom: 0.5rem; color: #ffffff; font-weight: 600;">Uren afwezigheid:</label>
-                    <input v-model.number="newAbsence.hours" type="number" min="1" max="40" placeholder="8" style="width: 100%; padding: 0.75rem; border: 1px solid rgba(255, 255, 255, 0.2); border-radius: 0.5rem; background: rgba(255, 255, 255, 0.1); color: #ffffff;">
-                  </div>
-                  <button @click="addAbsence" :disabled="!newAbsence.developerId || !newAbsence.hours" style="background: #3b82f6; color: white; padding: 0.75rem 1.5rem; border: none; border-radius: 0.5rem; cursor: pointer; margin-top: 0.5rem; font-weight: 600;">
-                    ➕ Voeg afwezigheid toe
-                  </button>
-                </div>
-              </div>
-
-              <!-- Buffer instelling -->
-              <div style="background: rgba(255, 255, 255, 0.05); padding: 1.5rem; border-radius: 1rem; margin-bottom: 1.5rem; border: 1px solid rgba(255, 255, 255, 0.1);">
-                <h4 style="color: #ffffff; margin-bottom: 1rem;">Buffer percentage</h4>
-                <div style="display: flex; align-items: center; gap: 0.75rem;">
-                  <input v-model.number="bufferPercentage" type="number" min="0" max="50" step="1" style="width: 80px; padding: 0.75rem; border: 1px solid rgba(255, 255, 255, 0.2); border-radius: 0.5rem; background: rgba(255, 255, 255, 0.1); color: #ffffff;">
-                  <span style="color: #a1a1aa;">% (aanbeveling: 15-20%)</span>
-                </div>
-              </div>
-
-              <!-- Capaciteit overzicht -->
-              <div style="background: rgba(16, 185, 129, 0.1); padding: 1.5rem; border-radius: 1rem; border: 1px solid rgba(16, 185, 129, 0.3);">
-                <h4 style="color: #10b981; margin-bottom: 0.75rem;">📊 Finale Capaciteit</h4>
-                <p style="font-size: 1.5rem; font-weight: bold; color: #10b981; margin-bottom: 0.25rem;">{{ finalCapacity || 'Berekenen...' }} uur</p>
-                <p style="color: #059669; font-size: 0.875rem;">Beschikbaar voor deze sprint</p>
-              </div>
-            </div>
 
             <!-- Step 3: Results -->
             <div v-if="currentStep === 3" class="step-panel">
