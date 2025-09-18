@@ -1667,7 +1667,7 @@ const trackNavigation = (direction, fromStep, toStep) => {
 }
 
 // Development: Analytics dashboard (only in development)
-const showAnalyticsDashboard = () => {
+const showAnalyticsDebugInfo = () => {
   if (process.env.NODE_ENV === 'development') {
     console.log('📊 Sprint Planner Analytics Dashboard')
     console.log('=====================================')
@@ -1736,7 +1736,7 @@ const trackLocalSession = () => {
 
 // Make analytics dashboard available globally for development
 if (process.env.NODE_ENV === 'development') {
-  window.showAnalyticsDashboard = showAnalyticsDashboard
+  window.showAnalyticsDebugInfo = showAnalyticsDebugInfo
   window.analytics = analytics
   window.localAnalytics = localAnalytics
 }
