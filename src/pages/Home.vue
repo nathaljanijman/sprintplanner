@@ -1694,7 +1694,7 @@ onMounted(() => {
   }
 
   .hero {
-    padding: 1rem 0 3rem;
+    padding: 0.5rem 0 2rem;
   }
 
   .nav-container {
