@@ -1532,42 +1532,52 @@ const analytics = ref({
 
 // Initialize Google Analytics
 const initializeAnalytics = () => {
-  // Track widget start
-  if (typeof gtag !== 'undefined') {
-    gtag('event', 'widget_start', {
-      event_category: 'Sprint Planner',
-      event_label: 'Widget Started',
-      value: 1
-    })
-    console.log('✅ GA4: Widget start event sent')
-  } else {
-    console.log('❌ GA4: gtag not available - check tracking ID')
-  }
-  
   analytics.value.startTime = Date.now()
   console.log('Google Analytics initialized for Sprint Planner')
+  
+  // Wait for gtag to be available
+  const checkGtag = () => {
+    if (typeof gtag !== 'undefined') {
+      gtag('event', 'widget_start', {
+        event_category: 'Sprint Planner',
+        event_label: 'Widget Started',
+        value: 1
+      })
+      console.log('✅ GA4: Widget start event sent')
+    } else {
+      console.log('❌ GA4: gtag not available - retrying...')
+      setTimeout(checkGtag, 1000)
+    }
+  }
+  
+  // Check immediately and retry if needed
+  checkGtag()
 }
 
 // Track step completion with Google Analytics
 const trackStepCompletion = (stepNumber, stepName) => {
   const timeSpent = Date.now() - analytics.value.startTime
   
-  if (typeof gtag !== 'undefined') {
-    gtag('event', 'step_completed', {
-      event_category: 'Sprint Planner',
-      event_label: `Step ${stepNumber}: ${stepName}`,
-      value: stepNumber,
-      custom_parameters: {
-        step_name: stepName,
-        step_number: stepNumber,
-        time_spent: timeSpent
-      }
-    })
-    console.log(`✅ GA4: Step ${stepNumber} (${stepName}) event sent`)
-  } else {
-    console.log(`❌ GA4: gtag not available for step ${stepNumber}`)
+  const sendEvent = () => {
+    if (typeof gtag !== 'undefined') {
+      gtag('event', 'step_completed', {
+        event_category: 'Sprint Planner',
+        event_label: `Step ${stepNumber}: ${stepName}`,
+        value: stepNumber,
+        custom_parameters: {
+          step_name: stepName,
+          step_number: stepNumber,
+          time_spent: timeSpent
+        }
+      })
+      console.log(`✅ GA4: Step ${stepNumber} (${stepName}) event sent`)
+    } else {
+      console.log(`❌ GA4: gtag not available for step ${stepNumber} - retrying...`)
+      setTimeout(sendEvent, 500)
+    }
   }
   
+  sendEvent()
   analytics.value.currentStep = stepNumber
   console.log(`GA4: Step ${stepNumber} (${stepName}) completed in ${timeSpent}ms`)
 }
@@ -1576,18 +1586,25 @@ const trackStepCompletion = (stepNumber, stepName) => {
 const trackWidgetCompletion = () => {
   const totalTime = Date.now() - analytics.value.startTime
   
-  if (typeof gtag !== 'undefined') {
-    gtag('event', 'widget_completed', {
-      event_category: 'Sprint Planner',
-      event_label: 'Widget Completed Successfully',
-      value: 1,
-      custom_parameters: {
-        total_time: totalTime,
-        completion_time: new Date().toISOString()
-      }
-    })
+  const sendEvent = () => {
+    if (typeof gtag !== 'undefined') {
+      gtag('event', 'widget_completed', {
+        event_category: 'Sprint Planner',
+        event_label: 'Widget Completed Successfully',
+        value: 1,
+        custom_parameters: {
+          total_time: totalTime,
+          completion_time: new Date().toISOString()
+        }
+      })
+      console.log('✅ GA4: Widget completed event sent')
+    } else {
+      console.log('❌ GA4: gtag not available for widget completion - retrying...')
+      setTimeout(sendEvent, 500)
+    }
   }
   
+  sendEvent()
   console.log('GA4: Widget completed!', {
     totalTime: totalTime,
     sessionId: analytics.value.sessionId
