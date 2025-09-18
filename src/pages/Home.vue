@@ -402,6 +402,43 @@
                 </div>
               </div>
             </div>
+
+            <!-- Step 4: Results -->
+            <div v-if="currentStep === 4" class="step-panel">
+              <div class="step-header">
+                <h3>Resultaten</h3>
+                <p>Je gepersonaliseerde sprint planning aanbevelingen</p>
+              </div>
+
+              <div class="results-showcase" style="margin-top: 2rem;">
+                <div class="main-result" style="background: linear-gradient(135deg, #3b82f6, #1d4ed8); padding: 2rem; border-radius: 1rem; text-align: center; margin-bottom: 2rem;">
+                  <div style="color: rgba(255,255,255,0.8); font-size: 0.875rem; margin-bottom: 0.5rem;">Aanbevolen</div>
+                  <div style="color: white; font-size: 3rem; font-weight: bold;">{{ recommendedSprintPoints || 0 }}</div>
+                  <div style="color: rgba(255,255,255,0.8); font-size: 1rem;">Story Points</div>
+                </div>
+
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1rem;">
+                  <div style="background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1); padding: 1.5rem; border-radius: 0.75rem;">
+                    <div style="font-size: 1.5rem; margin-bottom: 0.5rem;">📊</div>
+                    <div style="color: rgba(255,255,255,0.7); font-size: 0.875rem; margin-bottom: 0.25rem;">Gemiddelde velocity</div>
+                    <div style="color: white; font-size: 1.25rem; font-weight: 600;">{{ averageVelocity || 0 }}</div>
+                  </div>
+
+                  <div style="background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1); padding: 1.5rem; border-radius: 0.75rem;">
+                    <div style="font-size: 1.5rem; margin-bottom: 0.5rem;">👥</div>
+                    <div style="color: rgba(255,255,255,0.7); font-size: 0.875rem; margin-bottom: 0.25rem;">Team capaciteit</div>
+                    <div style="color: white; font-size: 1.25rem; font-weight: 600;">{{ teamCapacity || 0 }} uur</div>
+                  </div>
+
+                  <div style="background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1); padding: 1.5rem; border-radius: 0.75rem;">
+                    <div style="font-size: 1.5rem; margin-bottom: 0.5rem;">🎯</div>
+                    <div style="color: rgba(255,255,255,0.7); font-size: 0.875rem; margin-bottom: 0.25rem;">Buffer</div>
+                    <div style="color: white; font-size: 1.25rem; font-weight: 600;">{{ bufferPercentage || 0 }}%</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
             <!-- Step 1: Historical Velocity -->
             <div v-if="currentStep === 1" class="step-panel velocity-step">
               <div class="step-header">
@@ -489,6 +526,19 @@
                       {{ getFieldError('manualVelocity') }}
                     </div>
                     <div class="input-suffix">story points</div>
+                  </div>
+
+                  <!-- Calculation info -->
+                  <div class="input-wrapper" style="margin-top: 1rem;">
+                    <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.5rem;">
+                      <span style="font-size: 0.875rem;">📊</span>
+                      <span style="color: rgba(255,255,255,0.7); font-size: 0.8rem;">
+                        Realistische berekening inclusief overhead
+                      </span>
+                    </div>
+                    <div style="color: rgba(255,255,255,0.5); font-size: 0.7rem; line-height: 1.3;">
+                      7% afwezigheid • 17% meetings • 12% context switching
+                    </div>
                   </div>
                 </div>
               </div>
@@ -1167,14 +1217,23 @@ const totalIndividualHours = computed(() => {
 const recommendedSprintPoints = computed(() => {
   const velocity = averageVelocity.value
   const capacity = teamCapacity.value
-  
+
   if (velocity === 0 || capacity === 0) return 0
-  
-  // Convert capacity to story points (assuming 1 story point = 8 hours)
-  const capacityInStoryPoints = Math.round(capacity / 8)
-  
-  // Take the minimum of velocity and capacity
-  return Math.min(velocity, capacityInStoryPoints)
+
+  // Always use market averages to calculate realistic hours per story point
+  const totalContractCapacity = totalContractHours.value
+
+  // Apply market average reductions:
+  // - 7% sick/vacation, 17% meetings, 12% context switching = 36% total overhead
+  const marketEfficiency = 0.64 // (100% - 36% overhead)
+  const effectiveHistoricalCapacity = totalContractCapacity * marketEfficiency
+
+  const hoursPerStoryPoint = effectiveHistoricalCapacity / velocity
+
+  // Convert current capacity to story points using calculated ratio
+  const capacityInStoryPoints = Math.round(capacity / hoursPerStoryPoint)
+
+  return capacityInStoryPoints
 })
 
 const confidence = computed(() => {
@@ -1338,11 +1397,11 @@ const goToNextStep = async () => {
     // Simulate processing time for better UX
     await new Promise(resolve => setTimeout(resolve, 300))
     
-    if (currentStep.value < 3) {
+    if (currentStep.value < 4) {
       currentStep.value++
       updateStepCompletion()
       showSuccess(`Stap ${currentStep.value} geladen`)
-      
+
       // Scroll to top of widget
       setTimeout(() => {
         const widget = document.getElementById('planner-widget')
