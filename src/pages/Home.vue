@@ -77,11 +77,11 @@
       <div class="hero-container">
         <div class="hero-content">
             <h1 id="hero-title" class="title">
-              Plan je sprints <span class="title-highlight">slimmer</span> en <span class="title-highlight">sneller</span>
+              Betere <span class="title-highlight">predictability</span> voor je <span class="title-highlight">sprint planning</span>
             </h1>
             <p class="subtitle">
-              De eenvoudigste manier om je team's velocity te tracken en realistische sprint planning te maken. 
-              <strong>Geen complexe tools, gewoon resultaat.</strong>
+              Voor PO's en agilisten die data-driven willen plannen. Bereken team velocity en sprint capaciteit in 4 eenvoudige stappen.
+              <strong>Geen complexe tools, gewoon eerlijke planning.</strong>
             </p>
             <div class="hero-cta">
               <button @click="scrollToWidget" class="cta-button primary" aria-describedby="cta-description">
@@ -262,9 +262,9 @@
                 <div class="welcome-benefits">
                   <h3>Wat je krijgt:</h3>
                   <ul class="benefits-list">
-                    <li>Realistische sprint capaciteit</li>
-                    <li>Data-gedreven velocity insights</li>
-                    <li>Accurate planning voor je team</li>
+                    <li>Betere sprint predictability</li>
+                    <li>Team velocity berekening</li>
+                    <li>Realistische capaciteit planning</li>
                   </ul>
                 </div>
 
