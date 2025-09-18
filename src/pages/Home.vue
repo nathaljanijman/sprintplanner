@@ -1713,26 +1713,26 @@ onMounted(() => {
   }
 
 
-  .nav-brand h2 {
-    font-size: 1.25rem;
+  .nav-brand-text {
+    font-size: 1.5rem;
+    font-weight: 600;
   }
 
   .linkedin-text {
-    font-size: 0.75rem;
+    font-size: 0.875rem;
   }
 
   .linkedin-link {
-    padding: 0.5rem 0.75rem;
+    padding: 0.5rem 1rem;
+    gap: 0.5rem;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 0.5rem;
   }
-}
 
-@media (max-width: 480px) {
-  .linkedin-text {
-    display: none;
-  }
-  
-  .linkedin-link {
-    padding: 0.5rem;
+  .linkedin-icon {
+    width: 1.25rem;
+    height: 1.25rem;
   }
 }
 
