@@ -324,7 +324,14 @@
                     <label>Developer</label>
                     <select v-model="newAbsence.developerId" class="absence-select-minimal">
                       <option value="">Selecteer developer</option>
-                      <option v-for="i in 5" :key="i" :value="i">Developer {{ i }}</option>
+                      <!-- Individual developers scenario -->
+                      <template v-if="teamInputMethod === 'individual'">
+                        <option v-for="developer in developers" :key="developer.id" :value="developer.id">{{ developer.name }}</option>
+                      </template>
+                      <!-- Average team scenario -->
+                      <template v-if="teamInputMethod === 'average'">
+                        <option v-for="i in capacity.teamMembers" :key="i" :value="i">Developer {{ i }}</option>
+                      </template>
                     </select>
                   </div>
                   <div class="form-group-minimal">
@@ -345,6 +352,20 @@
                     aria-label="Voeg afwezigheid toe"
                   >
                     +
+                  </button>
+                </div>
+              </div>
+
+              <!-- Afwezighedenlijst -->
+              <div v-if="generalAbsences.length > 0" class="absences-list-minimal" style="margin-top: 1.5rem;">
+                <h4 style="color: #ffffff; margin-bottom: 1rem; font-size: 1rem;">Afwezigheden</h4>
+                <div v-for="absence in generalAbsences" :key="absence.id" style="background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1); padding: 1rem; margin-bottom: 0.5rem; border-radius: 0.5rem; display: flex; justify-content: space-between; align-items: center;">
+                  <div>
+                    <div style="color: #ffffff; font-weight: 500;">{{ getDeveloperName(absence.developerId) }}</div>
+                    <div style="color: #a1a1aa; font-size: 0.875rem;">{{ absence.hours }} uur afwezigheid</div>
+                  </div>
+                  <button @click="removeAbsence(absence.id)" style="background: rgba(239, 68, 68, 0.2); border: 1px solid rgba(239, 68, 68, 0.5); color: #ef4444; padding: 0.5rem; border-radius: 0.25rem; cursor: pointer; font-size: 0.875rem;">
+                    Verwijder
                   </button>
                 </div>
               </div>
@@ -784,7 +805,7 @@
 
               <!-- Next Button -->
             <button
-              v-if="currentStep < 3"
+              v-if="currentStep < 4"
 @click="goToNextStep"
                 class="nav-btn next-btn"
                 :disabled="!canProceed || isNavigating"
@@ -799,7 +820,7 @@
 
               <!-- Start Over Button -->
             <button
-              v-if="currentStep === 3" 
+              v-if="currentStep === 4" 
               @click="resetStepper" 
                 class="nav-btn reset-btn"
                 :disabled="isNavigating"
