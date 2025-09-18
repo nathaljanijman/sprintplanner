@@ -410,30 +410,79 @@
                 <p>Je gepersonaliseerde sprint planning aanbevelingen</p>
               </div>
 
-              <div class="results-showcase" style="margin-top: 2rem;">
-                <div class="main-result" style="background: linear-gradient(135deg, #3b82f6, #1d4ed8); padding: 2rem; border-radius: 1rem; text-align: center; margin-bottom: 2rem;">
-                  <div style="color: rgba(255,255,255,0.8); font-size: 0.875rem; margin-bottom: 0.5rem;">Aanbevolen</div>
-                  <div style="color: white; font-size: 3rem; font-weight: bold;">{{ recommendedSprintPoints || 0 }}</div>
-                  <div style="color: rgba(255,255,255,0.8); font-size: 1rem;">Story Points</div>
+              <div class="results-showcase">
+                <!-- Hero Result -->
+                <div class="hero-result">
+                  <div class="hero-number">{{ recommendedSprintPoints || 0 }}</div>
+                  <div class="hero-text">
+                    <div class="hero-label">Story Points</div>
+                    <div class="hero-context">Aanbevolen voor {{ capacity.sprintWeeks }}-week sprint</div>
+                  </div>
                 </div>
 
-                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1rem;">
-                  <div style="background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1); padding: 1.5rem; border-radius: 0.75rem;">
-                    <div style="font-size: 1.5rem; margin-bottom: 0.5rem;">📊</div>
-                    <div style="color: rgba(255,255,255,0.7); font-size: 0.875rem; margin-bottom: 0.25rem;">Gemiddelde velocity</div>
-                    <div style="color: white; font-size: 1.25rem; font-weight: 600;">{{ averageVelocity || 0 }}</div>
+                <!-- Key Metrics Grid -->
+                <div class="metrics-grid">
+                  <div class="metric-item">
+                    <div class="metric-value">{{ displayAverageVelocity }}</div>
+                    <div class="metric-label">Velocity</div>
                   </div>
-
-                  <div style="background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1); padding: 1.5rem; border-radius: 0.75rem;">
-                    <div style="font-size: 1.5rem; margin-bottom: 0.5rem;">👥</div>
-                    <div style="color: rgba(255,255,255,0.7); font-size: 0.875rem; margin-bottom: 0.25rem;">Team capaciteit</div>
-                    <div style="color: white; font-size: 1.25rem; font-weight: 600;">{{ teamCapacity || 0 }} uur</div>
+                  <div class="metric-item">
+                    <div class="metric-value">{{ finalCapacity || 0 }}u</div>
+                    <div class="metric-label">Capaciteit</div>
                   </div>
+                  <div class="metric-item">
+                    <div class="metric-value">{{ bufferPercentage || 0 }}%</div>
+                    <div class="metric-label">Buffer</div>
+                  </div>
+                </div>
 
-                  <div style="background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1); padding: 1.5rem; border-radius: 0.75rem;">
-                    <div style="font-size: 1.5rem; margin-bottom: 0.5rem;">🎯</div>
-                    <div style="color: rgba(255,255,255,0.7); font-size: 0.875rem; margin-bottom: 0.25rem;">Buffer</div>
-                    <div style="color: white; font-size: 1.25rem; font-weight: 600;">{{ bufferPercentage || 0 }}%</div>
+                <!-- Simple Details Link -->
+                <div class="details-section">
+                  <button
+                    @click="showAllDetails = !showAllDetails"
+                    class="show-details-btn"
+                  >
+                    {{ showAllDetails ? 'Verberg details' : 'Toon berekening' }}
+                  </button>
+
+                  <!-- All Details in One Clean Section -->
+                  <div v-if="showAllDetails" class="details-content">
+                    <div class="detail-block">
+                      <h4>Velocity berekening</h4>
+                      <p v-if="velocityInputMethod === 'manual'">
+                        {{ manualAverageVelocity }} SP handmatig ingevoerd,
+                        aangepast voor marktgemiddelde overhead (36%):
+                        <strong>{{ Math.round(manualAverageVelocity * 0.64 * 100) / 100 }} SP effectief</strong>
+                      </p>
+                      <p v-else>
+                        {{ displayAverageVelocity }} SP gemiddelde uit {{ filledSprints }} sprints,
+                        aangepast voor marktgemiddelde overhead (36%):
+                        <strong>{{ Math.round(displayAverageVelocity * 0.64 * 100) / 100 }} SP effectief</strong>
+                      </p>
+                    </div>
+
+                    <div class="detail-block">
+                      <h4>Capaciteit berekening</h4>
+                      <p v-if="teamInputMethod === 'average'">
+                        {{ capacity.teamMembers }} developers × {{ capacity.sprintWeeks }} weken × {{ capacity.contractHoursPerWeek }} uur = {{ totalContractHours }} uur basis.
+                        <span v-if="totalAbsenceHours > 0">Min {{ totalAbsenceHours }} uur afwezigheid. </span>
+                        Min {{ bufferPercentage }}% buffer = <strong>{{ finalCapacity || 0 }} uur netto</strong>
+                      </p>
+                      <p v-else>
+                        {{ developers.length }} developers = {{ totalContractHours }} uur basis.
+                        <span v-if="totalAbsenceHours > 0">Min {{ totalAbsenceHours }} uur afwezigheid. </span>
+                        Min {{ bufferPercentage }}% buffer = <strong>{{ finalCapacity || 0 }} uur netto</strong>
+                      </p>
+                    </div>
+
+                    <div class="detail-block">
+                      <h4>Jouw configuratie</h4>
+                      <div class="config-summary">
+                        <span>{{ velocityInputMethod === 'manual' ? 'Snelle velocity invoer' : 'Historische velocity data' }}</span> •
+                        <span>{{ teamInputMethod === 'average' ? 'Gemiddelde team uren' : 'Individuele developers' }}</span> •
+                        <span>{{ capacity.sprintWeeks }}-week sprint</span>
+                      </div>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -442,102 +491,119 @@
             <!-- Step 1: Historical Velocity -->
             <div v-if="currentStep === 1" class="step-panel velocity-step">
               <div class="step-header">
-                <h3>Team velocity</h3>
-                <p>Hoe wil je je velocity invoeren?</p>
+                <h3>Team velocity bepalen</h3>
+                <p>Kies hoe je de velocity van je team wilt invoeren</p>
               </div>
-              
-              <!-- Input Method Toggle -->
-              <div class="input-method-toggle">
-                <button 
+
+              <!-- Method Selection Cards -->
+              <div class="method-selection">
+                <div
                   @click="velocityInputMethod = 'manual'; updateStepCompletion()"
-                  class="toggle-button"
-                  :class="{ 'active': velocityInputMethod === 'manual' }"
+                  class="method-card"
+                  :class="{ 'selected': velocityInputMethod === 'manual' }"
                 >
-                  <div class="toggle-content">
-                    <div class="toggle-title">Snel gemiddelde</div>
-                    <div class="toggle-subtitle">Voer je gemiddelde velocity in</div>
+                  <div class="method-content">
+                    <h4>Snelle invoer</h4>
+                    <p>Ik ken mijn gemiddelde velocity al</p>
+                    <div class="method-time">30 seconden</div>
                   </div>
-                </button>
-                
-                <button 
+                  <div class="method-radio" :class="{ 'checked': velocityInputMethod === 'manual' }"></div>
+                </div>
+
+                <div
                   @click="velocityInputMethod = 'individual'; updateStepCompletion()"
-                  class="toggle-button"
-                  :class="{ 'active': velocityInputMethod === 'individual' }"
+                  class="method-card"
+                  :class="{ 'selected': velocityInputMethod === 'individual' }"
                 >
-                  <div class="toggle-content">
-                    <div class="toggle-title">Gedetailleerde historie</div>
-                    <div class="toggle-subtitle">Voer laatste 6 sprints in</div>
+                  <div class="method-content">
+                    <h4>Historische data</h4>
+                    <p>Bereken op basis van laatste 6 sprints</p>
+                    <div class="method-time">2 minuten</div>
                   </div>
-                </button>
+                  <div class="method-radio" :class="{ 'checked': velocityInputMethod === 'individual' }"></div>
+                </div>
               </div>
 
               <!-- Individual Sprint Input -->
               <div v-if="velocityInputMethod === 'individual'" class="velocity-input-section">
-                <div class="section-header">
+                <div class="input-section-header">
                   <h4>Laatste 6 sprints</h4>
-                  <p>Voer velocity voor elke sprint in om je gemiddelde te berekenen</p>
+                  <p>Voer het aantal voltooide story points per sprint in</p>
                 </div>
-                
-                <div class="velocity-grid-minimal" role="group" aria-labelledby="velocity-inputs-title">
+
+                <div class="velocity-grid" role="group" aria-labelledby="velocity-inputs-title">
                   <h4 id="velocity-inputs-title" class="sr-only">Sprint velocity inputs</h4>
-                  <div v-for="(sprint, index) in sprints" :key="index" class="velocity-card-minimal">
-                    <label :for="`sprint-${index}`" class="sprint-number">{{ index + 1 }}</label>
-                    <input 
-                      :id="`sprint-${index}`"
-                      v-model.number="sprint.velocity" 
-                      type="number" 
-                      min="0" 
-                      placeholder="0"
-                      :class="['velocity-input-minimal', { 'error': !isFieldValid(`sprint-${index}`) }]"
-                      @input="validateField(`sprint-${index}`, sprint.velocity, { required: true, min: 1 }); updateStepCompletion()"
-                      :aria-label="`Sprint ${index + 1} velocity in story points`"
-                      :aria-describedby="`velocity-hint sprint-${index}-error`"
-                      :aria-invalid="!isFieldValid(`sprint-${index}`)"
-                    />
-                    <div v-if="!isFieldValid(`sprint-${index}`)" :id="`sprint-${index}-error`" class="field-error">
+                  <div v-for="(sprint, index) in sprints" :key="index" class="velocity-input-card">
+                    <div class="sprint-header">
+                      <span class="sprint-number">Sprint {{ index + 1 }}</span>
+                      <span class="sprint-period">{{ getPeriodLabel(index) }}</span>
+                    </div>
+                    <div class="input-container">
+                      <input
+                        :id="`sprint-${index}`"
+                        v-model.number="sprint.velocity"
+                        type="number"
+                        min="0"
+                        placeholder="bijv. 25"
+                        :class="['velocity-input', { 'error': shouldShowError(`sprint-${index}`) }]"
+                        @input="markFieldAsTouched(`sprint-${index}`); validateField(`sprint-${index}`, sprint.velocity, { required: true, min: 1 }); updateStepCompletion()"
+                        @blur="markFieldAsTouched(`sprint-${index}`)"
+                        :aria-label="`Sprint ${index + 1} velocity in story points`"
+                      />
+                      <span class="input-unit">SP</span>
+                    </div>
+                    <div v-if="shouldShowError(`sprint-${index}`)" class="field-error">
                       {{ getFieldError(`sprint-${index}`) }}
                     </div>
-                    <div class="sprint-label">Sprint</div>
                   </div>
-                  <p id="velocity-hint" class="sr-only">Voer het aantal story points in dat per sprint is voltooid</p>
+                </div>
+
+                <!-- Progress Indicator -->
+                <div class="velocity-progress">
+                  <div class="progress-bar">
+                    <div class="progress-fill" :style="{ width: (filledSprints / 6 * 100) + '%' }"></div>
+                  </div>
+                  <span class="progress-text">{{ filledSprints }}/6 sprints ingevuld</span>
                 </div>
               </div>
 
               <!-- Manual Average Input -->
               <div v-if="velocityInputMethod === 'manual'" class="manual-input-section">
-                <div class="section-header">
-                  <h4>Gemiddelde velocity</h4>
-                  <p>Voer de gemiddelde velocity van je team direct in</p>
+                <div class="input-section-header">
+                  <h4>Gemiddelde velocity invoeren</h4>
+                  <p>Voer de gemiddelde velocity van je team in story points in</p>
                 </div>
-                
-                <div class="manual-input-container">
-                  <div class="input-wrapper">
-                    <input 
-                      v-model.number="manualAverageVelocity" 
-                      type="number" 
-                      min="0" 
-                      placeholder="Voer gemiddelde velocity in"
-                      :class="['manual-velocity-input', { 'error': !isFieldValid('manualVelocity') }]"
-                      @input="validateField('manualVelocity', manualAverageVelocity, { required: true, min: 1 }); updateStepCompletion()"
-                      :aria-invalid="!isFieldValid('manualVelocity')"
-                      :aria-describedby="'manual-velocity-error'"
+
+                <div class="manual-input-card">
+                  <div class="velocity-input-large">
+                    <input
+                      v-model.number="manualAverageVelocity"
+                      type="number"
+                      min="0"
+                      placeholder="bijv. 28"
+                      :class="['velocity-input-big', { 'error': shouldShowError('manualVelocity') }]"
+                      @input="markFieldAsTouched('manualVelocity'); validateField('manualVelocity', manualAverageVelocity, { required: true, min: 1 }); updateStepCompletion()"
+                      @blur="markFieldAsTouched('manualVelocity')"
                     />
-                    <div v-if="!isFieldValid('manualVelocity')" id="manual-velocity-error" class="field-error">
-                      {{ getFieldError('manualVelocity') }}
-                    </div>
-                    <div class="input-suffix">story points</div>
+                    <span class="velocity-unit">story points per sprint</span>
                   </div>
 
-                  <!-- Calculation info -->
-                  <div class="input-wrapper" style="margin-top: 1rem;">
-                    <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.5rem;">
-                      <span style="font-size: 0.875rem;">📊</span>
-                      <span style="color: rgba(255,255,255,0.7); font-size: 0.8rem;">
-                        Realistische berekening inclusief overhead
-                      </span>
-                    </div>
-                    <div style="color: rgba(255,255,255,0.5); font-size: 0.7rem; line-height: 1.3;">
-                      7% afwezigheid • 17% meetings • 12% context switching
+                  <div v-if="shouldShowError('manualVelocity')" class="field-error">
+                    {{ getFieldError('manualVelocity') }}
+                  </div>
+                </div>
+
+                <!-- Information Card -->
+                <div class="info-card">
+                  <div class="info-header">
+                    <span class="info-title">Realistische berekening</span>
+                  </div>
+                  <div class="info-content">
+                    <p>Alle velocity data wordt automatisch aangepast voor overhead zoals:</p>
+                    <div class="overhead-list">
+                      <div class="overhead-item">• 7% afwezigheid (vakantie, ziekte)</div>
+                      <div class="overhead-item">• 17% meetings & ceremonies</div>
+                      <div class="overhead-item">• 12% context switching</div>
                     </div>
                   </div>
                 </div>
@@ -545,12 +611,32 @@
 
 
               <!-- Velocity Summary - Only for Individual Sprints -->
-              <div v-if="velocityInputMethod === 'individual'" class="velocity-summary-minimal">
-                <div class="compact-result-card" @click="toggleVelocityDetails">
-                  <div class="compact-result-value">{{ displayAverageVelocity }}</div>
-                  <div class="compact-result-label">story points</div>
-                  <div v-if="showVelocityDetails" class="compact-result-details">
-                    Berekend op basis van {{ sprints.filter(s => s.velocity > 0).length }} sprints
+              <div v-if="velocityInputMethod === 'individual' && filledSprints > 0" class="velocity-summary">
+                <div class="summary-card">
+                  <div class="summary-header">
+                    <span class="summary-title">Berekende gemiddelde</span>
+                  </div>
+                  <div class="summary-value">
+                    <span class="value-number">{{ displayAverageVelocity }}</span>
+                    <span class="value-unit">story points</span>
+                  </div>
+                  <div class="summary-details">
+                    Gebaseerd op {{ filledSprints }} van 6 sprints
+                  </div>
+                </div>
+
+                <!-- Information Card for Historical Data -->
+                <div class="info-card">
+                  <div class="info-header">
+                    <span class="info-title">Realistische berekening</span>
+                  </div>
+                  <div class="info-content">
+                    <p>Deze historische data wordt automatisch aangepast voor overhead zoals:</p>
+                    <div class="overhead-list">
+                      <div class="overhead-item">• 7% afwezigheid (vakantie, ziekte)</div>
+                      <div class="overhead-item">• 17% meetings & ceremonies</div>
+                      <div class="overhead-item">• 12% context switching</div>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -806,23 +892,20 @@
                 
                 <div class="results-grid">
                   <div class="result-item">
-                    <div class="result-icon">📊</div>
                     <div class="result-info">
                       <div class="result-label">Gemiddelde velocity</div>
                       <div class="result-value">{{ averageVelocity }}</div>
                     </div>
                   </div>
-                  
+
                   <div class="result-item">
-                    <div class="result-icon">👥</div>
                     <div class="result-info">
                       <div class="result-label">Team capaciteit</div>
                       <div class="result-value">{{ teamCapacity }}</div>
                     </div>
                   </div>
-                  
+
                   <div class="result-item">
-                    <div class="result-icon">🎯</div>
                     <div class="result-info">
                       <div class="result-label">Vertrouwen</div>
                       <div class="result-value confidence" :class="confidence.toLowerCase()">{{ confidence }}</div>
@@ -958,42 +1041,53 @@ const showError = (message) => {
 const currentStep = ref(0)
 const canProceed = ref(false)
 const velocityInputMethod = ref('manual')
-const manualAverageVelocity = ref(0)
+const manualAverageVelocity = ref(null)
 
 // Validation state
 const validationErrors = ref({})
+const touchedFields = ref({})
 const isFieldValid = (field) => !validationErrors.value[field]
 const getFieldError = (field) => validationErrors.value[field] || ''
+const isFieldTouched = (field) => touchedFields.value[field]
+const shouldShowError = (field) => isFieldTouched(field) && !isFieldValid(field)
 
 // Navigation state
 const isNavigating = ref(false)
 
 // Validation functions
+const markFieldAsTouched = (field) => {
+  touchedFields.value[field] = true
+}
+
 const validateField = (field, value, rules) => {
   const errors = []
-  
-  if (rules.required && (!value || value === '')) {
+
+  // Handle null/undefined values properly
+  const isEmpty = value === null || value === undefined || value === ''
+  const numericValue = Number(value)
+
+  if (rules.required && isEmpty) {
     errors.push('Dit veld is verplicht')
   }
-  
-  if (rules.min && value < rules.min) {
+
+  if (!isEmpty && rules.min && numericValue < rules.min) {
     errors.push(`Minimum waarde is ${rules.min}`)
   }
-  
-  if (rules.max && value > rules.max) {
+
+  if (!isEmpty && rules.max && numericValue > rules.max) {
     errors.push(`Maximum waarde is ${rules.max}`)
   }
-  
-  if (rules.pattern && !rules.pattern.test(value)) {
+
+  if (!isEmpty && rules.pattern && !rules.pattern.test(value)) {
     errors.push(rules.message || 'Ongeldige invoer')
   }
-  
+
   if (errors.length > 0) {
     validationErrors.value[field] = errors[0]
   } else {
     delete validationErrors.value[field]
   }
-  
+
   return errors.length === 0
 }
 
@@ -1056,12 +1150,12 @@ const steps = [
 
 // Planner data
 const sprints = ref([
-  { velocity: 0 },
-  { velocity: 0 },
-  { velocity: 0 },
-  { velocity: 0 },
-  { velocity: 0 },
-  { velocity: 0 }
+  { velocity: null },
+  { velocity: null },
+  { velocity: null },
+  { velocity: null },
+  { velocity: null },
+  { velocity: null }
 ])
 
 const capacity = ref({
@@ -1144,7 +1238,7 @@ const averageVelocity = computed(() => {
   }
   
   // Individual sprints calculation
-  const validSprints = sprints.value.filter(s => s.velocity > 0)
+  const validSprints = sprints.value.filter(s => s.velocity !== null && s.velocity !== undefined && s.velocity > 0)
   console.log(' Valid sprints:', validSprints)
   
   if (validSprints.length === 0) {
@@ -1159,8 +1253,25 @@ const averageVelocity = computed(() => {
 })
 
 const displayAverageVelocity = computed(() => {
-  return averageVelocity.value
+  if (velocityInputMethod.value === 'manual') {
+    return manualAverageVelocity.value || '--'
+  }
+  const velocity = averageVelocity.value
+  return velocity > 0 ? velocity : '--'
 })
+
+// Helper functions for UX improvements
+const filledSprints = computed(() => {
+  return sprints.value.filter(sprint => sprint.velocity && sprint.velocity > 0).length
+})
+
+const getPeriodLabel = (index) => {
+  const weeks = ['2 weken geleden', '4 weken geleden', '6 weken geleden', '8 weken geleden', '10 weken geleden', '12 weken geleden']
+  return weeks[index] || 'Vorige sprint'
+}
+
+// Simplified disclosure state
+const showAllDetails = ref(false)
 
 // Helper function to get developer name
 const getDeveloperName = (developerId) => {
@@ -1485,12 +1596,12 @@ const handleStepperKeydown = (event, stepNumber) => {
 const resetStepper = () => {
   currentStep.value = 0
   sprints.value = [
-    { velocity: 0 },
-    { velocity: 0 },
-    { velocity: 0 },
-    { velocity: 0 },
-    { velocity: 0 },
-    { velocity: 0 }
+    { velocity: null },
+    { velocity: null },
+    { velocity: null },
+    { velocity: null },
+    { velocity: null },
+    { velocity: null }
   ]
   capacity.value = {
     sprintWeeks: 2,
@@ -1498,8 +1609,11 @@ const resetStepper = () => {
     contractHoursPerWeek: 40,
     bufferPercentage: 10
   }
-  
+
   developers.value = []
+  manualAverageVelocity.value = null
+  validationErrors.value = {}
+  touchedFields.value = {}
   updateStepCompletion()
 }
 
@@ -3148,6 +3262,392 @@ textarea:focus,
   backdrop-filter: blur(40px);
 }
 
+/* Method Selection Cards */
+.method-selection {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+  margin-bottom: 2rem;
+}
+
+.method-card {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1rem;
+  background: rgba(255, 255, 255, 0.05);
+  border: 2px solid rgba(255, 255, 255, 0.1);
+  border-radius: 0.75rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  position: relative;
+}
+
+.method-card:hover {
+  background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(59, 130, 246, 0.3);
+  transform: translateY(-2px);
+}
+
+.method-card.selected {
+  background: rgba(59, 130, 246, 0.1);
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 1px rgba(59, 130, 246, 0.2);
+}
+
+
+.method-content h4 {
+  color: white;
+  font-size: 1rem;
+  font-weight: 600;
+  margin: 0 0 0.25rem 0;
+}
+
+.method-content p {
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 0.8rem;
+  margin: 0 0 0.5rem 0;
+  line-height: 1.4;
+}
+
+.method-time {
+  color: rgba(59, 130, 246, 0.8);
+  font-size: 0.75rem;
+  font-weight: 500;
+  background: rgba(59, 130, 246, 0.1);
+  padding: 0.25rem 0.5rem;
+  border-radius: 0.375rem;
+  display: inline-block;
+}
+
+.method-radio {
+  width: 1.25rem;
+  height: 1.25rem;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-radius: 50%;
+  margin-left: auto;
+  position: relative;
+  transition: all 0.2s ease;
+}
+
+.method-radio.checked {
+  border-color: #3b82f6;
+  background: #3b82f6;
+}
+
+.method-radio.checked::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 6px;
+  height: 6px;
+  background: white;
+  border-radius: 50%;
+}
+
+/* Input Section Headers */
+.input-section-header {
+  margin-bottom: 1.5rem;
+}
+
+.input-section-header h4 {
+  color: white;
+  font-size: 1.25rem;
+  font-weight: 600;
+  margin: 0 0 0.5rem 0;
+}
+
+.input-section-header p {
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 0.9rem;
+  margin: 0;
+  line-height: 1.4;
+}
+
+/* Velocity Grid - Individual Sprints */
+.velocity-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 0.75rem;
+  margin-bottom: 1.5rem;
+}
+
+.velocity-input-card {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 0.5rem;
+  padding: 0.75rem;
+  transition: all 0.2s ease;
+}
+
+.velocity-input-card:hover {
+  background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(255, 255, 255, 0.2);
+}
+
+.sprint-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.75rem;
+}
+
+.sprint-number {
+  color: white;
+  font-weight: 600;
+  font-size: 0.8rem;
+}
+
+.sprint-period {
+  color: rgba(255, 255, 255, 0.5);
+  font-size: 0.7rem;
+}
+
+.input-container {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.velocity-input {
+  width: 100%;
+  background: rgba(0, 0, 0, 0.3);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 0.375rem;
+  padding: 0.5rem 2.5rem 0.5rem 0.5rem;
+  color: white;
+  font-size: 1rem;
+  font-weight: 500;
+  transition: all 0.2s ease;
+}
+
+.velocity-input:focus {
+  outline: none;
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2);
+  background: rgba(0, 0, 0, 0.5);
+}
+
+.velocity-input.error {
+  border-color: #ef4444;
+  box-shadow: 0 0 0 2px rgba(239, 68, 68, 0.2);
+}
+
+.input-unit {
+  position: absolute;
+  right: 0.5rem;
+  color: rgba(255, 255, 255, 0.5);
+  font-size: 0.75rem;
+  font-weight: 500;
+  pointer-events: none;
+}
+
+/* Progress Indicator */
+.velocity-progress {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.progress-bar {
+  flex: 1;
+  height: 0.5rem;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 0.25rem;
+  overflow: hidden;
+}
+
+.progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #3b82f6, #1d4ed8);
+  transition: width 0.3s ease;
+  border-radius: 0.25rem;
+}
+
+.progress-text {
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 0.875rem;
+  font-weight: 500;
+  min-width: max-content;
+}
+
+/* Manual Input Card */
+.manual-input-card {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 1rem;
+  padding: 2rem;
+  text-align: center;
+  margin-bottom: 1.5rem;
+}
+
+.velocity-input-large {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.velocity-input-big {
+  background: rgba(0, 0, 0, 0.3);
+  border: 2px solid rgba(255, 255, 255, 0.2);
+  border-radius: 0.75rem;
+  padding: 1rem 1.5rem;
+  color: white;
+  font-size: 2rem;
+  font-weight: 600;
+  text-align: center;
+  width: 200px;
+  transition: all 0.2s ease;
+}
+
+.velocity-input-big:focus {
+  outline: none;
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
+  background: rgba(0, 0, 0, 0.5);
+}
+
+.velocity-input-big.error {
+  border-color: #ef4444;
+  box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.2);
+}
+
+.velocity-unit {
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 0.875rem;
+  font-weight: 500;
+}
+
+/* Info Card */
+.info-card {
+  background: rgba(59, 130, 246, 0.1);
+  border: 1px solid rgba(59, 130, 246, 0.2);
+  border-radius: 0.75rem;
+  padding: 1.5rem;
+}
+
+.info-header {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 1rem;
+}
+
+.info-icon {
+  font-size: 1.25rem;
+}
+
+.info-title {
+  color: white;
+  font-weight: 600;
+  font-size: 1rem;
+}
+
+.info-content p {
+  color: rgba(255, 255, 255, 0.8);
+  font-size: 0.875rem;
+  margin: 0 0 1rem 0;
+  line-height: 1.5;
+}
+
+.overhead-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.overhead-item {
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 0.8rem;
+  padding-left: 0.5rem;
+}
+
+/* Summary Card */
+.summary-card {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 0.75rem;
+  padding: 1.5rem;
+  text-align: center;
+}
+
+.summary-header {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  margin-bottom: 1rem;
+}
+
+.summary-icon {
+  font-size: 1.25rem;
+}
+
+.summary-title {
+  color: rgba(255, 255, 255, 0.8);
+  font-size: 0.875rem;
+  font-weight: 500;
+}
+
+.summary-value {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.25rem;
+  margin-bottom: 0.75rem;
+}
+
+.value-number {
+  color: white;
+  font-size: 2.5rem;
+  font-weight: 700;
+  line-height: 1;
+}
+
+.value-unit {
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 0.875rem;
+  font-weight: 500;
+}
+
+.summary-details {
+  color: rgba(255, 255, 255, 0.6);
+  font-size: 0.8rem;
+}
+
+/* Field Errors */
+.field-error {
+  color: #ef4444;
+  font-size: 0.8rem;
+  margin-top: 0.5rem;
+  font-weight: 500;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .method-selection {
+    grid-template-columns: 1fr;
+  }
+
+  .velocity-grid {
+    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+  }
+
+  .velocity-input-big {
+    width: 100%;
+    font-size: 1.5rem;
+  }
+
+  .method-card {
+    padding: 0.75rem;
+  }
+
+}
+
 /* Input Method Toggle */
 .input-method-toggle {
   display: grid;
@@ -3398,8 +3898,39 @@ textarea:focus,
   outline: none;
 }
 
+.velocity-input-minimal::placeholder {
+  color: #71717a;
+  font-style: italic;
+}
+
 .manual-velocity-input::placeholder {
   color: #71717a;
+  font-style: italic;
+}
+
+/* Enhanced visual feedback for empty states */
+.velocity-input-minimal:placeholder-shown {
+  background: rgba(255, 255, 255, 0.03);
+  border-color: rgba(255, 255, 255, 0.1);
+}
+
+.manual-velocity-input:placeholder-shown {
+  background: rgba(255, 255, 255, 0.03);
+}
+
+/* Better focus states */
+.velocity-input-minimal:focus:not(:placeholder-shown) {
+  background: rgba(59, 130, 246, 0.05);
+}
+
+.manual-velocity-input:focus:not(:placeholder-shown) {
+  background: rgba(59, 130, 246, 0.05);
+}
+
+/* Subtle animation for better UX */
+.velocity-input-minimal,
+.manual-velocity-input {
+  transition: all 0.2s ease;
 }
 
 .input-suffix {
@@ -6184,6 +6715,225 @@ textarea:focus,
     padding: 1.25rem 2rem;
     font-size: 1.1rem;
     min-height: 56px;
+  }
+}
+
+/* Clean Results Page */
+.results-showcase {
+  margin-top: 3rem;
+  max-width: 600px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* Hero Result */
+.hero-result {
+  text-align: center;
+  margin-bottom: 3rem;
+}
+
+.hero-number {
+  color: #3b82f6;
+  font-size: 5rem;
+  font-weight: 800;
+  line-height: 1;
+  margin-bottom: 0.5rem;
+}
+
+.hero-label {
+  color: white;
+  font-size: 1.5rem;
+  font-weight: 600;
+  margin-bottom: 0.25rem;
+}
+
+.hero-context {
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 1rem;
+}
+
+/* Metrics Grid */
+.metrics-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1rem;
+  margin-bottom: 3rem;
+}
+
+.metric-item {
+  text-align: center;
+  padding: 1.5rem;
+  background: rgba(255, 255, 255, 0.03);
+  border-radius: 0.5rem;
+}
+
+.metric-value {
+  color: white;
+  font-size: 1.5rem;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+}
+
+.metric-label {
+  color: rgba(255, 255, 255, 0.6);
+  font-size: 0.875rem;
+}
+
+/* Simple Details Section */
+.details-section {
+  text-align: center;
+}
+
+.show-details-btn {
+  padding: 0.75rem 1.5rem;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 0.375rem;
+  color: rgba(255, 255, 255, 0.8);
+  font-size: 0.875rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.show-details-btn:hover {
+  background: rgba(255, 255, 255, 0.08);
+  color: white;
+}
+
+.details-content {
+  margin-top: 2rem;
+  text-align: left;
+  max-width: 500px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.detail-block {
+  margin-bottom: 2rem;
+  padding: 1.5rem;
+  background: rgba(255, 255, 255, 0.02);
+  border-radius: 0.5rem;
+}
+
+.detail-block h4 {
+  color: white;
+  font-size: 1rem;
+  font-weight: 600;
+  margin: 0 0 0.75rem 0;
+}
+
+.detail-block p {
+  color: rgba(255, 255, 255, 0.8);
+  font-size: 0.875rem;
+  line-height: 1.6;
+  margin: 0;
+}
+
+.detail-block strong {
+  color: #3b82f6;
+  font-weight: 600;
+}
+
+.config-summary {
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 0.875rem;
+  line-height: 1.5;
+}
+
+.config-summary span {
+  display: inline-block;
+}
+
+.adjustment-item {
+  margin-bottom: 0.25rem;
+}
+
+/* Minimal Step Details */
+.velocity-breakdown {
+  margin-bottom: 0.75rem;
+}
+
+.velocity-input {
+  color: white;
+  font-size: 0.875rem;
+  margin-bottom: 0.25rem;
+}
+
+.velocity-adjusted {
+  color: rgba(255, 255, 255, 0.6);
+  font-size: 0.8rem;
+  margin-bottom: 0.5rem;
+}
+
+.market-breakdown {
+  margin-top: 0.5rem;
+  padding-top: 0.5rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.overhead-explanation {
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 0.75rem;
+  margin-bottom: 0.25rem;
+}
+
+.overhead-items {
+  color: rgba(255, 255, 255, 0.5);
+  font-size: 0.7rem;
+  line-height: 1.4;
+}
+
+/* Simple Capacity Calculation */
+.capacity-line {
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 0.8rem;
+  margin-bottom: 0.25rem;
+}
+
+.capacity-result {
+  color: white;
+  font-weight: 500;
+  font-size: 0.875rem;
+  margin-top: 0.5rem;
+  padding-top: 0.5rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* Clean Final Calculation */
+.calc-formula {
+  color: white;
+  font-size: 0.875rem;
+  margin-bottom: 0.5rem;
+}
+
+.calc-explanation {
+  color: rgba(255, 255, 255, 0.5);
+  font-size: 0.7rem;
+}
+
+
+/* Clean Responsive Design */
+@media (max-width: 768px) {
+  .hero-number {
+    font-size: 4rem;
+  }
+
+  .metrics-grid {
+    grid-template-columns: 1fr;
+    gap: 0.75rem;
+  }
+
+  .metric-item {
+    padding: 1rem;
+  }
+
+  .details-content {
+    margin-top: 1.5rem;
+  }
+
+  .detail-block {
+    padding: 1rem;
+    margin-bottom: 1.5rem;
   }
 }
 </style>
