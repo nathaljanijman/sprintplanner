@@ -1694,7 +1694,7 @@ onMounted(() => {
   }
 
   .hero {
-    padding: 0.5rem 0 2rem;
+    padding: 0 0 2rem;
   }
 
   .nav-container {
@@ -2180,18 +2180,14 @@ onMounted(() => {
   }
   
   .hero {
-    padding: 8rem 0 3rem;
+    padding: 0 0 2rem;
   }
-  
+
   .hero-container {
     padding: 0 1rem;
     grid-template-columns: 1fr;
     gap: 1rem;
     min-height: auto;
-  }
-  
-  .hero {
-    padding: 8rem 0 3rem;
   }
   
   .hero-content {
@@ -5160,7 +5156,7 @@ textarea:focus,
   }
   
   .hero {
-    padding: 7rem 0 2.5rem;
+    padding: 0 0 2rem;
   }
   
   .hero-content {
