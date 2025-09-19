@@ -5756,7 +5756,7 @@ textarea:focus,
   }
   
   .config-grid-minimal {
-    grid-template-columns: 1fr;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
     gap: 1rem;
   }
   
@@ -6901,6 +6901,16 @@ textarea:focus,
     min-height: 48px;
     font-size: 1rem;
     padding: 0.75rem;
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    border-radius: 0.5rem;
+  }
+  
+  .input-group-minimal {
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    border-radius: 0.5rem;
+    overflow: hidden;
   }
   
   .developer-input-minimal, .hours-input-minimal {
