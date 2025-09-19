@@ -5756,8 +5756,15 @@ textarea:focus,
   }
   
   .config-grid-minimal {
-    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    display: flex;
+    flex-direction: row;
     gap: 1rem;
+    flex-wrap: wrap;
+  }
+  
+  .config-item-minimal {
+    flex: 1;
+    min-width: 150px;
   }
   
   .team-input-toggle {
