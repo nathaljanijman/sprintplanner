@@ -5758,13 +5758,49 @@ textarea:focus,
   .config-grid-minimal {
     display: flex;
     flex-direction: row;
-    gap: 1rem;
-    flex-wrap: wrap;
+    gap: 0.75rem;
+    flex-wrap: nowrap;
+    align-items: end;
   }
   
   .config-item-minimal {
     flex: 1;
-    min-width: 150px;
+    min-width: 120px;
+  }
+  
+  .config-item-minimal label {
+    font-size: 0.75rem;
+    margin-bottom: 0.25rem;
+  }
+  
+  .input-group-minimal {
+    display: flex;
+    align-items: center;
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    border-radius: 0.5rem;
+    overflow: hidden;
+    min-height: 44px;
+  }
+  
+  .config-input-minimal {
+    flex: 1;
+    background: transparent;
+    border: none;
+    padding: 0.5rem;
+    color: #ffffff;
+    font-size: 0.875rem;
+    outline: none;
+    min-height: 44px;
+  }
+  
+  .input-suffix-minimal {
+    padding: 0.5rem;
+    background: rgba(255, 255, 255, 0.05);
+    color: #a1a1aa;
+    font-size: 0.75rem;
+    border-left: 1px solid rgba(255, 255, 255, 0.1);
+    white-space: nowrap;
   }
   
   .team-input-toggle {
