@@ -5207,16 +5207,19 @@ textarea:focus,
 
 /* Minimal Config Grid */
 .config-grid-minimal {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-  gap: 1rem;
+  display: flex;
+  flex-direction: row;
+  gap: 0.75rem;
   margin-bottom: 1.5rem;
+  flex-wrap: wrap;
 }
 
 .config-item-minimal {
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
+  flex: 1;
+  min-width: 120px;
 }
 
 .config-item-minimal label {
