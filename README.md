@@ -15,11 +15,6 @@ Een moderne, minimalistische webapplicatie voor agile teams om hun sprints effec
 - **Smart Recommendations** - Krijg data-driven aanbevelingen voor je volgende sprint
 - **3-Step Wizard** - Intuïtieve stap-voor-stap interface
 
-### 🌍 Internationalisatie
-- **Nederlands & Engels** - Volledige taalondersteuning
-- **Language Switcher** - Eenvoudig wisselen tussen talen
-- **Persistent Settings** - Taalvoorkeur wordt opgeslagen
-
 ### 🎨 Modern Design
 - **2025 Dark Theme** - Zwarte achtergrond met cobalt blue accenten
 - **Glassmorphism** - Moderne glaseffecten en transparantie
